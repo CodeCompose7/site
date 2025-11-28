@@ -76,7 +76,7 @@
     {{ end }}
     
     {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
-      <div class="relative z-20 mb-4 flex-1 overflow-hidden text-sm text-neutral-600 dark:text-neutral-300" style="display: -webkit-box; -webkit-line-clamp: 10; line-clamp: 10; -webkit-box-orient: vertical; overflow: hidden;">
+      <div class="relative z-20 mb-4 flex-1 overflow-hidden text-sm text-neutral-500 dark:text-neutral-400" style="display: -webkit-box; -webkit-line-clamp: 10; line-clamp: 10; -webkit-box-orient: vertical; overflow: hidden;">
         {{ $context.Summary | emojify | plainify }}
       </div>
     {{ end }}
