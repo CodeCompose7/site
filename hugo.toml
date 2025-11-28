@@ -1,0 +1,105 @@
+baseURL = "https://yourusername.github.io/"
+languageCode = "ko"
+defaultContentLanguage = "ko"
+defaultContentLanguageInSubdir = true
+
+title = "코드컴포즈"
+theme = "congo"
+
+enableRobotsTXT = true
+buildDrafts = false
+buildFuture = false
+buildExpired = false
+
+[languages]
+  [languages.ko]
+    languageName = "한국어"
+    weight = 1
+    title = "코드컴포즈"
+    copyright = "&copy; 2025 코드컴포즈"
+    [languages.ko.params]
+      description = "코드컴포즈 회사 소개"
+      [languages.ko.params.author]
+        name = "코드컴포즈"
+    [[languages.ko.menu.main]]
+      name = "홈"
+      url = "/"
+      weight = 1
+    [[languages.ko.menu.main]]
+      name = "강의"
+      url = "/ko/categories/course/"
+      weight = 2
+    [[languages.ko.menu.main]]
+      name = "블로그"
+      url = "/ko/categories/blog/"
+      weight = 3
+    [[languages.ko.menu.main]]
+      name = "태그"
+      url = "/ko/tags/"
+      weight = 4
+    [[languages.ko.menu.main]]
+      name = "About"
+      url = "/ko/about/"
+      weight = 5
+  
+  [languages.en]
+    languageName = "English"
+    weight = 2
+    title = "CodeCompose"
+    copyright = "&copy; 2025 CodeCompose"
+    [languages.en.params]
+      description = "CodeCompose Company Introduction"
+      [languages.en.params.author]
+        name = "CodeCompose"
+    [[languages.en.menu.main]]
+      name = "Home"
+      url = "/en/"
+      weight = 1
+    [[languages.en.menu.main]]
+      name = "Courses"
+      url = "/en/categories/course/"
+      weight = 2
+    [[languages.en.menu.main]]
+      name = "Blog"
+      url = "/en/categories/blog/"
+      weight = 3
+    [[languages.en.menu.main]]
+      name = "Tags"
+      url = "/en/tags/"
+      weight = 4
+    [[languages.en.menu.main]]
+      name = "About"
+      url = "/en/about/"
+      weight = 5
+
+[params]
+  env = "production"
+  description = "코드컴포즈 회사 소개"
+  
+  # 댓글 시스템 (Giscus 설정 - 나중에 GitHub repo 생성 후 설정)
+  # [params.giscus]
+  #   repo = "yourusername/yourusername.github.io"
+  #   repoId = "YOUR_REPO_ID"
+  #   category = "Comments"
+  #   categoryId = "YOUR_CATEGORY_ID"
+  
+  # 소셜 링크
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/yourusername"
+  [[params.socialIcons]]
+    name = "email"
+    url = "mailto:your.email@example.com"
+
+[markup]
+  [markup.highlight]
+    style = "monokai"
+    lineNos = true
+    lineNumbersInTable = true
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"

@@ -1,0 +1,23 @@
+{
+  "name": "Hugo Development",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/hugo:1": {
+      "version": "latest",
+      "extended": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "budparr.language-hugo-vscode",
+        "davidanson.vscode-markdownlint",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  },
+  "postCreateCommand": "hugo version",
+  "forwardPorts": [1313],
+  "remoteUser": "vscode"
+}
