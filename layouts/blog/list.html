@@ -26,10 +26,19 @@
   </section>
   {{ if .Data.Pages }}
     <section class="mt-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {{ range (.Paginate .Pages).Pages }}
-          {{ partial "article-card.html" . }}
-        {{ end }}
+      <div class="flex flex-col lg:flex-row">
+        {{- $sidebarImage := .Params.sidebarImage | default (.Site.Params.blog.sidebarImage) }}
+        {{- $sidebarText := .Params.sidebarText | default (.Site.Params.blog.sidebarText) }}
+        {{- if or $sidebarImage $sidebarText }}
+          {{ partial "sidebar-hero.html" (dict "image" $sidebarImage "text" $sidebarText "context" .) }}
+        {{- end }}
+        <div class="{{ if or $sidebarImage $sidebarText }}lg:flex-1{{ end }}">
+          <div class="grid grid-cols-1 {{ if or $sidebarImage $sidebarText }}md:grid-cols-2{{ else }}md:grid-cols-2 lg:grid-cols-3{{ end }} gap-6">
+            {{ range (.Paginate .Pages).Pages }}
+              {{ partial "article-card.html" . }}
+            {{ end }}
+          </div>
+        </div>
       </div>
     </section>
     {{ partial "pagination.html" . }}

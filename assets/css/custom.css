@@ -147,3 +147,35 @@ section.prose,
 .dark .dark\:hover\:bg-neutral-700:hover {
   background-color: rgba(var(--color-neutral-700), 1);
 }
+
+/* Responsive 유틸리티 */
+@media (min-width: 1024px) {
+  .lg\:mb-0 {
+    margin-bottom: 0;
+  }
+  
+  .lg\:mr-8 {
+    margin-right: 2rem;
+  }
+
+  .lg\:mr-6 {
+    margin-right: 1.5rem;
+  }
+  
+  .lg\:flex-shrink-0 {
+    flex-shrink: 0;
+  }
+  
+  .lg\:w-2\/5 {
+    width: 40%;
+  }
+  
+  .lg\:flex-row {
+    flex-direction: row;
+  }
+}
+
+/* Text alignment */
+.text-center {
+  text-align: center;
+}
