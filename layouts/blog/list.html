@@ -32,9 +32,10 @@
         {{- if or $sidebarImage $sidebarText }}
           {{ partial "sidebar-hero.html" (dict "image" $sidebarImage "text" $sidebarText "context" .) }}
         {{- end }}
-        <div class="{{ if or $sidebarImage $sidebarText }}lg:flex-1{{ end }}">
-          <div class="grid grid-cols-1 {{ if or $sidebarImage $sidebarText }}md:grid-cols-2{{ else }}md:grid-cols-2 lg:grid-cols-3{{ end }} gap-6">
-            {{ range (.Paginate .Pages).Pages }}
+        <div class="{{ if or $sidebarImage $sidebarText }}lg:flex-1{{ end }} flex flex-col">
+          {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
+          <div class="grid min-h-[1200px] grid-cols-1 {{ if or $sidebarImage $sidebarText }}md:grid-cols-2{{ else }}md:grid-cols-2 lg:grid-cols-3{{ end }} gap-6">
+            {{ range (.Paginate .Pages $pagerSize).Pages }}
               {{ partial "article-card.html" . }}
             {{ end }}
           </div>
