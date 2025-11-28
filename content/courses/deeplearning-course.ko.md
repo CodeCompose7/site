@@ -1,9 +1,9 @@
 ---
 title: "딥러닝 기초부터 실전까지"
 date: 2024-11-27
-categories: ["course"]
 tags: ["딥러닝", "TensorFlow", "Python", "신경망"]
 description: "딥러닝의 기초 개념부터 실제 프로젝트 적용까지 다루는 실전 강의"
+summary: "딥러닝을 처음 시작하는 분들부터 실무에 적용하고자 하는 분들까지 모두를 위한 과정입니다. 신경망 기초부터 CNN, RNN, Transformer까지 실전 프로젝트를 통해 배웁니다."
 ---
 
 ## 강의 개요

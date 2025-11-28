@@ -1,9 +1,9 @@
 ---
 title: "Transformer 논문 리뷰: Attention is All You Need"
 date: 2024-11-26
-categories: ["blog"]
 tags: ["논문리뷰", "NLP", "딥러닝", "Transformer", "Attention"]
 description: "NLP의 패러다임을 바꾼 Transformer 아키텍처 분석"
+summary: "2017년 Google이 발표한 Transformer 아키텍처의 핵심 아이디어와 구조를 분석하고, RNN/LSTM의 한계를 극복한 Self-Attention 메커니즘의 혁명적 의미를 살펴봅니다."
 ---
 
 ## 들어가며

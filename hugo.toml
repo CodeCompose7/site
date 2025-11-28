@@ -38,11 +38,11 @@ summaryLength = 30
       weight = 1
     [[languages.ko.menu.main]]
       name = "강의"
-      url = "/ko/categories/course/"
+      pageRef = "courses"
       weight = 2
     [[languages.ko.menu.main]]
       name = "블로그"
-      url = "/ko/categories/blog/"
+      pageRef = "blog"
       weight = 3
     [[languages.ko.menu.main]]
       name = "태그"
@@ -85,11 +85,11 @@ summaryLength = 30
       weight = 1
     [[languages.en.menu.main]]
       name = "Courses"
-      url = "/en/categories/course/"
+      pageRef = "courses"
       weight = 2
     [[languages.en.menu.main]]
       name = "Blog"
-      url = "/en/categories/blog/"
+      pageRef = "blog"
       weight = 3
     [[languages.en.menu.main]]
       name = "Tags"
