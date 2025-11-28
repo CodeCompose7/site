@@ -21,6 +21,12 @@ buildExpired = false
       description = "코드컴포즈 회사 소개"
       [languages.ko.params.author]
         name = "코드컴포즈"
+        image = "img/profile.svg"
+        bio = "코드컴포즈의 기술 블로그 및 강의 소개 사이트입니다."
+        links = [
+          { github = "https://github.com/CodeCompose7" },
+          { email = "mailto:dev@codecompose.net" },
+        ]
     [[languages.ko.menu.main]]
       name = "홈"
       url = "/"
@@ -51,6 +57,13 @@ buildExpired = false
       description = "CodeCompose Company Introduction"
       [languages.en.params.author]
         name = "CodeCompose"
+        image = "img/profile.svg"
+        headline = "Not your ordinary tech blog!"
+        bio = "CodeCompose's tech blog and course introduction site."
+        links = [
+          { github = "https://github.com/CodeCompose7" },
+          { email = "mailto:dev@codecompose.net" },
+        ]
     [[languages.en.menu.main]]
       name = "Home"
       url = "/en/"
@@ -76,6 +89,12 @@ buildExpired = false
   env = "production"
   description = "코드컴포즈 회사 소개"
   
+  # 홈페이지 레이아웃 설정
+  [params.homepage]
+    layout = "profile"
+    showRecent = true
+    recentLimit = 5
+  
   [params.article]
     showTableOfContents = true
   
@@ -89,10 +108,10 @@ buildExpired = false
   # 소셜 링크
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/yourusername"
+    url = "https://github.com/CodeCompose7"
   [[params.socialIcons]]
     name = "email"
-    url = "mailto:your.email@example.com"
+    url = "mailto:dev@codecompose.net"
 
 [markup]
   [markup.highlight]
