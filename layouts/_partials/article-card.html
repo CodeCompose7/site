@@ -1,18 +1,12 @@
 {{- $context := . }}
-<article class="group flex h-full flex-col rounded-2xl border border-neutral-200 bg-neutral-50 p-8 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800">
+{{- $linkUrl := cond $context.Params.externalUrl $context.Params.externalUrl $context.Permalink }}
+<article class="group relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-neutral-50 p-8 transition-all duration-300 hover:-translate-y-2 hover:bg-neutral-100 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700">
+  <a href="{{ $linkUrl }}" class="absolute inset-0 z-10" aria-label="{{ $context.Title | emojify }}"></a>
   {{- $images := $context.Resources.ByType "image" }}
   {{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
   {{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
   {{- with $feature }}
-    <div class="mb-4 overflow-hidden rounded-md">
-      <a
-        href="{{ with $context.Params.externalUrl }}
-          {{ . }}
-        {{ else }}
-          {{ $context.Permalink }}
-        {{ end }}"
-        aria-label="{{ $context.Title | emojify }}"
-      >
+    <div class="relative z-20 mb-4 overflow-hidden rounded-md">
         <img
           alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default "" }}"
           {{ if eq .MediaType.SubType "svg" }}
@@ -29,11 +23,10 @@
             loading="lazy"
           {{ end }}
         />
-      </a>
     </div>
   {{- end }}
   
-  <div class="flex flex-1 flex-col px-6 py-6">
+  <div class="relative z-20 flex flex-1 flex-col px-6 py-6">
     <div class="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
       {{ if $context.Params.showDate | default ($context.Site.Params.article.showDate | default true) }}
         {{ partial "meta/date.html" $context.Date }}
@@ -44,15 +37,9 @@
       {{ end }}
     </div>
     
-    <h3 class="mb-2 line-clamp-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+    <h3 class="relative z-20 mb-2 line-clamp-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
       {{ with $context.Params.externalUrl }}
-        <a
-          class="text-neutral-900 decoration-primary-500 hover:text-primary-600 hover:underline hover:underline-offset-2 dark:text-neutral-100 dark:hover:text-primary-400"
-          href="{{ . }}"
-          target="_blank"
-          rel="external"
-          >{{ $context.Title | emojify }}</a
-        >
+        <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
         <span
           class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
           title="{{ i18n "list.externalurl_title" }}"
@@ -61,11 +48,7 @@
           <span class="ltr:hidden">&#8598;</span>
         </span>
       {{ else }}
-        <a
-          class="text-neutral-900 decoration-primary-500 hover:text-primary-600 hover:underline hover:underline-offset-2 dark:text-neutral-100 dark:hover:text-primary-400"
-          href="{{ $context.Permalink }}"
-          >{{ $context.Title | emojify }}</a
-        >
+        <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
       {{ end }}
       {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
         <div class="ms-2 inline-block">
@@ -76,12 +59,13 @@
 
     {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
     {{ if $showTaxonomies }}
-      <div class="mt-auto flex flex-wrap gap-2 pt-2 mb-2">
+      <div class="relative z-20 mt-auto flex max-h-[3.5rem] flex-wrap gap-2 overflow-hidden pt-2 mb-2">
         {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
           {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
             {{ range $context.GetTerms $taxonomy }}
               <a
                 href="{{ .Permalink }}"
+                onclick="event.stopPropagation();"
                 class="rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
                 >{{ .LinkTitle }}</a
               >
@@ -92,8 +76,8 @@
     {{ end }}
     
     {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
-      <div class="mb-4 flex-1 text-sm text-neutral-600 dark:text-neutral-300 line-clamp-3">
-        {{ $context.Summary | emojify | plainify | truncate 150 }}
+      <div class="relative z-20 mb-4 flex-1 overflow-hidden text-sm text-neutral-600 dark:text-neutral-300" style="display: -webkit-box; -webkit-line-clamp: 10; line-clamp: 10; -webkit-box-orient: vertical; overflow: hidden;">
+        {{ $context.Summary | emojify | plainify }}
       </div>
     {{ end }}
   </div>

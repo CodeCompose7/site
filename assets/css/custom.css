@@ -133,3 +133,17 @@ section.prose,
 .mb-1 {
   margin-bottom: 0.25rem;
 }
+
+/* 태그 영역 2줄 제한 */
+.max-h-\[3rem\] {
+  max-height: 3rem;
+}
+
+/* Hover 배경색 */
+.hover\:bg-neutral-100:hover {
+  background-color: rgba(var(--color-neutral-100), 1);
+}
+
+.dark .dark\:hover\:bg-neutral-700:hover {
+  background-color: rgba(var(--color-neutral-700), 1);
+}
