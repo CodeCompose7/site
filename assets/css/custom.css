@@ -39,6 +39,11 @@
   font-display: swap;
 }
 
+/* 기본 폰트: 고딕 계열 (메뉴, 헤더, 시스템 요소) */
+body {
+  font-family: "Noto Sans KR", "Apple SD Gothic Neo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
 /* 본문 폰트 변경 (메인 페이지 제외) */
 /* 메인 페이지의 article.prose는 제외하고, 다른 페이지의 section.prose에만 적용 */
 section.prose,
@@ -52,6 +57,12 @@ section.prose,
 
 .text-lg {
   font-size: 1.35rem;
+}
+
+/* TOC는 마루부리 폰트 제외 */
+.toc {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 1.0rem;
 }
 
 

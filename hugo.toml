@@ -76,6 +76,9 @@ buildExpired = false
   env = "production"
   description = "코드컴포즈 회사 소개"
   
+  [params.article]
+    showTableOfContents = true
+  
   # 댓글 시스템 (Giscus 설정 - 나중에 GitHub repo 생성 후 설정)
   # [params.giscus]
   #   repo = "yourusername/yourusername.github.io"
@@ -99,6 +102,9 @@ buildExpired = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
 
 [taxonomies]
   category = "categories"
