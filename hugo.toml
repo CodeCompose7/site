@@ -11,6 +11,9 @@ buildDrafts = false
 buildFuture = false
 buildExpired = false
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [languages]
   [languages.ko]
     languageName = "한국어"
@@ -47,6 +50,16 @@ buildExpired = false
       name = "About"
       url = "/ko/about/"
       weight = 5
+    [[languages.ko.menu.main]]
+      identifier = "search"
+      weight = 99
+      [languages.ko.menu.main.params]
+        action = "search"
+    [[languages.ko.menu.main]]
+      identifier = "locale"
+      weight = 100
+      [languages.ko.menu.main.params]
+        action = "locale"
   
   [languages.en]
     languageName = "English"
@@ -84,10 +97,21 @@ buildExpired = false
       name = "About"
       url = "/en/about/"
       weight = 5
+    [[languages.en.menu.main]]
+      identifier = "search"
+      weight = 99
+      [languages.en.menu.main.params]
+        action = "search"
+    [[languages.en.menu.main]]
+      identifier = "locale"
+      weight = 100
+      [languages.en.menu.main.params]
+        action = "locale"
 
 [params]
   env = "production"
   description = "코드컴포즈 회사 소개"
+  enableSearch = true
   
   # 홈페이지 레이아웃 설정
   [params.homepage]
