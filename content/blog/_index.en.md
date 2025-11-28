@@ -6,6 +6,7 @@ cascade:
   showDate: true
   showAuthor: false
   showSummary: true
+  showTaxonomies: true
   invertPagination: true
 ---
 

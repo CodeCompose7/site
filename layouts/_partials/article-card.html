@@ -1,5 +1,5 @@
 {{- $context := . }}
-<article class="group flex flex-col rounded-lg bg-neutral-50 dark:bg-neutral-800 p-6 transition-shadow hover:shadow-lg">
+<article class="group flex h-full flex-col rounded-2xl border border-neutral-200 bg-neutral-50 p-8 transition-all duration-300 hover:-translate-y-2 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800">
   {{- $images := $context.Resources.ByType "image" }}
   {{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
   {{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
@@ -33,18 +33,18 @@
     </div>
   {{- end }}
   
-  <div class="flex flex-1 flex-col">
+  <div class="flex flex-1 flex-col px-6 py-6">
     <div class="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
       {{ if $context.Params.showDate | default ($context.Site.Params.article.showDate | default true) }}
         {{ partial "meta/date.html" $context.Date }}
         {{ if and ($context.Params.showReadingTime | default ($context.Site.Params.article.showReadingTime | default true)) (ne $context.ReadingTime 0) }}
-          <span class="px-2 text-primary-500">&middot;</span>
+          <span class="px-1 text-primary-500">&middot;</span>
           {{ partial "meta/reading-time.html" $context }}
         {{ end }}
       {{ end }}
     </div>
     
-    <h3 class="mb-2 text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+    <h3 class="mb-2 line-clamp-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
       {{ with $context.Params.externalUrl }}
         <a
           class="text-neutral-900 decoration-primary-500 hover:text-primary-600 hover:underline hover:underline-offset-2 dark:text-neutral-100 dark:hover:text-primary-400"
@@ -73,35 +73,27 @@
         </div>
       {{ end }}
     </h3>
-    
-    {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
-      <div class="mb-4 flex-1 text-sm text-neutral-600 dark:text-neutral-300 line-clamp-3">
-        {{ $context.Summary | emojify | plainify | truncate 150 }}
-      </div>
-    {{ end }}
-    
-    {{ if or
-      ($context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default false)))
-    }}
-      <div class="mt-auto flex flex-wrap gap-2">
+
+    {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
+    {{ if $showTaxonomies }}
+      <div class="mt-auto flex flex-wrap gap-2 pt-2 mb-2">
         {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
-          {{ $taxonomySingular := $taxonomy }}
-          {{ if eq $taxonomy "tags" }}
-            {{ $taxonomySingular = "tag" }}
-          {{ else if eq $taxonomy "categories" }}
-            {{ $taxonomySingular = "category" }}
-          {{ end }}
-          {{ $taxonomyTerms := $context.GetTerms $taxonomySingular }}
-          {{ if gt (len $taxonomyTerms) 0 }}
-            {{ range $taxonomyTerms }}
+          {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+            {{ range $context.GetTerms $taxonomy }}
               <a
                 href="{{ .Permalink }}"
-                class="rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400"
+                class="rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
                 >{{ .LinkTitle }}</a
               >
             {{ end }}
           {{ end }}
         {{ end }}
+      </div>
+    {{ end }}
+    
+    {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
+      <div class="mb-4 flex-1 text-sm text-neutral-600 dark:text-neutral-300 line-clamp-3">
+        {{ $context.Summary | emojify | plainify | truncate 150 }}
       </div>
     {{ end }}
   </div>

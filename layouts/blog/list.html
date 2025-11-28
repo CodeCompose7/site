@@ -26,25 +26,11 @@
   </section>
   {{ if .Data.Pages }}
     <section class="mt-8">
-      {{ if $.Params.groupByYear | default ($.Site.Params.list.groupByYear | default true) }}
-        {{ range (.Paginate (.Pages.GroupByDate "2006")).PageGroups }}
-          <h2 class="mt-12 text-2xl font-bold text-neutral-700 first:mt-8 dark:text-neutral-300">
-            {{ .Key }}
-          </h2>
-          <hr class="w-36 border-dotted border-neutral-400 mb-6" />
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {{ range .Pages }}
-              {{ partial "article-card.html" . }}
-            {{ end }}
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {{ range (.Paginate .Pages).Pages }}
+          {{ partial "article-card.html" . }}
         {{ end }}
-      {{ else }}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {{ range (.Paginate .Pages).Pages }}
-            {{ partial "article-card.html" . }}
-          {{ end }}
-        </div>
-      {{ end }}
+      </div>
     </section>
     {{ partial "pagination.html" . }}
   {{ else }}
