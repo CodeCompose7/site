@@ -15,7 +15,7 @@
         {{- $img = resources.Get $imagePath }}
       {{- end }}
       {{- if $img }}
-        <div class="mb-2 overflow-hidden rounded-2xl">
+        <div class="mb-2 overflow-hidden rounded-2xl sidebar-hero-img-wrapper">
           <img
             src="{{ $img.Permalink }}"
             alt="{{ $text | default "" }}"
@@ -27,7 +27,7 @@
         </div>
       {{- else }}
         {{- /* Fallback to static path */}}
-        <div class="mb-2 overflow-hidden rounded-2xl">
+        <div class="mb-2 overflow-hidden rounded-2xl sidebar-hero-img-wrapper">
           <img
             src="{{ $imagePath }}"
             alt="{{ $text | default "" }}"

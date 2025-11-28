@@ -148,6 +148,11 @@ section.prose,
   background-color: rgba(var(--color-neutral-700), 1);
 }
 
+/* Sidebar hero image height (mobile 우선) */
+.sidebar-hero-img-wrapper {
+  max-height: 10rem;
+}
+
 /* Responsive 유틸리티 */
 @media (min-width: 1024px) {
   .lg\:mb-0 {
@@ -172,6 +177,11 @@ section.prose,
   
   .lg\:flex-row {
     flex-direction: row;
+  }
+
+  /* Sidebar hero image height: 데스크톱에서는 높이 제한 해제 */
+  .sidebar-hero-img-wrapper {
+    max-height: none;
   }
 }
 
