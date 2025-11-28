@@ -1,6 +1,8 @@
 ---
 title: "Blog"
 description: "Paper reviews and tech blog"
+sidebarImage: banner1.jpg
+sidebarText: "Code. Research. Innovation."
 
 cascade:
   showDate: true
