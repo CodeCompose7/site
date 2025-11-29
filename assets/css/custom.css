@@ -236,6 +236,53 @@ h1.font-extrabold {
   cursor: default;
 }
 
+/* 카드 높이 고정 및 Summary 제한 */
+article.group {
+  display: flex;
+  flex-direction: column;
+  height: 18.5rem; /* 카드 높이 고정 (450px, 16px 기준) */
+  overflow: hidden; /* 넘치는 내용 숨김 */
+}
+
+.article-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* flex-1과 함께 사용할 때 필요 */
+  overflow: hidden;
+}
+
+.article-summary-wrapper {
+  min-height: 0; /* flex-1과 함께 사용할 때 필요 */
+  position: relative;
+}
+
+.article-summary-skeleton {
+  min-height: 3rem; /* 최소 높이 */
+}
+
+.article-summary {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 0;
+  word-break: break-word; /* 긴 단어 줄바꿈 */
+  line-height: 1.5rem; /* text-base의 line-height */
+  transition: opacity 0.3s ease-in-out; /* 부드러운 전환 */
+  /* line-clamp는 JavaScript로 동적으로 설정 */
+}
+
+.article-summary.visible {
+  opacity: 1 !important;
+}
+
+/* line-clamp가 적용된 경우 확실히 작동하도록 */
+.article-summary[style*="-webkit-line-clamp"] {
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  flex: none !important; /* flex: 1과 충돌 방지 */
+}
+
 /* Hover 배경색 */
 .hover\:bg-neutral-100:hover {
   background-color: rgba(var(--color-neutral-100), 1);
