@@ -138,6 +138,16 @@ section.prose,
   font-size: 1.0rem;
 }
 
+.toc a {
+  font-weight: 200;
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1));
+}
+
+/* h1 font-extrabold를 font-bold로 오버라이드 */
+h1.font-extrabold {
+  font-weight: 700;
+}
+
 /* Grid 레이아웃 스타일 */
 .grid {
   display: grid;
