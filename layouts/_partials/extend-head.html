@@ -6,10 +6,13 @@
 
 <script>
 (function() {
-  function limitTagsToTwoLines() {
+  function limitTagsToOneLine() {
     const containers = document.querySelectorAll('.article-tags-container');
     
     containers.forEach(container => {
+      const wrapper = container.closest('.article-tags-wrapper');
+      const skeleton = wrapper ? wrapper.querySelector('.article-tags-skeleton') : null;
+      
       // 기존 "..." 태그 제거
       const existingMore = container.querySelector('.article-tag-more');
       if (existingMore) {
@@ -24,7 +27,7 @@
       const maxHeightStyle = getComputedStyle(container).maxHeight;
       const maxHeightPx = parseFloat(maxHeightStyle);
       
-      // maxHeight가 유효하지 않으면 기본값 사용 (4.5rem = 72px, 16px 기준)
+      // maxHeight가 유효하지 않으면 기본값 사용 (2.25rem = 36px, 16px 기준)
       if (isNaN(maxHeightPx) || maxHeightPx === 0) {
         return; // 스타일이 아직 적용되지 않았을 수 있음
       }
@@ -32,13 +35,12 @@
       // 컨테이너의 실제 높이 확인
       let containerHeight = container.scrollHeight;
       
-      // 2줄을 넘어가는 경우
+      // 1줄을 넘어가는 경우
       if (containerHeight > maxHeightPx) {
-        // 각 태그의 위치를 확인하여 2줄 내에 들어가는 태그만 표시
+        // 각 태그의 위치를 확인하여 1줄 내에 들어가는 태그만 표시
         const visibleTags = [];
         const tagPositions = new Map();
         let firstLineTop = null;
-        let secondLineTop = null;
         
         // 모든 태그의 위치 측정
         tags.forEach(tag => {
@@ -52,19 +54,13 @@
           }
         });
         
-        // 첫 번째 줄과 두 번째 줄의 태그 찾기
+        // 첫 번째 줄의 태그만 찾기
         tags.forEach(tag => {
           const tagTop = tagPositions.get(tag);
           const lineDiff = Math.abs(tagTop - firstLineTop);
           
           // 같은 줄에 있는 태그 (5px 오차 허용)
           if (lineDiff < 5) {
-            visibleTags.push(tag);
-          } else if (secondLineTop === null || Math.abs(tagTop - secondLineTop) < 5) {
-            // 두 번째 줄
-            if (secondLineTop === null) {
-              secondLineTop = tagTop;
-            }
             visibleTags.push(tag);
           }
         });
@@ -85,6 +81,16 @@
           container.appendChild(moreTag);
         }
       }
+      
+      // skeleton 숨기고 실제 태그 표시
+      if (skeleton) {
+        skeleton.classList.add('hidden');
+        setTimeout(() => {
+          container.classList.add('visible');
+        }, 150);
+      } else {
+        container.classList.add('visible');
+      }
     });
   }
   
@@ -92,10 +98,10 @@
   function runLimitTags() {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(limitTagsToTwoLines, 50);
+        setTimeout(limitTagsToOneLine, 50);
       });
     } else {
-      setTimeout(limitTagsToTwoLines, 50);
+      setTimeout(limitTagsToOneLine, 50);
     }
   }
   
@@ -105,112 +111,26 @@
   let resizeTimer;
   window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(limitTagsToTwoLines, 150);
+    resizeTimer = setTimeout(limitTagsToOneLine, 150);
   });
   
-  // Summary 동적 높이 조정
-  function adjustSummaryHeight() {
-    const summaries = document.querySelectorAll('.article-summary');
-    
-    summaries.forEach(summary => {
-      // 부모 컨테이너 찾기
-      const card = summary.closest('article.group');
-      if (!card) return;
-      
-      const cardContent = summary.closest('.article-card-content');
-      if (!cardContent) return;
-      
-      const wrapper = summary.closest('.article-summary-wrapper');
-      const skeleton = wrapper ? wrapper.querySelector('.article-summary-skeleton') : null;
-      
-      // line-clamp 제거하여 전체 텍스트 표시
-      summary.style.webkitLineClamp = '';
-      summary.style.lineClamp = '';
-      summary.style.display = 'block';
-      summary.style.webkitBoxOrient = '';
-      
-      // 카드의 전체 높이 (고정되어 있음: 18.5rem)
-      const cardHeight = card.offsetHeight;
-      
-      // summary의 위치 측정
-      const cardRect = card.getBoundingClientRect();
-      const summaryRect = summary.getBoundingClientRect();
-      const summaryTop = summaryRect.top - cardRect.top;
-      
-      // summary가 사용할 수 있는 최대 높이 (카드 하단까지, mb-4 제외)
-      const summaryMarginBottom = 16; // mb-4 = 1rem = 16px
-      const availableHeight = cardHeight - summaryTop - summaryMarginBottom;
-      
-      // summary의 실제 높이
-      const summaryHeight = summary.scrollHeight;
-      
-      // 항상 높이 제한 적용
-      if (availableHeight > 0) {
-        // 넘치는 경우에만 line-clamp 적용
-        if (summaryHeight > availableHeight) {
-          // 사용 가능한 높이에 맞는 줄 수 계산 (보수적으로 접근 - 한 줄 줄임)
-          const lineHeight = parseFloat(getComputedStyle(summary).lineHeight) || 24; // 1.5rem = 24px
-          const calculatedLines = Math.floor(availableHeight / lineHeight);
-          const maxLines = Math.max(1, calculatedLines - 1); // 한 줄 줄여서 보수적으로 처리
-          
-          // line-clamp 적용 (모든 필수 속성을 한 번에 설정)
-          summary.style.setProperty('display', '-webkit-box', 'important');
-          summary.style.setProperty('-webkit-line-clamp', maxLines, 'important');
-          summary.style.setProperty('line-clamp', maxLines, 'important');
-          summary.style.setProperty('-webkit-box-orient', 'vertical', 'important');
-          summary.style.setProperty('overflow', 'hidden', 'important');
-          summary.style.setProperty('text-overflow', 'ellipsis', 'important');
-          summary.style.setProperty('flex', 'none', 'important'); // flex: 1과 충돌 방지
-          
-          // 다른 속성 제거
-          summary.style.maxHeight = '';
-          summary.style.height = '';
-        } else {
-          // 넘치지 않으면 일반 블록으로 표시
-          summary.style.display = 'block';
-          summary.style.overflow = 'hidden';
-          summary.style.webkitLineClamp = '';
-          summary.style.lineClamp = '';
-          summary.style.webkitBoxOrient = '';
-          summary.style.maxHeight = '';
-          summary.style.height = '';
-        }
-        
-        // skeleton 숨기고 실제 내용 표시
-        if (skeleton) {
-          skeleton.style.display = 'none';
-        }
-        summary.classList.add('visible');
-      }
-    });
-  }
-  
-  // Summary 높이 조정 실행
-  function runAdjustSummary() {
+  // DOM 로드 후 태그 처리 실행
+  function runLimitTags() {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(function() {
-          limitTagsToTwoLines();
-          setTimeout(adjustSummaryHeight, 100);
-        }, 100);
+        setTimeout(limitTagsToOneLine, 50);
       });
     } else {
-      setTimeout(function() {
-        limitTagsToTwoLines();
-        setTimeout(adjustSummaryHeight, 100);
-      }, 100);
+      setTimeout(limitTagsToOneLine, 50);
     }
   }
   
-  runAdjustSummary();
+  runLimitTags();
   
-  // 리사이즈 이벤트에 summary 조정도 추가
+  // 리사이즈 이벤트 처리 (반응형 대응)
   window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() {
-      limitTagsToTwoLines();
-      adjustSummaryHeight();
-    }, 150);
+    resizeTimer = setTimeout(limitTagsToOneLine, 150);
   });
 })();
 </script>

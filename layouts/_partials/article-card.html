@@ -37,50 +37,56 @@
       {{ end }}
     </div>
     
-    <h3 class="relative z-20 mb-2 line-clamp-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
-      {{ with $context.Params.externalUrl }}
-        <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
-        <span
-          class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
-          title="{{ i18n "list.externalurl_title" }}"
-        >
-          <span class="rtl:hidden">&#8599;</span>
-          <span class="ltr:hidden">&#8598;</span>
-        </span>
-      {{ else }}
-        <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
-      {{ end }}
-      {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
-        <div class="ms-2 inline-block">
-          {{ partial "badge.html" (i18n "article.draft" | emojify) }}
-        </div>
-      {{ end }}
+    <h3 class="article-title relative z-20 mb-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+      <span class="article-title-text">
+        {{ with $context.Params.externalUrl }}
+          <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+          <span
+            class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
+            title="{{ i18n "list.externalurl_title" }}"
+          >
+            <span class="rtl:hidden">&#8599;</span>
+            <span class="ltr:hidden">&#8598;</span>
+          </span>
+        {{ else }}
+          <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+        {{ end }}
+        {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
+          <span class="ms-2 inline-block">
+            {{ partial "badge.html" (i18n "article.draft" | emojify) }}
+          </span>
+        {{ end }}
+      </span>
     </h3>
 
     {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
     {{ if $showTaxonomies }}
-      <div class="article-tags-container relative z-20 mt-auto flex flex-wrap gap-2 overflow-hidden pt-2 mb-2">
-        {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
-          {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
-            {{ range $context.GetTerms $taxonomy }}
-              <a
-                href="{{ .Permalink }}"
-                onclick="event.stopPropagation();"
-                class="article-tag rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
-                >{{ .LinkTitle }}</a
-              >
+      <div class="article-tags-wrapper relative z-20 mt-auto pt-2 mb-2">
+        <div class="article-tags-skeleton">
+          <div class="skeleton-tag"></div>
+          <div class="skeleton-tag"></div>
+          <div class="skeleton-tag skeleton-tag-short"></div>
+        </div>
+        <div class="article-tags-container relative z-10 flex flex-wrap gap-2 overflow-hidden opacity-0">
+          {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
+            {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+              {{ range $context.GetTerms $taxonomy }}
+                <a
+                  href="{{ .Permalink }}"
+                  onclick="event.stopPropagation();"
+                  class="article-tag rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
+                  >{{ .LinkTitle }}</a
+                >
+              {{ end }}
             {{ end }}
           {{ end }}
-        {{ end }}
+        </div>
       </div>
     {{ end }}
     
     {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
-      <div class="article-summary-wrapper relative z-20 mb-4 flex-1">
-        <div class="article-summary-skeleton absolute inset-0 bg-neutral-200 dark:bg-neutral-700 rounded animate-pulse"></div>
-        <div class="article-summary relative z-10 overflow-hidden text-base text-neutral-500 dark:text-neutral-400 opacity-0">
-          {{ $context.Summary | emojify | plainify }}
-        </div>
+      <div class="article-summary relative z-20 mb-4 flex-1 overflow-hidden text-base text-neutral-500 dark:text-neutral-400">
+        {{ $context.Summary | emojify | plainify }}
       </div>
     {{ end }}
   </div>
