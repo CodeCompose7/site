@@ -4,3 +4,108 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+<script>
+(function() {
+  function limitTagsToTwoLines() {
+    const containers = document.querySelectorAll('.article-tags-container');
+    
+    containers.forEach(container => {
+      // 기존 "..." 태그 제거
+      const existingMore = container.querySelector('.article-tag-more');
+      if (existingMore) {
+        existingMore.remove();
+      }
+      
+      // 모든 태그 표시
+      const tags = Array.from(container.querySelectorAll('.article-tag'));
+      tags.forEach(tag => tag.classList.remove('hidden'));
+      
+      // 컨테이너의 max-height 가져오기
+      const maxHeightStyle = getComputedStyle(container).maxHeight;
+      const maxHeightPx = parseFloat(maxHeightStyle);
+      
+      // maxHeight가 유효하지 않으면 기본값 사용 (4.5rem = 72px, 16px 기준)
+      if (isNaN(maxHeightPx) || maxHeightPx === 0) {
+        return; // 스타일이 아직 적용되지 않았을 수 있음
+      }
+      
+      // 컨테이너의 실제 높이 확인
+      let containerHeight = container.scrollHeight;
+      
+      // 2줄을 넘어가는 경우
+      if (containerHeight > maxHeightPx) {
+        // 각 태그의 위치를 확인하여 2줄 내에 들어가는 태그만 표시
+        const visibleTags = [];
+        const tagPositions = new Map();
+        let firstLineTop = null;
+        let secondLineTop = null;
+        
+        // 모든 태그의 위치 측정
+        tags.forEach(tag => {
+          const rect = tag.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
+          const relativeTop = rect.top - containerRect.top;
+          tagPositions.set(tag, relativeTop);
+          
+          if (firstLineTop === null) {
+            firstLineTop = relativeTop;
+          }
+        });
+        
+        // 첫 번째 줄과 두 번째 줄의 태그 찾기
+        tags.forEach(tag => {
+          const tagTop = tagPositions.get(tag);
+          const lineDiff = Math.abs(tagTop - firstLineTop);
+          
+          // 같은 줄에 있는 태그 (5px 오차 허용)
+          if (lineDiff < 5) {
+            visibleTags.push(tag);
+          } else if (secondLineTop === null || Math.abs(tagTop - secondLineTop) < 5) {
+            // 두 번째 줄
+            if (secondLineTop === null) {
+              secondLineTop = tagTop;
+            }
+            visibleTags.push(tag);
+          }
+        });
+        
+        // 보이지 않는 태그 숨기기
+        tags.forEach(tag => {
+          if (!visibleTags.includes(tag)) {
+            tag.classList.add('hidden');
+          }
+        });
+        
+        // 숨겨진 태그가 있으면 "..." 태그 추가
+        if (visibleTags.length < tags.length) {
+          const moreTag = document.createElement('span');
+          moreTag.className = 'article-tag-more rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 mb-1 mr-1';
+          moreTag.textContent = '...';
+          moreTag.style.cursor = 'default';
+          container.appendChild(moreTag);
+        }
+      }
+    });
+  }
+  
+  // DOM 로드 후 실행 (약간의 지연을 두어 레이아웃이 완전히 렌더링된 후 실행)
+  function runLimitTags() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(limitTagsToTwoLines, 50);
+      });
+    } else {
+      setTimeout(limitTagsToTwoLines, 50);
+    }
+  }
+  
+  runLimitTags();
+  
+  // 리사이즈 이벤트 처리 (반응형 대응)
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(limitTagsToTwoLines, 150);
+  });
+})();
+</script>

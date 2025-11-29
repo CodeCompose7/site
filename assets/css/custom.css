@@ -218,8 +218,22 @@ h1.font-extrabold {
 }
 
 /* 태그 영역 2줄 제한 */
-.max-h-\[3rem\] {
-  max-height: 3rem;
+.article-tags-container {
+  max-height: 4.5rem; /* 2줄 높이 (태그 높이 + gap 고려) */
+  position: relative;
+}
+
+.article-tag {
+  display: inline-block;
+}
+
+.article-tag.hidden {
+  display: none;
+}
+
+.article-tag-more {
+  display: inline-block;
+  cursor: default;
 }
 
 /* Hover 배경색 */

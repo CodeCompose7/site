@@ -59,14 +59,14 @@
 
     {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
     {{ if $showTaxonomies }}
-      <div class="relative z-20 mt-auto flex max-h-[3.5rem] flex-wrap gap-2 overflow-hidden pt-2 mb-2">
+      <div class="article-tags-container relative z-20 mt-auto flex flex-wrap gap-2 overflow-hidden pt-2 mb-2">
         {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
           {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
             {{ range $context.GetTerms $taxonomy }}
               <a
                 href="{{ .Permalink }}"
                 onclick="event.stopPropagation();"
-                class="rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
+                class="article-tag rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
                 >{{ .LinkTitle }}</a
               >
             {{ end }}
