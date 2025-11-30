@@ -219,11 +219,11 @@ h1.font-extrabold {
   margin-bottom: 0.25rem;
 }
 
-/* 제목: 항상 2줄 공간, 하단 정렬 */
+/* 제목: 항상 2줄 공간, 상단 정렬 */
 .article-title {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end; /* 하단 정렬 */
+  justify-content: flex-start; /* 상단 정렬 */
   min-height: 3.5rem; /* 2줄 높이 고정 */
 }
 

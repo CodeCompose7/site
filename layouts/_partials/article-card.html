@@ -27,16 +27,6 @@
   {{- end }}
   
   <div class="article-card-content relative z-20 flex flex-1 flex-col px-6 py-6">
-    <div class="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-      {{ if $context.Params.showDate | default ($context.Site.Params.article.showDate | default true) }}
-        {{ partial "meta/date.html" $context.Date }}
-        {{ if and ($context.Params.showReadingTime | default ($context.Site.Params.article.showReadingTime | default true)) (ne $context.ReadingTime 0) }}
-          <span class="px-1 text-primary-500">&middot;</span>
-          {{ partial "meta/reading-time.html" $context }}
-        {{ end }}
-      {{ end }}
-    </div>
-    
     <h3 class="article-title relative z-20 mb-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
       <span class="article-title-text">
         {{ with $context.Params.externalUrl }}
@@ -58,6 +48,16 @@
         {{ end }}
       </span>
     </h3>
+
+    <div class="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+      {{ if $context.Params.showDate | default ($context.Site.Params.article.showDate | default true) }}
+        {{ partial "meta/date.html" $context.Date }}
+        {{ if and ($context.Params.showReadingTime | default ($context.Site.Params.article.showReadingTime | default true)) (ne $context.ReadingTime 0) }}
+          <span class="px-1 text-primary-500">&middot;</span>
+          {{ partial "meta/reading-time.html" $context }}
+        {{ end }}
+      {{ end }}
+    </div>
 
     {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
     {{ if $showTaxonomies }}
