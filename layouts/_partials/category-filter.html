@@ -41,7 +41,6 @@
   {{- end }}
 {{- end }}
 
-{{- $allCategories := $context.Site.Taxonomies.categories }}
 {{- $currentLang := $context.Language.Lang }}
 {{- $isLocal := hugo.IsServer }}
 
@@ -63,6 +62,18 @@
 {{- end }}
 {{- $totalCount := len $allPages }}
 {{- $totalCountWithDrafts := len $allPagesWithDrafts }}
+
+{{- /* 현재 섹션에서 실제로 사용 중인 카테고리만 수집 */}}
+{{- $allCategories := slice }}
+{{- range $allPagesWithDrafts }}
+  {{- with .Params.categories }}
+    {{- range . }}
+      {{- if not (in $allCategories .) }}
+        {{- $allCategories = $allCategories | append . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 
 {{- if $allCategories }}
   <div class="category-filter mb-8 flex flex-wrap">
@@ -88,31 +99,29 @@
     </a>
     
     {{- /* 각 카테고리 버튼 */}}
-    {{- range $term, $pages := $allCategories }}
-      {{- /* 먼저 {sectionName}/categories/ 경로에서 찾기, 없으면 전역 categories/ 경로에서 찾기 */}}
+    {{- range $index, $term := $allCategories }}
+      {{- /* 섹션 전용 카테고리 페이지(/<sectionName>/categories/<slug>/)만 사용 */}}
       {{- $termPage := $context.Site.GetPage (printf "/%s/categories/%s" $sectionName $term) }}
-      {{- if not $termPage }}
-        {{- $termPage = $context.Site.GetPage (printf "/categories/%s" $term) }}
-      {{- end }}
-      {{- /* draft가 아닌 카테고리만 표시 */}}
-      {{- if and $termPage (not $termPage.Draft) }}
-        {{- $isActive := eq $currentCategory $term }}
+      {{- if $termPage }}
         {{- /* 해당 섹션의 페이지들 중에서 해당 카테고리에 속한 것만 필터링 */}}
         {{- $categoryPagesWithDrafts := where $allPagesWithDrafts "Params.categories" "intersect" (slice $term) }}
         {{- $categoryPages := where $categoryPagesWithDrafts "Draft" "!=" true }}
         {{- $categoryCount := len $categoryPages }}
         {{- $categoryCountWithDrafts := len $categoryPagesWithDrafts }}
-        <a
-          href="{{ $termPage.Permalink }}"
-          class="category-filter-btn {{ if $isActive }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
-        >
-          {{ $termPage.LinkTitle }}
-          {{- if $isLocal }}
-            <span class="category-count">({{ $categoryCount }}{{- if ne $categoryCount $categoryCountWithDrafts }} - {{ $categoryCountWithDrafts }}{{- end }})</span>
-          {{- else }}
-            <span class="category-count">({{ $categoryCount }})</span>
-          {{- end }}
-        </a>
+        {{- if gt $categoryCount 0 }}
+          {{- $isActive := eq $currentCategory $term }}
+          <a
+            href="{{ $termPage.Permalink }}"
+            class="category-filter-btn {{ if $isActive }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
+          >
+            {{ $termPage.LinkTitle }}
+            {{- if $isLocal }}
+              <span class="category-count">({{ $categoryCount }}{{- if ne $categoryCount $categoryCountWithDrafts }} - {{ $categoryCountWithDrafts }}{{- end }})</span>
+            {{- else }}
+              <span class="category-count">({{ $categoryCount }})</span>
+            {{- end }}
+          </a>
+        {{- end }}
       {{- end }}
     {{- end }}
   </div>

@@ -29,78 +29,69 @@
   {{- $categoryName := "" }}
   {{- if .File }}
     {{- $dirParts := split (strings.TrimSuffix "/" .File.Dir) "/" }}
-    {{- /* blog/categories/paper-review/ -> paper-review */}}
+    {{- /* courses/categories/ai-learning/ -> ai-learning */}}
     {{- $categoryName = index $dirParts (sub (len $dirParts) 1) }}
   {{- else }}
     {{- /* 폴더명을 직접 추출 */}}
     {{- $pathParts := split (strings.TrimPrefix "/" (strings.TrimSuffix "/" .RelPermalink)) "/" }}
-    {{- /* ko/blog/categories/paper-review -> paper-review */}}
+    {{- /* ko/courses/categories/ai-learning -> ai-learning */}}
     {{- if ge (len $pathParts) 4 }}
       {{- $categoryName = index $pathParts 3 }}
     {{- end }}
   {{- end }}
-  {{- /* 블로그 섹션을 경로로 직접 찾기 */}}
+  {{- /* 강의 섹션을 경로로 직접 찾기 */}}
   {{- $currentLang := .Language.Lang | default "ko" }}
-  {{- $blogSectionName := .Site.Params.sections.blog | default "blog" }}
-  {{- $blogPath := printf "/%s/%s" $currentLang $blogSectionName }}
-  {{- $blogSection := .Site.GetPage $blogPath }}
+  {{- $coursesSectionName := "courses" }}
+  {{- $coursesPath := printf "/%s/%s" $currentLang $coursesSectionName }}
+  {{- $coursesSection := .Site.GetPage $coursesPath }}
   {{- /* 찾은 페이지가 현재 페이지인지 확인하고, 그렇다면 다시 찾기 */}}
-  {{- if and $blogSection (eq $blogSection .) }}
-    {{- $blogSection = false }}
+  {{- if and $coursesSection (eq $coursesSection .) }}
+    {{- $coursesSection = false }}
   {{- end }}
-  {{- if not $blogSection }}
-    {{- $foundSection := .Site.GetPage (printf "/%s" $blogSectionName) }}
+  {{- if not $coursesSection }}
+    {{- $foundSection := .Site.GetPage (printf "/%s" $coursesSectionName) }}
     {{- if and $foundSection (ne $foundSection .) }}
-      {{- $blogSection = $foundSection }}
+      {{- $coursesSection = $foundSection }}
     {{- end }}
   {{- end }}
-  {{- if not $blogSection }}
-    {{- $foundSection := .Site.GetPage "section" $blogSectionName }}
+  {{- if not $coursesSection }}
+    {{- $foundSection := .Site.GetPage "section" $coursesSectionName }}
     {{- if and $foundSection (ne $foundSection .) }}
-      {{- $blogSection = $foundSection }}
+      {{- $coursesSection = $foundSection }}
     {{- end }}
   {{- end }}
-  {{- if not $blogSection }}
-    {{- $foundSection := .Site.GetPage $blogSectionName }}
+  {{- if not $coursesSection }}
+    {{- $foundSection := .Site.GetPage $coursesSectionName }}
     {{- if and $foundSection (ne $foundSection .) }}
-      {{- $blogSection = $foundSection }}
+      {{- $coursesSection = $foundSection }}
     {{- end }}
   {{- end }}
-  {{- $allPosts := slice }}
-  {{- if $blogSection }}
-    {{- /* blog 섹션 전체(하위 폴더 포함)를 대상으로 카테고리 필터링 */}}
-    {{- $allPosts = $blogSection.RegularPagesRecursive }}
+  {{- $allCourses := slice }}
+  {{- if $coursesSection }}
+    {{- /* courses 섹션 전체(하위 폴더 포함)를 대상으로 카테고리 필터링 */}}
+    {{- $allCourses = $coursesSection.RegularPagesRecursive }}
   {{- end }}
   {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
   {{- if not .Site.BuildDrafts }}
-    {{- $allPosts = where $allPosts "Draft" "!=" true }}
+    {{- $allCourses = where $allCourses "Draft" "!=" true }}
   {{- end }}
-  {{- $filteredPosts := where $allPosts "Params.categories" "intersect" (slice $categoryName) }}
+  {{- $filteredCourses := where $allCourses "Params.categories" "intersect" (slice $categoryName) }}
   
   <section class="mt-8">
     {{- /* 카테고리 필터는 항상 표시 */}}
-    {{ partial "category-filter.html" (dict "context" . "currentCategory" $categoryName "blogSection" $blogSection "section" "blog") }}
+    {{ partial "category-filter.html" (dict "context" . "currentCategory" $categoryName "blogSection" $coursesSection "section" "courses") }}
   
-  {{ if $filteredPosts }}
+  {{ if $filteredCourses }}
       
-      {{- /* 카테고리 term 페이지인 경우 sidebar 이미지/텍스트 표시 */}}
-      {{- $sidebarImage := .Params.sidebarImage | default "" }}
-      {{- $sidebarText := .Params.sidebarText | default "" }}
       {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
-      {{- $paginator := .Paginate $filteredPosts $pagerSize }}
+      {{- $paginator := .Paginate $filteredCourses $pagerSize }}
       
-      {{- if or $sidebarImage $sidebarText }}
-        {{- /* sidebar가 있는 경우 list-sidebar-wrapper 사용 */}}
-        {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
-      {{- else }}
-        {{- /* sidebar가 없는 경우 article-card 레이아웃 사용 */}}
-        <div class="grid min-h-[1200px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {{ range $paginator.Pages }}
-            {{ partial "article-card.html" . }}
-          {{ end }}
-        </div>
-      {{- end }}
-    {{ partial "pagination.html" . }}
+      <div class="flex flex-col">
+        {{ range $paginator.Pages }}
+          {{ partial "course-card.html" . }}
+        {{ end }}
+      </div>
+      {{ partial "pagination.html" . }}
   {{ else }}
     <section class="prose mt-10 dark:prose-invert">
       <p class="border-t py-8">

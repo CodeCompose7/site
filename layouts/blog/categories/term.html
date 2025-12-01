@@ -78,7 +78,7 @@
   
   <section class="mt-8">
     {{- /* 카테고리 필터는 항상 표시 */}}
-    {{ partial "category-filter.html" (dict "context" . "currentCategory" $categoryName "blogSection" $blogSection) }}
+    {{ partial "category-filter.html" (dict "context" . "currentCategory" $categoryName "blogSection" $blogSection "section" "blog") }}
   
   {{ if $filteredPosts }}
       

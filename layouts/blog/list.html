@@ -45,7 +45,7 @@
           {{- $currentCategory = index $pathParts (sub (len $pathParts) 1) }}
         {{- end }}
       {{- end }}
-      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" .) }}
+      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" . "section" "blog") }}
 
       {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
       {{- $paginator := .Paginate $allPages $pagerSize }}

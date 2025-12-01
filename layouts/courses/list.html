@@ -45,6 +45,20 @@
   {{- $hasPages := gt (len $sortedPages) 0 }}
   {{ if $hasPages }}
     <section class="mt-8">
+      {{- /* 카테고리 필터 추가 */}}
+      {{- $currentCategory := "" }}
+      {{- if eq .Kind "term" }}
+        {{- $currentCategory = .Data.Term }}
+      {{- end }}
+      {{- /* 섹션 기반 카테고리 페이지(/.../categories/<slug>/)인 경우 경로에서 카테고리명 추출 */}}
+      {{- if and (eq $currentCategory "") .RelPermalink }}
+        {{- if in .RelPermalink "/categories/" }}
+          {{- $pathParts := split (strings.TrimSuffix "/" .RelPermalink) "/" }}
+          {{- $currentCategory = index $pathParts (sub (len $pathParts) 1) }}
+        {{- end }}
+      {{- end }}
+      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" . "section" "courses") }}
+      
       <div class="flex flex-col">
         {{ range $sortedPages }}
           {{ partial "course-card.html" . }}
