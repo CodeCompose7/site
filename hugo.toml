@@ -129,6 +129,10 @@ summaryLength = 30
     showTableOfContents = true
     showTaxonomies = true
   
+  # 섹션 경로 설정 (필요 시 여기서 섹션 슬러그만 변경)
+  [params.sections]
+    blog = "blog"
+  
   # 댓글 시스템 (Giscus 설정 - 나중에 GitHub repo 생성 후 설정)
   # [params.giscus]
   #   repo = "yourusername/yourusername.github.io"

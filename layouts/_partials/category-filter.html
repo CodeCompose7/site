@@ -1,0 +1,85 @@
+{{- /* 
+  카테고리 필터 partial
+  블로그 리스트 페이지에서 사용할 카테고리 필터 버튼들을 표시합니다.
+*/ -}}
+{{- $context := .context | default . }}
+{{- $currentCategory := .currentCategory | default "" }}
+{{- /* 어떤 섹션(courses, blog 등)에서 사용할지 결정: 
+      1) partial 호출 시 넘겨준 .section
+      2) 없으면 현재 컨텍스트의 .Section
+      3) 그래도 없으면 설정값 params.sections.blog (기본 blog) */}}
+{{- $sectionName := .section | default ($context.Section | default ($context.Site.Params.sections.blog | default "blog")) }}
+
+{{- /* 항상 현재 언어의 섹션 루트를 찾도록 보정 */}}
+{{- $blogSection := .blogSection }}
+{{- /* 전달된 섹션이 현재 페이지인지 확인하고, 그렇다면 다시 찾기 */}}
+{{- if and $blogSection (eq $blogSection $context) }}
+  {{- $blogSection = false }}
+{{- end }}
+{{- if not $blogSection }}
+  {{- /* 현재 언어를 고려한 경로로 찾기: /{lang}/{sectionName} */}}
+  {{- $currentLang := $context.Language.Lang | default "ko" }}
+  {{- $blogPath := printf "/%s/%s" $currentLang $sectionName }}
+  {{- $foundSection := $context.Site.GetPage $blogPath }}
+  {{- /* 찾은 페이지가 현재 페이지가 아닌지 확인 */}}
+  {{- if and $foundSection (ne $foundSection $context) }}
+    {{- $blogSection = $foundSection }}
+  {{- end }}
+{{- end }}
+{{- if not $blogSection }}
+  {{- /* 경로로 직접 찾기 (언어 코드 없이) */}}
+  {{- $foundSection := $context.Site.GetPage (printf "/%s" $sectionName) }}
+  {{- if and $foundSection (ne $foundSection $context) }}
+    {{- $blogSection = $foundSection }}
+  {{- end }}
+{{- end }}
+{{- if not $blogSection }}
+  {{- /* fallback: section 타입으로 찾기 */}}
+  {{- $foundSection := $context.Site.GetPage "section" $sectionName }}
+  {{- if and $foundSection (ne $foundSection $context) }}
+    {{- $blogSection = $foundSection }}
+  {{- end }}
+{{- end }}
+
+{{- $allCategories := $context.Site.Taxonomies.categories }}
+{{- $currentLang := $context.Language.Lang }}
+
+{{- if $allCategories }}
+  <div class="category-filter mb-8 flex flex-wrap gap-3">
+    {{- /* 전체 보기 버튼 */}}
+    {{- $blogHref := "" }}
+    {{- if $blogSection }}
+      {{- $blogHref = $blogSection.Permalink }}
+    {{- else }}
+      {{- /* 직접 경로 구성 */}}
+      {{- $currentLang := $context.Language.Lang | default "ko" }}
+      {{- $blogHref = printf "/%s/%s/" $currentLang $sectionName }}
+    {{- end }}
+    <a
+      href="{{ $blogHref }}"
+      class="category-filter-btn rounded-lg border-2 px-4 py-2 text-sm font-medium transition-colors {{ if eq $currentCategory "" }}border-primary-500 bg-primary-500 text-white{{ else }}border-neutral-300 bg-white text-neutral-700 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400{{ end }}"
+    >
+      전체 보기
+    </a>
+    
+    {{- /* 각 카테고리 버튼 */}}
+    {{- range $term, $pages := $allCategories }}
+      {{- /* 먼저 {sectionName}/categories/ 경로에서 찾기, 없으면 전역 categories/ 경로에서 찾기 */}}
+      {{- $termPage := $context.Site.GetPage (printf "/%s/categories/%s" $sectionName $term) }}
+      {{- if not $termPage }}
+        {{- $termPage = $context.Site.GetPage (printf "/categories/%s" $term) }}
+      {{- end }}
+      {{- /* 모든 카테고리를 표시 (현재 페이지여도 표시) */}}
+      {{- if $termPage }}
+        {{- $isActive := eq $currentCategory $term }}
+        <a
+          href="{{ $termPage.Permalink }}"
+          class="category-filter-btn rounded-lg border-2 px-4 py-2 text-sm font-medium transition-colors {{ if $isActive }}border-primary-500 bg-primary-500 text-white{{ else }}border-neutral-300 bg-white text-neutral-700 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400{{ end }}"
+        >
+          {{ $termPage.LinkTitle }}
+        </a>
+      {{- end }}
+    {{- end }}
+  </div>
+{{- end }}
+

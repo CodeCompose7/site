@@ -24,10 +24,27 @@
       {{ .Content | emojify }}
     </div>
   </section>
-  {{ if .Data.Pages }}
+  {{- /* 블로그 섹션의 실제 글들만 재귀적으로 수집 (섹션/카테고리 인덱스 제외) */}}
+  {{- $allPages := .RegularPagesRecursive }}
+  {{- $hasPages := gt (len $allPages) 0 }}
+  {{ if $hasPages }}
     <section class="mt-8">
+      {{- /* 카테고리 필터 추가 */}}
+      {{- $currentCategory := "" }}
+      {{- if eq .Kind "term" }}
+        {{- $currentCategory = .Data.Term }}
+      {{- end }}
+      {{- /* 섹션 기반 카테고리 페이지(/.../categories/<slug>/)인 경우 경로에서 카테고리명 추출 */}}
+      {{- if and (eq $currentCategory "") .RelPermalink }}
+        {{- if in .RelPermalink "/categories/" }}
+          {{- $pathParts := split (strings.TrimSuffix "/" .RelPermalink) "/" }}
+          {{- $currentCategory = index $pathParts (sub (len $pathParts) 1) }}
+        {{- end }}
+      {{- end }}
+      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" .) }}
+
       {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
-      {{- $paginator := .Paginate .Pages $pagerSize }}
+      {{- $paginator := .Paginate $allPages $pagerSize }}
       {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
     </section>
     {{ partial "pagination.html" . }}

@@ -1,0 +1,81 @@
+{{ define "main" }}
+  {{ $toc := and (.Params.showTableOfContents | default (.Site.Params.list.showTableOfContents | default false)) (in .TableOfContents "<ul") }}
+  <header>
+    {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
+      {{ partial "breadcrumbs.html" . }}
+    {{ end }}
+    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+  </header>
+  <section
+    class="{{ if $toc -}}
+      mt-12
+    {{- else -}}
+      mt-0
+    {{- end }} prose flex max-w-full flex-col dark:prose-invert lg:flex-row"
+  >
+    {{ if $toc }}
+      <div class="order-first px-0 lg:order-last lg:max-w-xs lg:ps-8">
+        <div class="toc ps-5 lg:sticky lg:top-10">
+          {{ partial "toc.html" . }}
+        </div>
+      </div>
+    {{ end }}
+    <div class="min-h-0 min-w-0 max-w-prose grow">
+      {{ .Content | emojify }}
+    </div>
+  </section>
+  {{- /* term 페이지 자체를 제외한 실제 포스트만 필터링 */}}
+  {{- $filteredPages := where .Data.Pages "Kind" "!=" "term" }}
+  {{- $filteredPages = where $filteredPages "Kind" "!=" "taxonomy" }}
+  
+  <section class="mt-8">
+    {{- /* 카테고리 필터 추가 (categories taxonomy인 경우) - 항상 표시 */}}
+    {{- if eq .Data.Singular "category" }}
+      {{- $currentCategory := .Data.Term }}
+      {{- /* 블로그 섹션을 현재 언어를 고려해서 찾기 */}}
+      {{- $currentLang := .Language.Lang | default "ko" }}
+      {{- $blogSectionName := .Site.Params.sections.blog | default "blog" }}
+      {{- $blogPath := printf "/%s/%s" $currentLang $blogSectionName }}
+      {{- $blogSection := .Site.GetPage $blogPath }}
+      {{- if not $blogSection }}
+        {{- $blogSection = .Site.GetPage (printf "/%s" $blogSectionName) }}
+      {{- end }}
+      {{- if not $blogSection }}
+        {{- $blogSection = .Site.GetPage "section" $blogSectionName }}
+      {{- end }}
+      {{- if not $blogSection }}
+        {{- $blogSection = .Site.GetPage $blogSectionName }}
+      {{- end }}
+      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" $blogSection) }}
+    {{- end }}
+  
+  {{ if $filteredPages }}
+      
+      {{- /* 카테고리 term 페이지인 경우 sidebar 이미지/텍스트 표시 */}}
+      {{- $sidebarImage := .Params.sidebarImage | default "" }}
+      {{- $sidebarText := .Params.sidebarText | default "" }}
+      {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
+      {{- $paginator := .Paginate $filteredPages $pagerSize }}
+      
+      {{- if or $sidebarImage $sidebarText }}
+        {{- /* sidebar가 있는 경우 list-sidebar-wrapper 사용 */}}
+        {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
+      {{- else }}
+        {{- /* sidebar가 없는 경우 article-card 레이아웃 사용 */}}
+        <div class="grid min-h-[1200px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {{ range $paginator.Pages }}
+            {{ partial "article-card.html" . }}
+          {{ end }}
+        </div>
+      {{- end }}
+    {{ partial "pagination.html" . }}
+  {{ else }}
+    <section class="prose mt-10 dark:prose-invert">
+      <p class="border-t py-8">
+        <em>{{ i18n "list.no_articles" | emojify }}</em>
+      </p>
+    </section>
+  {{ end }}
+  </section>
+{{ end }}
+
