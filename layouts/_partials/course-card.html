@@ -6,7 +6,7 @@
 {{- /* 기본 이미지 경로 */}}
 {{- $defaultImage := "img/course/default_course.jpg" }}
 {{- $defaultImageResource := resources.Get $defaultImage }}
-<article class="course-card group relative mb-6 flex w-full flex-col items-stretch overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition-all duration-300 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800 sm:flex-row">
+<article class="course-card group relative mb-6 flex w-full flex-col items-stretch overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition-all duration-300 hover:-translate-y-2 hover:bg-neutral-100 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700 sm:flex-row">
   <a href="{{ $linkUrl }}" class="absolute inset-0 z-10" aria-label="{{ $context.Title | emojify }}"></a>
   
   {{- /* 대표 이미지 - 왼쪽에 배치 (35%) */}}
