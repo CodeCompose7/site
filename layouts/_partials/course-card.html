@@ -104,7 +104,7 @@
         </div>
         <div class="article-tags-container relative z-10 flex flex-wrap gap-2 overflow-hidden opacity-0">
           {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
-            {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+            {{ if and (ne $taxonomy "categories") (gt (len ($context.GetTerms $taxonomy)) 0) }}
               {{ range $context.GetTerms $taxonomy }}
                 <a
                   href="{{ .Permalink }}"
