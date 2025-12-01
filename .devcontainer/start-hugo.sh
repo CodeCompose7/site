@@ -7,6 +7,7 @@ pkill -f 'hugo server' || true
 # Hugo 서버를 백그라운드에서 실행
 cd /workspaces/courses
 nohup hugo server -D --bind 0.0.0.0 --port 1313 > /tmp/hugo-server.log 2>&1 &
+# nohup hugo server --bind 0.0.0.0 --port 1313 > /tmp/hugo-server.log 2>&1 &
 
 # 프로세스가 시작되었는지 확인
 sleep 2
