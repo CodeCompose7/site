@@ -536,6 +536,16 @@ article.group.flex-row {
   article.course-card {
     flex-direction: row !important;
     height: auto;
-    min-height: 18.62rem;
+    min-height: 17rem;
   }
+}
+
+/* Course card 제목은 한 줄로 제한 */
+.course-card .article-title {
+  min-height: auto;
+}
+
+.course-card .article-title-text {
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
 }
