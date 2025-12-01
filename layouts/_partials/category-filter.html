@@ -43,6 +43,26 @@
 
 {{- $allCategories := $context.Site.Taxonomies.categories }}
 {{- $currentLang := $context.Language.Lang }}
+{{- $isLocal := hugo.IsServer }}
+
+{{- /* 전체 보기 버튼용 페이지 개수 계산 */}}
+{{- $allPages := slice }}
+{{- $allPagesWithDrafts := slice }}
+{{- if $blogSection }}
+  {{- $allPagesWithDrafts = $blogSection.RegularPagesRecursive }}
+  {{- $allPages = where $allPagesWithDrafts "Draft" "!=" true }}
+{{- else }}
+  {{- /* blogSection이 없으면 현재 컨텍스트에서 찾기 */}}
+  {{- if $context.Section }}
+    {{- $sectionPage := $context.Site.GetPage (printf "/%s" $context.Section) }}
+    {{- if $sectionPage }}
+      {{- $allPagesWithDrafts = $sectionPage.RegularPagesRecursive }}
+      {{- $allPages = where $allPagesWithDrafts "Draft" "!=" true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $totalCount := len $allPages }}
+{{- $totalCountWithDrafts := len $allPagesWithDrafts }}
 
 {{- if $allCategories }}
   <div class="category-filter mb-8 flex flex-wrap">
@@ -60,6 +80,11 @@
       class="category-filter-btn {{ if eq $currentCategory "" }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
     >
       전체 보기
+      {{- if $isLocal }}
+        <span class="category-count">({{ $totalCount }}{{- if ne $totalCount $totalCountWithDrafts }} - {{ $totalCountWithDrafts }}{{- end }})</span>
+      {{- else }}
+        <span class="category-count">({{ $totalCount }})</span>
+      {{- end }}
     </a>
     
     {{- /* 각 카테고리 버튼 */}}
@@ -72,11 +97,21 @@
       {{- /* draft가 아닌 카테고리만 표시 */}}
       {{- if and $termPage (not $termPage.Draft) }}
         {{- $isActive := eq $currentCategory $term }}
+        {{- /* 해당 섹션의 페이지들 중에서 해당 카테고리에 속한 것만 필터링 */}}
+        {{- $categoryPagesWithDrafts := where $allPagesWithDrafts "Params.categories" "intersect" (slice $term) }}
+        {{- $categoryPages := where $categoryPagesWithDrafts "Draft" "!=" true }}
+        {{- $categoryCount := len $categoryPages }}
+        {{- $categoryCountWithDrafts := len $categoryPagesWithDrafts }}
         <a
           href="{{ $termPage.Permalink }}"
           class="category-filter-btn {{ if $isActive }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
         >
           {{ $termPage.LinkTitle }}
+          {{- if $isLocal }}
+            <span class="category-count">({{ $categoryCount }}{{- if ne $categoryCount $categoryCountWithDrafts }} - {{ $categoryCountWithDrafts }}{{- end }})</span>
+          {{- else }}
+            <span class="category-count">({{ $categoryCount }})</span>
+          {{- end }}
         </a>
       {{- end }}
     {{- end }}
