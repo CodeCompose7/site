@@ -6,7 +6,7 @@ cascade:
   showDate: true
   showAuthor: false
   showSummary: true
-  invertPagination: true
+  showTaxonomies: true
 ---
 
 {{< lead >}}

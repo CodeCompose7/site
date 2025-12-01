@@ -1,0 +1,126 @@
+{{- $context := . }}
+{{- $linkUrl := cond $context.Params.externalUrl $context.Params.externalUrl $context.Permalink }}
+{{- $images := $context.Resources.ByType "image" }}
+{{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
+{{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
+{{- /* 기본 이미지 경로 */}}
+{{- $defaultImage := "img/course/default_course.jpg" }}
+{{- $defaultImageResource := resources.Get $defaultImage }}
+<article class="course-card group relative mb-6 flex w-full flex-col items-stretch overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50 transition-all duration-300 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800 sm:flex-row">
+  <a href="{{ $linkUrl }}" class="absolute inset-0 z-10" aria-label="{{ $context.Title | emojify }}"></a>
+  
+  {{- /* 대표 이미지 - 왼쪽에 배치 (35%) */}}
+  {{- if $feature }}
+    <div class="course-card-image relative z-20 overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+      <img
+        alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default $context.Title }}"
+        {{ if eq $feature.MediaType.SubType "svg" }}
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          src="{{ $feature.Permalink }}"
+        {{ else }}
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          srcset="
+          {{- ($feature.Fill "320x240 smart").Permalink }}
+          320w, {{- ($feature.Fill "640x480 smart").Permalink }} 640w, {{- ($feature.Fill "800x600 smart").Permalink }} 800w"
+          src="{{ ($feature.Fill "640x480 smart").Permalink }}" width="640" height="480"
+        {{ end }}
+        {{ if $context.Site.Params.enableImageLazyLoading | default true }}
+          loading="lazy"
+        {{ end }}
+      />
+    </div>
+  {{- else if $defaultImageResource }}
+    {{- /* 기본 이미지 사용 */}}
+    <div class="course-card-image relative z-20 overflow-hidden bg-neutral-100 dark:bg-neutral-900">
+      <img
+        alt="{{ $context.Title }}"
+        class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        srcset="
+        {{- ($defaultImageResource.Fill "320x240 smart").Permalink }}
+        320w, {{- ($defaultImageResource.Fill "640x480 smart").Permalink }} 640w, {{- ($defaultImageResource.Fill "800x600 smart").Permalink }} 800w"
+        src="{{ ($defaultImageResource.Fill "640x480 smart").Permalink }}" width="640" height="480"
+        {{ if $context.Site.Params.enableImageLazyLoading | default true }}
+          loading="lazy"
+        {{ end }}
+      />
+    </div>
+  {{- else }}
+    {{- /* 이미지가 없을 경우 플레이스홀더 */}}
+    <div class="course-card-image relative z-20 flex items-center justify-center bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900 dark:to-primary-800">
+      <svg class="h-16 w-16 text-primary-400 dark:text-primary-500 sm:h-24 sm:w-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+      </svg>
+    </div>
+  {{- end }}
+  
+  {{- /* 카드 내용 - 오른쪽에 배치 (65%) */}}
+  <div class="course-card-content article-card-content relative z-20 flex flex-1 flex-col px-6 py-6 md:px-8 md:py-8">
+    {{- /* 1. 제목 */}}
+    <h3 class="article-title relative z-20 mb-2 text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
+      <span class="article-title-text">
+        {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
+          <span class="inline-block" style="vertical-align: top; margin-top: 0.25rem;">
+            {{ partial "badge.html" (i18n "article.draft" | emojify) }}
+          </span>
+        {{ end }}
+        {{ with $context.Params.externalUrl }}
+          <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+          <span
+            class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
+            title="{{ i18n "list.externalurl_title" }}"
+          >
+            <span class="rtl:hidden">&#8599;</span>
+            <span class="ltr:hidden">&#8598;</span>
+          </span>
+        {{ else }}
+          <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+        {{ end }}
+      </span>
+    </h3>
+
+    {{- /* 2. 날짜 및 읽기 시간 */}}
+    <div class="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+      {{ if $context.Params.showDate | default ($context.Site.Params.article.showDate | default true) }}
+        {{ partial "meta/date.html" $context.Date }}
+        {{ if and ($context.Params.showReadingTime | default ($context.Site.Params.article.showReadingTime | default true)) (ne $context.ReadingTime 0) }}
+          <span class="px-1 text-primary-500">&middot;</span>
+          {{ partial "meta/reading-time.html" $context }}
+        {{ end }}
+      {{ end }}
+    </div>
+
+    {{- /* 3. 태그 (블로그 카드와 동일한 구조 및 여백) */}}
+    {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
+    {{ if $showTaxonomies }}
+      <div class="article-tags-wrapper relative z-20 mt-auto pt-2 mb-2">
+        <div class="article-tags-skeleton">
+          <div class="skeleton-tag"></div>
+          <div class="skeleton-tag"></div>
+          <div class="skeleton-tag skeleton-tag-short"></div>
+        </div>
+        <div class="article-tags-container relative z-10 flex flex-wrap gap-2 overflow-hidden opacity-0">
+          {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
+            {{ if (gt (len ($context.GetTerms $taxonomy)) 0) }}
+              {{ range $context.GetTerms $taxonomy }}
+                <a
+                  href="{{ .Permalink }}"
+                  onclick="event.stopPropagation();"
+                  class="article-tag rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
+                  >{{ .LinkTitle }}</a
+                >
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        </div>
+      </div>
+    {{ end }}
+
+    {{- /* 4. 요약 */}}
+    {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
+      <div class="article-summary relative z-20 flex-1 overflow-hidden text-base text-neutral-500 dark:text-neutral-400">
+        {{ $context.Summary | emojify | plainify }}
+      </div>
+    {{ end }}
+  </div>
+</article>
+

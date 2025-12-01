@@ -263,6 +263,19 @@ article.group {
   overflow: hidden; /* 넘치는 내용 숨김 */
 }
 
+/* 강의 카드(course-card)는 높이를 고정하지 않고 내용에 맞게 확장 */
+article.course-card {
+  height: auto;
+  overflow: hidden; /* 모서리 라운딩 유지 위해 숨김만 유지 */
+}
+
+/* Course card는 가로 배치 유지 */
+article.group.flex-row {
+  flex-direction: row !important;
+  height: auto;
+  min-height: 12rem;
+}
+
 .article-card-content {
   display: flex;
   flex-direction: column;
@@ -480,4 +493,49 @@ article.group {
   background-color: rgba(var(--color-primary-900), 1);
   color: rgba(var(--color-primary-400), 1);
   box-shadow: 0 2px 4px rgba(var(--color-neutral-700), 0.3);
+}
+
+/* Course card 레이아웃 */
+.course-card-image {
+  width: 100%;
+  flex-shrink: 0;
+  min-height: 12rem;
+}
+
+.course-card-image img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.course-card-content {
+  width: 100%;
+  flex: 1;
+}
+
+/* 데스크톱에서는 가로 배치 */
+@media (min-width: 640px) {
+  .course-card-image {
+    width: 35% !important;
+    min-height: 12rem;
+  }
+
+  .course-card-content {
+    width: 65% !important;
+    flex: 0 0 65%;
+  }
+}
+
+@media (max-width: 640px) {
+  .course-card-image {
+    height: 14rem;
+  }
+}
+
+/* Course card는 가로 배치 유지 (데스크톱) */
+@media (min-width: 640px) {
+  article.course-card {
+    flex-direction: row !important;
+    height: auto;
+    min-height: 18.62rem;
+  }
 }

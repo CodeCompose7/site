@@ -24,13 +24,33 @@
       {{ .Content | emojify }}
     </div>
   </section>
-  {{ if .Data.Pages }}
+  {{- /* 강의 섹션의 실제 강의들만 재귀적으로 수집 (섹션/카테고리 인덱스 제외) */}}
+  {{- $allPages := .RegularPagesRecursive }}
+  {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $allPages = where $allPages "Draft" "!=" true }}
+  {{- end }}
+  {{- /* 커스텀 정렬: weight가 있으면 weight 우선, 없으면 date 내림차순 */}}
+  {{- $pagesWithWeight := where $allPages "Params.weight" "!=" nil }}
+  {{- $pagesWithoutWeight := where $allPages "Params.weight" "==" nil }}
+  {{- $sortedWithWeight := $pagesWithWeight.ByWeight }}
+  {{- $sortedWithoutWeight := $pagesWithoutWeight.ByDate.Reverse }}
+  {{- $sortedPages := slice }}
+  {{- range $sortedWithWeight }}
+    {{- $sortedPages = $sortedPages | append . }}
+  {{- end }}
+  {{- range $sortedWithoutWeight }}
+    {{- $sortedPages = $sortedPages | append . }}
+  {{- end }}
+  {{- $hasPages := gt (len $sortedPages) 0 }}
+  {{ if $hasPages }}
     <section class="mt-8">
-      {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
-      {{- $paginator := .Paginate .Pages $pagerSize }}
-      {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
+      <div class="flex flex-col">
+        {{ range $sortedPages }}
+          {{ partial "course-card.html" . }}
+        {{ end }}
+      </div>
     </section>
-    {{ partial "pagination.html" . }}
   {{ else }}
     <section class="prose mt-10 dark:prose-invert">
       <p class="border-t py-8">
