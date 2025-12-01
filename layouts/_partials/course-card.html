@@ -3,6 +3,10 @@
 {{- $images := $context.Resources.ByType "image" }}
 {{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
 {{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
+{{- /* page 리소스에서 찾지 못했고 feature 파라미터가 있으면 assets에서 직접 로드 */}}
+{{- if and (not $feature) $context.Params.feature }}
+  {{- $feature = resources.Get $context.Params.feature }}
+{{- end }}
 {{- /* 기본 이미지 경로 */}}
 {{- $defaultImage := "img/course/default_course.jpg" }}
 {{- $defaultImageResource := resources.Get $defaultImage }}
