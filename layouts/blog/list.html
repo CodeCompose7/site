@@ -26,6 +26,10 @@
   </section>
   {{- /* 블로그 섹션의 실제 글들만 재귀적으로 수집 (섹션/카테고리 인덱스 제외) */}}
   {{- $allPages := .RegularPagesRecursive }}
+  {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $allPages = where $allPages "Draft" "!=" true }}
+  {{- end }}
   {{- $hasPages := gt (len $allPages) 0 }}
   {{ if $hasPages }}
     <section class="mt-8">

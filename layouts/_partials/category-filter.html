@@ -69,8 +69,8 @@
       {{- if not $termPage }}
         {{- $termPage = $context.Site.GetPage (printf "/categories/%s" $term) }}
       {{- end }}
-      {{- /* 모든 카테고리를 표시 (현재 페이지여도 표시) */}}
-      {{- if $termPage }}
+      {{- /* draft가 아닌 카테고리만 표시 */}}
+      {{- if and $termPage (not $termPage.Draft) }}
         {{- $isActive := eq $currentCategory $term }}
         <a
           href="{{ $termPage.Permalink }}"

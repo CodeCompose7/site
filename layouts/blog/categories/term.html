@@ -70,6 +70,10 @@
   {{- if $blogSection }}
     {{- $allPosts = $blogSection.Pages }}
   {{- end }}
+  {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $allPosts = where $allPosts "Draft" "!=" true }}
+  {{- end }}
   {{- $filteredPosts := where $allPosts "Params.categories" "intersect" (slice $categoryName) }}
   
   <section class="mt-8">

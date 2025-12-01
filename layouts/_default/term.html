@@ -27,6 +27,10 @@
   {{- /* term 페이지 자체를 제외한 실제 포스트만 필터링 */}}
   {{- $filteredPages := where .Data.Pages "Kind" "!=" "term" }}
   {{- $filteredPages = where $filteredPages "Kind" "!=" "taxonomy" }}
+  {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $filteredPages = where $filteredPages "Draft" "!=" true }}
+  {{- end }}
   
   <section class="mt-8">
     {{- /* 카테고리 필터 추가 (categories taxonomy인 경우) - 항상 표시 */}}

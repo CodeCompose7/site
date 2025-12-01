@@ -42,7 +42,7 @@
           <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
         {{ end }}
         {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
-          <span class="ms-2 inline-block">
+          <span class="inline-block" style="vertical-align: middle;">
             {{ partial "badge.html" (i18n "article.draft" | emojify) }}
           </span>
         {{ end }}
