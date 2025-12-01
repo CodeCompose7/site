@@ -45,7 +45,7 @@
 {{- $currentLang := $context.Language.Lang }}
 
 {{- if $allCategories }}
-  <div class="category-filter mb-8 flex flex-wrap gap-3">
+  <div class="category-filter mb-8 flex flex-wrap">
     {{- /* 전체 보기 버튼 */}}
     {{- $blogHref := "" }}
     {{- if $blogSection }}
@@ -57,7 +57,7 @@
     {{- end }}
     <a
       href="{{ $blogHref }}"
-      class="category-filter-btn rounded-lg border-2 px-4 py-2 text-sm font-medium transition-colors {{ if eq $currentCategory "" }}border-primary-500 bg-primary-500 text-white{{ else }}border-neutral-300 bg-white text-neutral-700 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400{{ end }}"
+      class="category-filter-btn {{ if eq $currentCategory "" }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
     >
       전체 보기
     </a>
@@ -74,7 +74,7 @@
         {{- $isActive := eq $currentCategory $term }}
         <a
           href="{{ $termPage.Permalink }}"
-          class="category-filter-btn rounded-lg border-2 px-4 py-2 text-sm font-medium transition-colors {{ if $isActive }}border-primary-500 bg-primary-500 text-white{{ else }}border-neutral-300 bg-white text-neutral-700 hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-800 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400{{ end }}"
+          class="category-filter-btn {{ if $isActive }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
         >
           {{ $termPage.LinkTitle }}
         </a>

@@ -411,3 +411,73 @@ article.group {
 .text-center {
   text-align: center;
 }
+
+/* 카테고리 필터 버튼 스타일 */
+.category-filter-btn {
+  display: inline-block;
+  border-radius: 1rem;
+  border: 1px solid;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* 선택된 카테고리 버튼 */
+.category-filter-btn-active {
+  border-color: rgba(var(--color-primary-500), 1);
+  background-color: rgba(var(--color-primary-500), 1);
+  color: white;
+  box-shadow: 0 2px 8px rgba(var(--color-primary-500), 0.3);
+  font-weight: 600;
+}
+
+.category-filter-btn-active:hover {
+  border-color: rgba(var(--color-primary-600), 1);
+  background-color: rgba(var(--color-primary-600), 1);
+  box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.4);
+  transform: translateY(-1px);
+}
+
+.dark .category-filter-btn-active {
+  border-color: rgba(var(--color-primary-500), 1);
+  background-color: rgba(var(--color-primary-500), 1);
+  box-shadow: 0 2px 8px rgba(var(--color-primary-500), 0.4);
+}
+
+.dark .category-filter-btn-active:hover {
+  border-color: rgba(var(--color-primary-400), 1);
+  background-color: rgba(var(--color-primary-400), 1);
+  box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.5);
+}
+
+/* 선택되지 않은 카테고리 버튼 */
+.category-filter-btn-inactive {
+  border-color: rgba(var(--color-neutral-200), 1);
+  background-color: rgba(var(--color-neutral-50), 1);
+  color: rgba(var(--color-neutral-700), 1);
+}
+
+.category-filter-btn-inactive:hover {
+  border-color: rgba(var(--color-primary-300), 1);
+  background-color: rgba(var(--color-primary-50), 1);
+  color: rgba(var(--color-primary-700), 1);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(var(--color-neutral-200), 0.3);
+}
+
+.dark .category-filter-btn-inactive {
+  border-color: rgba(var(--color-neutral-600), 1);
+  background-color: rgba(var(--color-neutral-800), 1);
+  color: rgba(var(--color-neutral-300), 1);
+}
+
+.dark .category-filter-btn-inactive:hover {
+  border-color: rgba(var(--color-primary-600), 1);
+  background-color: rgba(var(--color-primary-900), 1);
+  color: rgba(var(--color-primary-400), 1);
+  box-shadow: 0 2px 4px rgba(var(--color-neutral-700), 0.3);
+}
