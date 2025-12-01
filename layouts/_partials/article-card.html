@@ -29,6 +29,11 @@
   <div class="article-card-content relative z-20 flex flex-1 flex-col px-6 py-6">
     <h3 class="article-title relative z-20 mb-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
       <span class="article-title-text">
+        {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
+          <span class="inline-block" style="vertical-align: top; margin-top: 0.25rem;">
+            {{ partial "badge.html" (i18n "article.draft" | emojify) }}
+          </span>
+        {{ end }}
         {{ with $context.Params.externalUrl }}
           <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
           <span
@@ -40,11 +45,6 @@
           </span>
         {{ else }}
           <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
-        {{ end }}
-        {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
-          <span class="inline-block" style="vertical-align: middle;">
-            {{ partial "badge.html" (i18n "article.draft" | emojify) }}
-          </span>
         {{ end }}
       </span>
     </h3>
