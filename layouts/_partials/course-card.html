@@ -59,7 +59,7 @@
     <h3 class="article-title relative z-20 mb-2 text-2xl font-semibold text-neutral-900 dark:text-neutral-100">
       <span class="article-title-text">
         {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
-          <span class="inline-block" style="vertical-align: top; margin-top: 0.25rem;">
+          <span class="inline-block" style="vertical-align: top; margin-top: 0.4rem;">
             {{ partial "badge.html" (i18n "article.draft" | emojify) }}
           </span>
         {{ end }}

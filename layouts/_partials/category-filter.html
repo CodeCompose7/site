@@ -92,7 +92,7 @@
     >
       전체 보기
       {{- if $isLocal }}
-        <span class="category-count">({{ $totalCount }}{{- if ne $totalCount $totalCountWithDrafts }} - {{ $totalCountWithDrafts }}{{- end }})</span>
+        <span class="category-count">({{ $totalCount }} - {{ $totalCountWithDrafts }})</span>
       {{- else }}
         <span class="category-count">({{ $totalCount }})</span>
       {{- end }}
@@ -116,7 +116,7 @@
           >
             {{ $termPage.LinkTitle }}
             {{- if $isLocal }}
-              <span class="category-count">({{ $categoryCount }}{{- if ne $categoryCount $categoryCountWithDrafts }} - {{ $categoryCountWithDrafts }}{{- end }})</span>
+              <span class="category-count">({{ $categoryCount }} - {{ $categoryCountWithDrafts }})</span>
             {{- else }}
               <span class="category-count">({{ $categoryCount }})</span>
             {{- end }}
