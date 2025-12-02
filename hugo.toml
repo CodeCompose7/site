@@ -1,6 +1,7 @@
-# baseURL은 워크플로우에서 자동으로 설정됩니다 (커스텀 도메인 포함)
-# 로컬 개발 시에는 --baseURL http://localhost:1313 옵션 사용
-baseURL = "/"
+# 프로덕션에서 사용할 기본 주소 (커스텀 도메인)
+#   - GitHub Pages용 커스텀 도메인: https://courses.codecompose.net/
+#   - 로컬 개발 시에는 hugo server --baseURL http://localhost:1313 옵션 사용
+baseURL = "https://courses.codecompose.net/"
 languageCode = "ko"
 defaultContentLanguage = "ko"
 defaultContentLanguageInSubdir = true
