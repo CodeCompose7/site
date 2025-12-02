@@ -1,0 +1,27 @@
+{{- /* 
+  이 partial은 리스트 페이지에서 sidebar 이미지와 텍스트를 표시하는 wrapper입니다.
+  사용법: {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
+  
+  front matter에서 sidebarImage와 sidebarText를 읽어옵니다:
+  - sidebarImage: assets/banner/ 폴더에 있는 이미지 파일명
+  - sidebarText: 이미지 아래에 표시될 텍스트
+*/ -}}
+{{- $context := .context | default . }}
+{{- $pages := .pages | default $context.Pages }}
+{{- $sidebarImage := $context.Params.sidebarImage | default ($context.Site.Params.blog.sidebarImage) }}
+{{- $sidebarText := $context.Params.sidebarText | default ($context.Site.Params.blog.sidebarText) }}
+{{- $hasSidebar := or $sidebarImage $sidebarText }}
+
+<div class="flex flex-col lg:flex-row">
+  {{- if $hasSidebar }}
+    {{ partial "sidebar-hero.html" (dict "image" $sidebarImage "text" $sidebarText "context" $context) }}
+  {{- end }}
+  <div class="{{ if $hasSidebar }}lg:flex-1{{ end }} flex flex-col">
+    <div class="grid min-h-[1200px] grid-cols-1 {{ if $hasSidebar }}md:grid-cols-2{{ else }}md:grid-cols-2 lg:grid-cols-3{{ end }} gap-6">
+      {{ range $pages }}
+        {{ partial "article-card.html" . }}
+      {{ end }}
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,105 @@
+{{ define "main" }}
+  {{ $toc := and (.Params.showTableOfContents | default (.Site.Params.list.showTableOfContents | default false)) (in .TableOfContents "<ul") }}
+  <header>
+    {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
+      {{ partial "breadcrumbs.html" . }}
+    {{ end }}
+    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+  </header>
+  <section
+    class="{{ if $toc -}}
+      mt-12
+    {{- else -}}
+      mt-0
+    {{- end }} prose flex max-w-full flex-col dark:prose-invert lg:flex-row"
+  >
+    {{ if $toc }}
+      <div class="order-first px-0 lg:order-last lg:max-w-xs lg:ps-8">
+        <div class="toc ps-5 lg:sticky lg:top-10">
+          {{ partial "toc.html" . }}
+        </div>
+      </div>
+    {{ end }}
+    <div class="min-h-0 min-w-0 max-w-prose grow">
+      {{ .Content | emojify }}
+    </div>
+  </section>
+  
+  {{- /* 카테고리명 추출 (폴더명에서) */}}
+  {{- $categoryName := "" }}
+  {{- if .File }}
+    {{- $dirParts := split (strings.TrimSuffix "/" .File.Dir) "/" }}
+    {{- /* courses/categories/ai-learning/ -> ai-learning */}}
+    {{- $categoryName = index $dirParts (sub (len $dirParts) 1) }}
+  {{- else }}
+    {{- /* 폴더명을 직접 추출 */}}
+    {{- $pathParts := split (strings.TrimPrefix "/" (strings.TrimSuffix "/" .RelPermalink)) "/" }}
+    {{- /* ko/courses/categories/ai-learning -> ai-learning */}}
+    {{- if ge (len $pathParts) 4 }}
+      {{- $categoryName = index $pathParts 3 }}
+    {{- end }}
+  {{- end }}
+  {{- /* 강의 섹션을 경로로 직접 찾기 */}}
+  {{- $currentLang := .Language.Lang | default "ko" }}
+  {{- $coursesSectionName := "courses" }}
+  {{- $coursesPath := printf "/%s/%s" $currentLang $coursesSectionName }}
+  {{- $coursesSection := .Site.GetPage $coursesPath }}
+  {{- /* 찾은 페이지가 현재 페이지인지 확인하고, 그렇다면 다시 찾기 */}}
+  {{- if and $coursesSection (eq $coursesSection .) }}
+    {{- $coursesSection = false }}
+  {{- end }}
+  {{- if not $coursesSection }}
+    {{- $foundSection := .Site.GetPage (printf "/%s" $coursesSectionName) }}
+    {{- if and $foundSection (ne $foundSection .) }}
+      {{- $coursesSection = $foundSection }}
+    {{- end }}
+  {{- end }}
+  {{- if not $coursesSection }}
+    {{- $foundSection := .Site.GetPage "section" $coursesSectionName }}
+    {{- if and $foundSection (ne $foundSection .) }}
+      {{- $coursesSection = $foundSection }}
+    {{- end }}
+  {{- end }}
+  {{- if not $coursesSection }}
+    {{- $foundSection := .Site.GetPage $coursesSectionName }}
+    {{- if and $foundSection (ne $foundSection .) }}
+      {{- $coursesSection = $foundSection }}
+    {{- end }}
+  {{- end }}
+  {{- $allCourses := slice }}
+  {{- if $coursesSection }}
+    {{- /* courses 섹션 전체(하위 폴더 포함)를 대상으로 카테고리 필터링 */}}
+    {{- $allCourses = $coursesSection.RegularPagesRecursive }}
+  {{- end }}
+  {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $allCourses = where $allCourses "Draft" "!=" true }}
+  {{- end }}
+  {{- $filteredCourses := where $allCourses "Params.categories" "intersect" (slice $categoryName) }}
+  
+  <section class="mt-8">
+    {{- /* 카테고리 필터는 항상 표시 */}}
+    {{ partial "category-filter.html" (dict "context" . "currentCategory" $categoryName "blogSection" $coursesSection "section" "courses") }}
+  
+  {{ if $filteredCourses }}
+      
+      {{- $pagerSize := .Params.pagerSize | default (.Site.Params.pagination.pagerSize | default 10) }}
+      {{- $paginator := .Paginate $filteredCourses $pagerSize }}
+      
+      <div class="flex flex-col">
+        {{ range $paginator.Pages }}
+          {{ partial "course-card.html" . }}
+        {{ end }}
+      </div>
+      {{ partial "pagination.html" . }}
+  {{ else }}
+    <section class="prose mt-10 dark:prose-invert">
+      <p class="border-t py-8">
+        <em>{{ i18n "list.no_articles" | emojify }}</em>
+      </p>
+    </section>
+  {{ end }}
+  </section>
+{{ end }}
+
+

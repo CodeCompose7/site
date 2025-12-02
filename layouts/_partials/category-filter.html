@@ -1,0 +1,129 @@
+{{- /* 
+  카테고리 필터 partial
+  블로그 리스트 페이지에서 사용할 카테고리 필터 버튼들을 표시합니다.
+*/ -}}
+{{- $context := .context | default . }}
+{{- $currentCategory := .currentCategory | default "" }}
+{{- /* 어떤 섹션(courses, blog 등)에서 사용할지 결정: 
+      1) partial 호출 시 넘겨준 .section
+      2) 없으면 현재 컨텍스트의 .Section
+      3) 그래도 없으면 설정값 params.sections.blog (기본 blog) */}}
+{{- $sectionName := .section | default ($context.Section | default ($context.Site.Params.sections.blog | default "blog")) }}
+
+{{- /* 항상 현재 언어의 섹션 루트를 찾도록 보정 */}}
+{{- $blogSection := .blogSection }}
+{{- /* 전달된 섹션이 현재 페이지인지 확인하고, 그렇다면 다시 찾기 */}}
+{{- if and $blogSection (eq $blogSection $context) }}
+  {{- $blogSection = false }}
+{{- end }}
+{{- if not $blogSection }}
+  {{- /* 현재 언어를 고려한 경로로 찾기: /{lang}/{sectionName} */}}
+  {{- $currentLang := $context.Language.Lang | default "ko" }}
+  {{- $blogPath := printf "/%s/%s" $currentLang $sectionName }}
+  {{- $foundSection := $context.Site.GetPage $blogPath }}
+  {{- /* 찾은 페이지가 현재 페이지가 아닌지 확인 */}}
+  {{- if and $foundSection (ne $foundSection $context) }}
+    {{- $blogSection = $foundSection }}
+  {{- end }}
+{{- end }}
+{{- if not $blogSection }}
+  {{- /* 경로로 직접 찾기 (언어 코드 없이) */}}
+  {{- $foundSection := $context.Site.GetPage (printf "/%s" $sectionName) }}
+  {{- if and $foundSection (ne $foundSection $context) }}
+    {{- $blogSection = $foundSection }}
+  {{- end }}
+{{- end }}
+{{- if not $blogSection }}
+  {{- /* fallback: section 타입으로 찾기 */}}
+  {{- $foundSection := $context.Site.GetPage "section" $sectionName }}
+  {{- if and $foundSection (ne $foundSection $context) }}
+    {{- $blogSection = $foundSection }}
+  {{- end }}
+{{- end }}
+
+{{- $currentLang := $context.Language.Lang }}
+{{- $isLocal := hugo.IsServer }}
+
+{{- /* 전체 보기 버튼용 페이지 개수 계산 */}}
+{{- $allPages := slice }}
+{{- $allPagesWithDrafts := slice }}
+{{- if $blogSection }}
+  {{- $allPagesWithDrafts = $blogSection.RegularPagesRecursive }}
+  {{- $allPages = where $allPagesWithDrafts "Draft" "!=" true }}
+{{- else }}
+  {{- /* blogSection이 없으면 현재 컨텍스트에서 찾기 */}}
+  {{- if $context.Section }}
+    {{- $sectionPage := $context.Site.GetPage (printf "/%s" $context.Section) }}
+    {{- if $sectionPage }}
+      {{- $allPagesWithDrafts = $sectionPage.RegularPagesRecursive }}
+      {{- $allPages = where $allPagesWithDrafts "Draft" "!=" true }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $totalCount := len $allPages }}
+{{- $totalCountWithDrafts := len $allPagesWithDrafts }}
+
+{{- /* 현재 섹션에서 실제로 사용 중인 카테고리만 수집 */}}
+{{- $allCategories := slice }}
+{{- range $allPagesWithDrafts }}
+  {{- with .Params.categories }}
+    {{- range . }}
+      {{- if not (in $allCategories .) }}
+        {{- $allCategories = $allCategories | append . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+
+{{- if $allCategories }}
+  <div class="category-filter mb-8 flex flex-wrap">
+    {{- /* 전체 보기 버튼 */}}
+    {{- $blogHref := "" }}
+    {{- if $blogSection }}
+      {{- $blogHref = $blogSection.Permalink }}
+    {{- else }}
+      {{- /* 직접 경로 구성 */}}
+      {{- $currentLang := $context.Language.Lang | default "ko" }}
+      {{- $blogHref = printf "/%s/%s/" $currentLang $sectionName }}
+    {{- end }}
+    <a
+      href="{{ $blogHref }}"
+      class="category-filter-btn {{ if eq $currentCategory "" }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
+    >
+      전체 보기
+      {{- if $isLocal }}
+        <span class="category-count">({{ $totalCount }} - {{ $totalCountWithDrafts }})</span>
+      {{- else }}
+        <span class="category-count">({{ $totalCount }})</span>
+      {{- end }}
+    </a>
+    
+    {{- /* 각 카테고리 버튼 */}}
+    {{- range $index, $term := $allCategories }}
+      {{- /* 섹션 전용 카테고리 페이지(/<sectionName>/categories/<slug>/)만 사용 */}}
+      {{- $termPage := $context.Site.GetPage (printf "/%s/categories/%s" $sectionName $term) }}
+      {{- if $termPage }}
+        {{- /* 해당 섹션의 페이지들 중에서 해당 카테고리에 속한 것만 필터링 */}}
+        {{- $categoryPagesWithDrafts := where $allPagesWithDrafts "Params.categories" "intersect" (slice $term) }}
+        {{- $categoryPages := where $categoryPagesWithDrafts "Draft" "!=" true }}
+        {{- $categoryCount := len $categoryPages }}
+        {{- $categoryCountWithDrafts := len $categoryPagesWithDrafts }}
+        {{- if gt $categoryCount 0 }}
+          {{- $isActive := eq $currentCategory $term }}
+          <a
+            href="{{ $termPage.Permalink }}"
+            class="category-filter-btn {{ if $isActive }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
+          >
+            {{ $termPage.LinkTitle }}
+            {{- if $isLocal }}
+              <span class="category-count">({{ $categoryCount }} - {{ $categoryCountWithDrafts }})</span>
+            {{- else }}
+              <span class="category-count">({{ $categoryCount }})</span>
+            {{- end }}
+          </a>
+        {{- end }}
+      {{- end }}
+    {{- end }}
+  </div>
+{{- end }}
+

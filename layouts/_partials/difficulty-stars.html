@@ -1,0 +1,28 @@
+{{- /* 난이도 별 표시: front matter의 level(1~5)을 읽어 별 5개로 렌더링 */ -}}
+{{- $context := . -}}
+{{- $level := $context.Params.level | default 0 -}}
+
+{{- if gt $level 0 }}
+  {{- $max := 5 -}}
+  {{- $stars := slice -}}
+
+  {{- range seq 1 $max }}
+    {{- if le . $level }}
+      {{- $stars = $stars | append "★" -}}
+    {{- else }}
+      {{- $stars = $stars | append "☆" -}}
+    {{- end }}
+  {{- end }}
+
+  {{- $starText := delimit $stars "" -}}
+
+  <span
+    class="inline-block align-middle"
+    style="vertical-align: middle; margin-bottom: 0.25rem;"
+    aria-label="{{ printf "난이도 %d/5" $level }}"
+  >
+    {{ partial "badge.html" $starText }}
+  </span>
+{{- end }}
+
+

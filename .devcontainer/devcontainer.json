@@ -17,7 +17,16 @@
       ]
     }
   },
-  "postCreateCommand": "hugo version",
-  "forwardPorts": [1313],
+  "postCreateCommand": "chmod +x .devcontainer/start-hugo.sh && hugo version",
+  "postAttachCommand": ".devcontainer/start-hugo.sh",
+  "forwardPorts": [
+    1313
+  ],
+  "portsAttributes": {
+    "1313": {
+      "label": "Hugo Server",
+      "onAutoForward": "notify"
+    }
+  },
   "remoteUser": "vscode"
 }
