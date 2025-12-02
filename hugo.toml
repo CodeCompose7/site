@@ -11,6 +11,11 @@ buildDrafts = false
 buildFuture = false
 buildExpired = false
 
+summaryLength = 30
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [languages]
   [languages.ko]
     languageName = "한국어"
@@ -21,17 +26,23 @@ buildExpired = false
       description = "코드컴포즈 회사 소개"
       [languages.ko.params.author]
         name = "코드컴포즈"
+        image = "img/profile.svg"
+        bio = "코드컴포즈의 기술 블로그 및 강의 소개 사이트입니다."
+        links = [
+          { github = "https://github.com/CodeCompose7" },
+          { email = "mailto:dev@codecompose.net" },
+        ]
     [[languages.ko.menu.main]]
       name = "홈"
       url = "/"
       weight = 1
     [[languages.ko.menu.main]]
       name = "강의"
-      url = "/ko/categories/course/"
+      pageRef = "courses"
       weight = 2
     [[languages.ko.menu.main]]
       name = "블로그"
-      url = "/ko/categories/blog/"
+      pageRef = "blog"
       weight = 3
     [[languages.ko.menu.main]]
       name = "태그"
@@ -41,6 +52,16 @@ buildExpired = false
       name = "About"
       url = "/ko/about/"
       weight = 5
+    [[languages.ko.menu.main]]
+      identifier = "search"
+      weight = 99
+      [languages.ko.menu.main.params]
+        action = "search"
+    [[languages.ko.menu.main]]
+      identifier = "locale"
+      weight = 100
+      [languages.ko.menu.main.params]
+        action = "locale"
   
   [languages.en]
     languageName = "English"
@@ -51,17 +72,24 @@ buildExpired = false
       description = "CodeCompose Company Introduction"
       [languages.en.params.author]
         name = "CodeCompose"
+        image = "img/profile.svg"
+        headline = "Not your ordinary tech blog!"
+        bio = "CodeCompose's tech blog and course introduction site."
+        links = [
+          { github = "https://github.com/CodeCompose7" },
+          { email = "mailto:dev@codecompose.net" },
+        ]
     [[languages.en.menu.main]]
       name = "Home"
       url = "/en/"
       weight = 1
     [[languages.en.menu.main]]
       name = "Courses"
-      url = "/en/categories/course/"
+      pageRef = "courses"
       weight = 2
     [[languages.en.menu.main]]
       name = "Blog"
-      url = "/en/categories/blog/"
+      pageRef = "blog"
       weight = 3
     [[languages.en.menu.main]]
       name = "Tags"
@@ -71,10 +99,39 @@ buildExpired = false
       name = "About"
       url = "/en/about/"
       weight = 5
+    [[languages.en.menu.main]]
+      identifier = "search"
+      weight = 99
+      [languages.en.menu.main.params]
+        action = "search"
+    [[languages.en.menu.main]]
+      identifier = "locale"
+      weight = 100
+      [languages.en.menu.main.params]
+        action = "locale"
 
 [params]
   env = "production"
   description = "코드컴포즈 회사 소개"
+  enableSearch = true
+  
+  # 홈페이지 레이아웃 설정
+  [params.homepage]
+    layout = "profile"
+    showRecent = true
+    recentLimit = 5
+  
+  # 리스트 페이지 설정
+  [params.list]
+    showTaxonomies = true
+  
+  [params.article]
+    showTableOfContents = true
+    showTaxonomies = true
+  
+  # 섹션 경로 설정 (필요 시 여기서 섹션 슬러그만 변경)
+  [params.sections]
+    blog = "blog"
   
   # 댓글 시스템 (Giscus 설정 - 나중에 GitHub repo 생성 후 설정)
   # [params.giscus]
@@ -86,10 +143,10 @@ buildExpired = false
   # 소셜 링크
   [[params.socialIcons]]
     name = "github"
-    url = "https://github.com/yourusername"
+    url = "https://github.com/CodeCompose7"
   [[params.socialIcons]]
     name = "email"
-    url = "mailto:your.email@example.com"
+    url = "mailto:dev@codecompose.net"
 
 [markup]
   [markup.highlight]
@@ -99,6 +156,9 @@ buildExpired = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
 
 [taxonomies]
   category = "categories"

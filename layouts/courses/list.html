@@ -1,0 +1,76 @@
+{{ define "main" }}
+  {{ $toc := and (.Params.showTableOfContents | default (.Site.Params.list.showTableOfContents | default false)) (in .TableOfContents "<ul") }}
+  <header>
+    {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
+      {{ partial "breadcrumbs.html" . }}
+    {{ end }}
+    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+  </header>
+  <section
+    class="{{ if $toc -}}
+      mt-12
+    {{- else -}}
+      mt-0
+    {{- end }} prose flex max-w-full flex-col dark:prose-invert lg:flex-row"
+  >
+    {{ if $toc }}
+      <div class="order-first px-0 lg:order-last lg:max-w-xs lg:ps-8">
+        <div class="toc ps-5 lg:sticky lg:top-10">
+          {{ partial "toc.html" . }}
+        </div>
+      </div>
+    {{ end }}
+    <div class="min-h-0 min-w-0 max-w-prose grow">
+      {{ .Content | emojify }}
+    </div>
+  </section>
+  {{- /* 강의 섹션의 실제 강의들만 재귀적으로 수집 (섹션/카테고리 인덱스 제외) */}}
+  {{- $allPages := .RegularPagesRecursive }}
+  {{- /* buildDrafts가 false인 경우에만 draft 필터링 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $allPages = where $allPages "Draft" "!=" true }}
+  {{- end }}
+  {{- /* 커스텀 정렬: weight가 있으면 weight 우선, 없으면 date 내림차순 */}}
+  {{- $pagesWithWeight := where $allPages "Params.weight" "!=" nil }}
+  {{- $pagesWithoutWeight := where $allPages "Params.weight" "==" nil }}
+  {{- $sortedWithWeight := $pagesWithWeight.ByWeight }}
+  {{- $sortedWithoutWeight := $pagesWithoutWeight.ByDate.Reverse }}
+  {{- $sortedPages := slice }}
+  {{- range $sortedWithWeight }}
+    {{- $sortedPages = $sortedPages | append . }}
+  {{- end }}
+  {{- range $sortedWithoutWeight }}
+    {{- $sortedPages = $sortedPages | append . }}
+  {{- end }}
+  {{- $hasPages := gt (len $sortedPages) 0 }}
+  {{ if $hasPages }}
+    <section class="mt-8">
+      {{- /* 카테고리 필터 추가 */}}
+      {{- $currentCategory := "" }}
+      {{- if eq .Kind "term" }}
+        {{- $currentCategory = .Data.Term }}
+      {{- end }}
+      {{- /* 섹션 기반 카테고리 페이지(/.../categories/<slug>/)인 경우 경로에서 카테고리명 추출 */}}
+      {{- if and (eq $currentCategory "") .RelPermalink }}
+        {{- if in .RelPermalink "/categories/" }}
+          {{- $pathParts := split (strings.TrimSuffix "/" .RelPermalink) "/" }}
+          {{- $currentCategory = index $pathParts (sub (len $pathParts) 1) }}
+        {{- end }}
+      {{- end }}
+      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" . "section" "courses") }}
+      
+      <div class="flex flex-col">
+        {{ range $sortedPages }}
+          {{ partial "course-card.html" . }}
+        {{ end }}
+      </div>
+    </section>
+  {{ else }}
+    <section class="prose mt-10 dark:prose-invert">
+      <p class="border-t py-8">
+        <em>{{ i18n "list.no_articles" | emojify }}</em>
+      </p>
+    </section>
+  {{ end }}
+{{ end }}
+

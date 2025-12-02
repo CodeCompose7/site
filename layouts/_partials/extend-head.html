@@ -1,2 +1,136 @@
 {{/* 마루부리 폰트는 static/fonts 폴더에 직접 파일을 넣어서 사용합니다 */}}
+{{/* Noto Sans KR 웹폰트 로드 (고딕 계열) - 나중에 로컬 폰트로 교체 가능 */}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+<script>
+(function() {
+  function limitTagsToOneLine() {
+    const containers = document.querySelectorAll('.article-tags-container');
+    
+    containers.forEach(container => {
+      const wrapper = container.closest('.article-tags-wrapper');
+      const skeleton = wrapper ? wrapper.querySelector('.article-tags-skeleton') : null;
+      
+      // 기존 "..." 태그 제거
+      const existingMore = container.querySelector('.article-tag-more');
+      if (existingMore) {
+        existingMore.remove();
+      }
+      
+      // 모든 태그 표시
+      const tags = Array.from(container.querySelectorAll('.article-tag'));
+      tags.forEach(tag => tag.classList.remove('hidden'));
+      
+      // 컨테이너의 너비와 높이 가져오기
+      const containerRect = container.getBoundingClientRect();
+      const containerWidth = containerRect.width;
+      const maxHeightStyle = getComputedStyle(container).maxHeight;
+      const maxHeightPx = parseFloat(maxHeightStyle);
+      
+      // maxHeight가 유효하지 않으면 기본값 사용 (2.25rem = 36px, 16px 기준)
+      if (isNaN(maxHeightPx) || maxHeightPx === 0) {
+        return; // 스타일이 아직 적용되지 않았을 수 있음
+      }
+      
+      // gap-2 = 0.5rem = 8px
+      const gap = 8;
+      
+      // 태그들의 너비를 순서대로 계산하여 컨테이너 너비를 넘지 않는 태그만 표시
+      const visibleTags = [];
+      let totalWidth = 0;
+      
+      // "..." 태그의 예상 너비 (나중에 추가될 수 있음)
+      const moreTagWidth = 40; // 대략적인 "..." 태그 너비
+      
+      for (let i = 0; i < tags.length; i++) {
+        const tag = tags[i];
+        const tagRect = tag.getBoundingClientRect();
+        const tagWidth = tagRect.width;
+        
+        // 현재 태그 + gap + (마지막 태그가 아니면 다음 태그를 위한 공간, 또는 "..." 태그)
+        const neededWidth = totalWidth + tagWidth + (i > 0 ? gap : 0);
+        const remainingTags = tags.length - i - 1;
+        
+        // 마지막 태그가 아니면 "..." 태그 공간도 고려
+        const widthWithMore = remainingTags > 0 ? neededWidth + gap + moreTagWidth : neededWidth;
+        
+        // 컨테이너 너비를 넘지 않으면 추가
+        if (widthWithMore <= containerWidth) {
+          visibleTags.push(tag);
+          totalWidth = neededWidth;
+        } else {
+          // 넘어가면 중단
+          break;
+        }
+      }
+      
+      // 보이지 않는 태그 숨기기
+      tags.forEach(tag => {
+        if (!visibleTags.includes(tag)) {
+          tag.classList.add('hidden');
+        }
+      });
+      
+      // 숨겨진 태그가 있으면 "..." 태그 추가
+      if (visibleTags.length < tags.length) {
+        const moreTag = document.createElement('span');
+        moreTag.className = 'article-tag-more rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 mb-1 mr-1';
+        moreTag.textContent = '...';
+        moreTag.style.cursor = 'default';
+        container.appendChild(moreTag);
+      }
+      
+      // skeleton 숨기고 실제 태그 표시
+      if (skeleton) {
+        skeleton.classList.add('hidden');
+        setTimeout(() => {
+          container.classList.add('visible');
+        }, 150);
+      } else {
+        container.classList.add('visible');
+      }
+    });
+  }
+  
+  // DOM 로드 후 실행 (약간의 지연을 두어 레이아웃이 완전히 렌더링된 후 실행)
+  function runLimitTags() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(limitTagsToOneLine, 50);
+      });
+    } else {
+      setTimeout(limitTagsToOneLine, 50);
+    }
+  }
+  
+  runLimitTags();
+  
+  // 리사이즈 이벤트 처리 (반응형 대응)
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(limitTagsToOneLine, 150);
+  });
+  
+  // DOM 로드 후 태그 처리 실행
+  function runLimitTags() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(limitTagsToOneLine, 50);
+      });
+    } else {
+      setTimeout(limitTagsToOneLine, 50);
+    }
+  }
+  
+  runLimitTags();
+  
+  // 리사이즈 이벤트 처리 (반응형 대응)
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(limitTagsToOneLine, 150);
+  });
+})();
+</script>
