@@ -37,7 +37,7 @@
       {{ if .Params.showBreadcrumbs | default (.Site.Params.article.showBreadcrumbs | default false) }}
         {{ partial "breadcrumbs.html" . }}
       {{ end }}
-      <h1 class="mb-8 mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+      <h1 class="mb-2 mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
         {{ .Title | emojify }}
       </h1>
       {{ if or
@@ -48,7 +48,10 @@
         (.Params.showEdit | default (.Site.Params.article.showEdit | default false))
       }}
         <div class="mb-10 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
-          {{ partial "article-meta.html" (dict "context" . "scope" "single") }}
+          <div class="flex flex-wrap items-center gap-2">
+            {{ partial "article-meta.html" (dict "context" . "scope" "single") }}
+            {{ partial "difficulty-stars.html" . }}
+          </div>
         </div>
       {{ end }}
       {{ with $feature }}
