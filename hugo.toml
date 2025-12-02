@@ -1,4 +1,6 @@
-baseURL = "https://yourusername.github.io/"
+# baseURL은 워크플로우에서 자동으로 설정됩니다 (커스텀 도메인 포함)
+# 로컬 개발 시에는 --baseURL http://localhost:1313 옵션 사용
+baseURL = "/"
 languageCode = "ko"
 defaultContentLanguage = "ko"
 defaultContentLanguageInSubdir = true

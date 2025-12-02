@@ -39,10 +39,19 @@ git submodule add --depth=1 https://github.com/jpanther/congo.git themes/congo
 ### 3. 로컬 서버 실행
 
 ```bash
-hugo server -D
+# 로컬 개발용 (baseURL 오버라이드)
+hugo server -D --baseURL http://localhost:1313
+```
+
+또는 환경 변수 사용:
+
+```bash
+HUGO_BASEURL=http://localhost:1313 hugo server -D
 ```
 
 브라우저에서 `http://localhost:1313` 접속
+
+> **참고**: `hugo.toml`의 `baseURL`은 상대 경로(`/`)로 설정되어 있어, 워크플로우에서 자동으로 올바른 URL(커스텀 도메인 포함)을 설정합니다. 로컬 개발 시에는 위 명령어로 baseURL을 오버라이드해야 정상적으로 작동합니다.
 
 ## 컨텐츠 작성
 
@@ -180,7 +189,7 @@ git push -u origin main
    ```
 
 3. GitHub Settings > Pages > Custom domain에 도메인 입력
-4. `hugo.toml`의 `baseURL` 업데이트
+4. 워크플로우가 자동으로 커스텀 도메인 URL을 사용하므로 `hugo.toml` 수정 불필요
 
 ## 댓글 시스템 (Giscus)
 
@@ -194,10 +203,10 @@ git push -u origin main
 # 새 글 작성
 hugo new posts/title.ko.md
 
-# 로컬 서버 (draft 포함)
-hugo server -D
+# 로컬 서버 (draft 포함, baseURL 오버라이드)
+hugo server -D --baseURL http://localhost:1313
 
-# 빌드 (public 폴더에 생성)
+# 빌드 (public 폴더에 생성, 프로덕션용)
 hugo
 
 # 테마 업데이트
