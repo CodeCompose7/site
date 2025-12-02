@@ -48,7 +48,7 @@ jobs:
             --baseURL "${{ steps.pages.outputs.base_url }}/"
         
       - name: 아티팩트 업로드
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
@@ -61,4 +61,4 @@ jobs:
     steps:
       - name: GitHub Pages에 배포
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
