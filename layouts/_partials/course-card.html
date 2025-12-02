@@ -67,6 +67,9 @@
             {{ partial "badge.html" (i18n "article.draft" | emojify) }}
           </span>
         {{ end }}
+
+        {{ partial "difficulty-stars.html" $context }}
+
         {{ with $context.Params.externalUrl }}
           <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
           <span
