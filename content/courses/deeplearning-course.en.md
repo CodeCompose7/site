@@ -1,6 +1,7 @@
 ---
 title: "Deep Learning: From Basics to Production"
 date: 2024-11-27
+categories: ["ai-learning"]
 tags: ["Deep Learning", "TensorFlow", "Python", "Neural Networks"]
 description: "A practical course covering deep learning fundamentals to real-world project deployment"
 summary: "A comprehensive course designed for everyone from beginners to those looking to apply deep learning in production. Learn from neural network fundamentals to practical projects with CNN, RNN, and Transformer."
