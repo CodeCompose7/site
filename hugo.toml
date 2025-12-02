@@ -38,7 +38,7 @@ summaryLength = 30
       [languages.ko.params.header]
         logo = "img/logo.svg"
         logoDark = "img/logo-dark.svg"
-        logoWidth = 50
+        logoWidth = 40
         showTitle = false
     [[languages.ko.menu.main]]
       name = "홈"
@@ -90,7 +90,7 @@ summaryLength = 30
       [languages.en.params.header]
         logo = "img/logo.svg"
         logoDark = "img/logo-dark.svg"
-        logoWidth = 50
+        logoWidth = 40
         showTitle = false
     [[languages.en.menu.main]]
       name = "Home"
