@@ -35,6 +35,11 @@ summaryLength = 30
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
         ]
+      [languages.ko.params.header]
+        logo = "img/logo.svg"
+        logoDark = "img/logo-dark.svg"
+        logoWidth = 50
+        showTitle = false
     [[languages.ko.menu.main]]
       name = "홈"
       url = "/"
@@ -82,6 +87,11 @@ summaryLength = 30
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
         ]
+      [languages.en.params.header]
+        logo = "img/logo.svg"
+        logoDark = "img/logo-dark.svg"
+        logoWidth = 50
+        showTitle = false
     [[languages.en.menu.main]]
       name = "Home"
       url = "/en/"
