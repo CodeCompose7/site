@@ -43,9 +43,9 @@ jobs:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: |
-          hugo \
-            --minify \
-            --baseURL "${{ steps.pages.outputs.base_url }}/"
+          # baseURL은 hugo.toml 에서 관리합니다.
+          # (커스텀 도메인: https://courses.codecompose.net/)
+          hugo --minify
         
       - name: 빌드 결과 확인
         run: |
