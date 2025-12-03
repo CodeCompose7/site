@@ -1,6 +1,11 @@
-# Hugo Multi-language Tech Blog
+# Code Compose 강의 및 기술 사이트
 
-택규의 기술 블로그 및 강의 소개 사이트
+코드컴포즈 기술 블로그 및 강의 소개 사이트
+
+```bash
+# 로컬 개발용 (baseURL 오버라이드)
+hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
+```
 
 ## 프로젝트 구조
 
