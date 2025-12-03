@@ -68,7 +68,7 @@
   margin-bottom: 0.25rem;
 }
 
-/* 제목: 항상 2줄 공간, 상단 정렬 */
+/* 제목: 항상 2줄 공간, 상단 정렬 (기본 카드 용도) */
 .article-title {
   display: flex;
   flex-direction: column;
@@ -104,7 +104,7 @@
   cursor: default;
 }
 
-/* 카드 높이 고정 및 Summary 제한 */
+/* 카드 높이 고정 및 Summary 제한 (기본 카드 용도) */
 article.group {
   display: flex;
   flex-direction: column;
@@ -220,6 +220,33 @@ article.group.flex-row {
   -webkit-box-orient: vertical !important;
   overflow: hidden !important;
   flex: none !important; /* flex: 1과 충돌 방지 */
+}
+
+/* ========================= */
+/* 홈 최신 글(recent-articles) 전용 스타일 */
+/* ========================= */
+
+.recent-articles article.group {
+  height: 12.5rem; /* 약 200px: 제목 1줄 + 태그 1줄 + 설명 2줄 기준 */
+}
+
+.recent-articles article.group:hover {
+  transform: none; /* 최신 글에서는 hover 시 위로 올라가지 않도록 고정 */
+}
+
+.recent-articles .article-title {
+  min-height: 1.8rem; /* 제목 1줄만 위한 높이 */
+  margin-bottom: 0.25rem; /* mb-1: 최신 글에서만 간격 축소 */
+}
+
+.recent-articles .article-title-text {
+  -webkit-line-clamp: 1; /* 제목 1줄만 표시 */
+  line-clamp: 1;
+}
+
+.recent-articles .article-summary {
+  -webkit-line-clamp: 2; /* 설명 최대 2줄 */
+  line-clamp: 2;
 }
 
 /* Hover 배경색 */
