@@ -1,19 +1,34 @@
-# Hugo Multi-language Tech Blog
+# Code Compose 강의 및 기술 사이트
 
-택규의 기술 블로그 및 강의 소개 사이트
+코드컴포즈 기술 블로그 및 강의 소개 사이트
+
+```bash
+# 로컬 개발용 (baseURL 오버라이드)
+hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
+```
 
 ## 프로젝트 구조
 
 ```text
 .
 ├── .devcontainer/          # VS Code devcontainer 설정
+├── assets/                 # 커스텀 스타일, 이미지 등
+│   ├── css/
+│   └── img/
 ├── content/                # 마크다운 컨텐츠
+│   ├── _index.ko.md        # 한국어 홈
+│   ├── _index.en.md        # 영어 홈
 │   ├── about.ko.md         # 한국어 소개 페이지
 │   ├── about.en.md         # 영어 소개 페이지
-│   └── posts/              # 블로그 글 및 강의 소개
-│       ├── *.ko.md         # 한국어 글
-│       └── *.en.md         # 영어 글
-├── themes/                 # Hugo 테마 (설치 필요)
+│   ├── blog/               # 블로그 글
+│   │   ├── _index.*.md
+│   │   └── *.ko.md / *.en.md
+│   └── courses/            # 강의 소개
+│       ├── _index.*.md
+│       └── *.ko.md / *.en.md
+├── layouts/                # 커스텀 레이아웃 (Congo 테마 확장)
+├── themes/
+│   └── congo/              # Hugo 테마 (이미 포함됨)
 ├── hugo.toml               # Hugo 설정 파일
 └── README.md
 ```
@@ -28,11 +43,14 @@ VS Code에서:
 2. Command Palette (Ctrl+Shift+P) 열기
 3. "Dev Containers: Reopen in Container" 선택
 
-### 2. Hugo 테마 설치
+### 2. Hugo 테마 확인
+
+이 템플릿에는 `themes/congo` 디렉터리에 Congo 테마가 **이미 포함**되어 있습니다.
+
+별도의 새 Hugo 프로젝트를 만들고 이 README만 참고해서 Congo 테마를 추가하고 싶다면, 아래 예시처럼 submodule을 사용할 수 있습니다:
 
 ```bash
-# Congo 테마 설치
-git init
+# (새 프로젝트에서만) Congo 테마를 submodule로 추가
 git submodule add --depth=1 https://github.com/jpanther/congo.git themes/congo
 ```
 
@@ -40,8 +58,15 @@ git submodule add --depth=1 https://github.com/jpanther/congo.git themes/congo
 
 ```bash
 # 로컬 개발용 (baseURL 오버라이드)
-hugo server -D --baseURL http://localhost:1313
+hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 ```
+
+```bash
+# 로컬 개발용 (baseURL 오버라이드) - Draft 제외
+hugo server --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
+```
+
+자동 실행을 하려면, `start-hugo.sh` 파일의 `로컬 개발용 baseURL 오버라이드` 부분을 주석 해제하세요.
 
 또는 환경 변수 사용:
 
@@ -51,41 +76,74 @@ HUGO_BASEURL=http://localhost:1313 hugo server -D
 
 브라우저에서 `http://localhost:1313` 접속
 
-> **참고**: `hugo.toml`의 `baseURL`은 상대 경로(`/`)로 설정되어 있어, 워크플로우에서 자동으로 올바른 URL(커스텀 도메인 포함)을 설정합니다. 로컬 개발 시에는 위 명령어로 baseURL을 오버라이드해야 정상적으로 작동합니다.
+> **참고**: `hugo.toml`의 `baseURL`은 프로덕션용 커스텀 도메인  
+> `https://courses.codecompose.net/` 으로 설정되어 있습니다.  
+> 로컬 개발 시에는 위 명령어처럼 `--baseURL http://localhost:1313` 옵션이나  
+> `HUGO_BASEURL` 환경 변수로 **반드시 오버라이드**해야 정상적으로 작동합니다.
 
 ## 컨텐츠 작성
 
 ### 새 글 작성
 
+이 프로젝트는 **블로그(`blog`) 섹션**과 **강의(`courses`) 섹션**을 분리해서 운영합니다.
+
 ```bash
 # 한국어 블로그 글
-hugo new posts/my-post.ko.md
+hugo new blog/my-post.ko.md
 
 # 영어 블로그 글
-hugo new posts/my-post.en.md
+hugo new blog/my-post.en.md
+
+# 한국어 강의 소개 페이지
+hugo new courses/my-course.ko.md
+
+# 영어 강의 소개 페이지
+hugo new courses/my-course.en.md
 ```
+
+### 다른 글로 링크 걸기 (참조)
+
+Hugo에서는 **shortcode 링크**를 이용해서 다른 컨텐츠를 안정적으로 참조할 수 있습니다.  
+파일 경로 기준으로 `relref`를 쓰는 것을 추천합니다.
+
+```markdown
+다음 글도 함께 보세요:
+
+- [트랜스포머 논문 리뷰]({{< relref "blog/transformer-review.ko.md" >}})
+- [딥러닝 입문 강의 소개]({{< relref "courses/deeplearning-course.ko.md" >}})
+```
+
+- **한국어 글에서 링크**: `.ko.md` 파일을 대상으로 `relref`를 사용  
+  예) `{{< relref "blog/transformer-review.ko.md" >}}`  
+- **영어 글에서 링크**: `.en.md` 파일을 대상으로 `relref`를 사용  
+  예) `{{< relref "blog/transformer-review.en.md" >}}`
+
+`relref`를 사용하면:
+
+- 언어별 서브 경로(`/ko/`, `/en/`)와 `baseURL`이 자동으로 반영되고,
+- 나중에 슬러그나 URL 구조를 바꿔도 **링크를 일일이 수정할 필요가 없습니다.**
 
 ### Front Matter 예시
 
-**강의 글:**
+**강의 글(`content/courses/`):**
 
 ```yaml
 ---
 title: "쿠버네티스 기초 강의"
 date: 2024-11-27
-categories: ["강의"]
+categories: ["ai-learning"]          # 예: content/courses/categories/ai-learning/
 tags: ["쿠버네티스", "K3s", "DevOps"]
 description: "쿠버네티스의 기초부터 실전까지"
 ---
 ```
 
-**블로그 글:**
+**블로그 글(`content/blog/`):**
 
 ```yaml
 ---
 title: "K3s 클러스터 구축하기"
 date: 2024-11-27
-categories: ["블로그"]
+categories: ["paper-review"]         # 예: content/blog/categories/paper-review/
 tags: ["쿠버네티스", "K3s", "실습"]
 description: "경량 쿠버네티스 K3s로 클러스터 만들기"
 ---
@@ -189,7 +247,8 @@ git push -u origin main
    ```
 
 3. GitHub Settings > Pages > Custom domain에 도메인 입력
-4. 워크플로우가 자동으로 커스텀 도메인 URL을 사용하므로 `hugo.toml` 수정 불필요
+4. 이 프로젝트에서는 `hugo.toml`의 `baseURL`을 커스텀 도메인(`https://courses.codecompose.net/`)으로 고정해 두고,  
+   로컬 개발 및 프리뷰 환경에서만 `--baseURL`/`HUGO_BASEURL`로 오버라이드하는 방식을 사용합니다.
 
 ## 댓글 시스템 (Giscus)
 
@@ -200,8 +259,8 @@ git push -u origin main
 ## 유용한 명령어
 
 ```bash
-# 새 글 작성
-hugo new posts/title.ko.md
+# 새 글 작성 (예시)
+hugo new blog/title.ko.md
 
 # 로컬 서버 (draft 포함, baseURL 오버라이드)
 hugo server -D --baseURL http://localhost:1313

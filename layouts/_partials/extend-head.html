@@ -1,3 +1,13 @@
+{{- /* 레이아웃/카드 전용 CSS 번들 */ -}}
+{{- $algorithm := .Site.Params.fingerprintAlgorithm | default "sha256" -}}
+{{- $layoutsCSS := resources.Get "css/layouts.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $layoutsCSS.Permalink }}"
+  integrity="{{ $layoutsCSS.Data.Integrity }}"
+/>
+
 {{/* 마루부리 폰트는 static/fonts 폴더에 직접 파일을 넣어서 사용합니다 */}}
 {{/* 폰트 preload: 가장 중요한 폰트를 먼저 로드하여 FOUT 방지 */}}
 <link rel="preload" href="/fonts/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
