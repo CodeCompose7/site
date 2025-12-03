@@ -157,3 +157,37 @@ h1.font-extrabold {
 .pl-6 {
   padding-left: 1.5rem; /* 24px */
 }
+
+/* ========================= */
+/* 단일 글 페이지 TOC 레이아웃 조정
+   - 1024px~1279px 구간에서는 모바일처럼 1컬럼 유지
+   - 1280px 이상에서만 2컬럼(본문 + TOC)으로 전환
+   (단일 글 템플릿에서만 사용되는 구조: article > section.prose 기준) */
+/* ========================= */
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  /* 단일 글의 본문/TOC 컨테이너를 다시 세로 배치 */
+  article > section.prose {
+    flex-direction: column !important; /* lg:flex-row 무효화 */
+  }
+
+  /* TOC 컬럼(wrapper): 단일 글에서만 첫 번째 div가 TOC를 감쌈 */
+  article > section.prose > div:first-child {
+    order: initial !important;       /* lg:order-last 무효화 */
+    max-width: 100% !important;      /* lg:max-w-xs 무효화 */
+    padding-left: 0 !important;      /* lg:ps-8 무효화 */
+    padding-right: 0 !important;
+  }
+
+  /* TOC 자체는 sticky 해제 */
+  article > section.prose > div:first-child .toc {
+    position: static !important;     /* lg:sticky 무효화 */
+    top: auto !important;
+  }
+
+  /* 원래 Congo에서는 1024px 이상에서 summary(= "목차")를 숨기는데,
+     단일 글 1024~1279 구간에서는 다시 보이도록 강제 */
+  article > section.prose > div:first-child .toc details > summary {
+    display: block !important;
+  }
+}
