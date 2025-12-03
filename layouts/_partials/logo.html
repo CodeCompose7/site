@@ -27,8 +27,8 @@
       {{- else }}
         <img
           src="{{ $logo.Permalink }}"
-          width="{{ div $logo.Width 2 }}"
-          height="{{ div $logo.Height 2 }}"
+          width="{{ div $logo.Width 16 }}"
+          height="{{ div $logo.Height 16 }}"
           class="max-h-[10rem] max-w-[10rem] object-scale-down object-left
           {{ if $logo_dark }}dark:hidden flex{{ end }}"
           alt="{{ .Site.Title }}"
@@ -36,8 +36,8 @@
         {{- if $logo_dark }}
           <img
             src="{{ $logo_dark.Permalink }}"
-            width="{{ div $logo_dark.Width 2 }}"
-            height="{{ div $logo_dark.Height 2 }}"
+            width="{{ div $logo_dark.Width 16 }}"
+            height="{{ div $logo_dark.Height 16 }}"
             class="hidden max-h-[10rem] max-w-[10rem] object-scale-down object-left dark:flex"
             alt="{{ .Site.Title }}"
           />

@@ -36,8 +36,8 @@ summaryLength = 30
           { email = "mailto:dev@codecompose.net" },
         ]
       [languages.ko.params.header]
-        logo = "img/logo.svg"
-        logoDark = "img/logo-dark.svg"
+        logo = "img/logo_with_whitespace.png"
+        logoDark = "img/logo_with_whitespace.png"
         logoWidth = 40
         showTitle = false
     [[languages.ko.menu.main]]
@@ -88,8 +88,8 @@ summaryLength = 30
           { email = "mailto:dev@codecompose.net" },
         ]
       [languages.en.params.header]
-        logo = "img/logo.svg"
-        logoDark = "img/logo-dark.svg"
+        logo = "img/logo_with_whitespace.png"
+        logoDark = "img/logo_with_whitespace.png"
         logoWidth = 40
         showTitle = false
     [[languages.en.menu.main]]
