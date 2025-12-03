@@ -68,20 +68,17 @@
   margin-bottom: 0.25rem;
 }
 
-/* 제목: 항상 2줄 공간, 상단 정렬 (기본 카드 용도) */
+/* 제목: 상단 정렬 (기본 카드 용도)
+   - 줄 수 제한/높이 고정은 데스크톱(min-width: 1280px)에서만 적용 */
 .article-title {
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* 상단 정렬 */
-  min-height: 3.5rem; /* 2줄 높이 고정 */
 }
 
 .article-title-text {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: block;
+  overflow: hidden; /* 너무 긴 단어만 잘림 처리 */
 }
 
 /* 태그 영역 1줄 제한 */
@@ -206,12 +203,9 @@ article.group.flex-row {
 }
 
 .article-summary {
-  display: -webkit-box;
-  -webkit-line-clamp: 5;
-  line-clamp: 5;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: block;
+  overflow: visible;
+  text-overflow: clip;
   min-height: 0;
   word-break: break-word; /* 긴 단어 줄바꿈 */
   line-height: 1.45rem; /* text-base의 line-height */
@@ -226,8 +220,7 @@ article.group.flex-row {
 }
 
 /* ========================= */
-/* 홈 최신 글(recent-articles) 전용 스타일
-   - 높이는 JS에서 별도 기준(제목 1줄 + 요약 2줄)으로 통일 */
+/* 홈 최신 글(recent-articles) 전용 스타일 */
 /* ========================= */
 
 .recent-articles article.group:hover {
@@ -235,18 +228,7 @@ article.group.flex-row {
 }
 
 .recent-articles .article-title {
-  min-height: 1.8rem; /* 제목 1줄만 위한 높이 */
   margin-bottom: 0.25rem; /* mb-1: 최신 글에서만 간격 축소 */
-}
-
-.recent-articles .article-title-text {
-  -webkit-line-clamp: 1; /* 제목 1줄만 표시 */
-  line-clamp: 1;
-}
-
-.recent-articles .article-summary {
-  -webkit-line-clamp: 2; /* 설명 최대 2줄 */
-  line-clamp: 2;
 }
 
 /* Hover 배경색 */
@@ -294,6 +276,66 @@ article.group.flex-row {
 @media (min-width: 1280px) {
   .sidebar-hero-img-wrapper {
     max-height: none;
+  }
+
+  /* 데스크톱에서는 카드 제목/요약 줄 수 및 높이 통일 */
+  .article-title {
+    min-height: 3.5rem; /* 제목 2줄 기준 높이 */
+  }
+
+  .article-title-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .article-summary {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* 데스크톱에서의 홈 최신 글(최근 글) 제목/요약 줄 수 제한 */
+  .recent-articles .article-title {
+    min-height: 1.8rem; /* 제목 1줄 기준 */
+  }
+
+  .recent-articles .article-title-text {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  .recent-articles .article-summary {
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+  }
+}
+
+/* ========================= */
+/* 블로그 리스트/카테고리: 태블릿(768~1279px)에서는 단일 컬럼 유지
+   - grid 모드는 데스크톱(1280px 이상)에서만 사용 */
+/* ========================= */
+
+@media (min-width: 768px) and (max-width: 1279.98px) {
+  .list-with-sidebar .grid,
+  .blog-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* 태블릿 구간에서는 일반 카드 제목을 1줄로 축소 */
+  .article-title-text {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+
+  /* 제목 컨테이너 높이도 1줄 기준으로 줄이기 */
+  .article-title {
+    min-height: 1.9rem; /* recent-articles와 비슷한 1줄 높이 */
   }
 }
 

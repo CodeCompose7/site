@@ -199,7 +199,24 @@
     });
   }
 
+  function clearMinHeight(selector) {
+    const cards = document.querySelectorAll(selector);
+    if (!cards.length) return;
+    cards.forEach(card => {
+      card.style.minHeight = '';
+    });
+  }
+
   function equalizeCards() {
+    const vw = window.innerWidth || document.documentElement.clientWidth || 0;
+
+    // 데스크톱 미만에서는 높이 통일을 적용하지 않고, 기존 min-height를 제거
+    if (vw < 1280) {
+      clearMinHeight('article.group:not(.course-card)');
+      clearMinHeight('.recent-articles article.group');
+      return;
+    }
+
     // 일반 카드(강의 카드 제외, recent-articles 제외)
     const generalSampleSelector = 'article.group:not(.course-card)';
     const generalSample = document.querySelector(generalSampleSelector);

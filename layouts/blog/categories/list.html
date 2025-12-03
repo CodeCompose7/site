@@ -94,7 +94,7 @@
         {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
       {{- else }}
         {{- /* sidebar가 없는 경우 article-card 레이아웃 사용 */}}
-        <div class="grid min-h-[1200px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid min-h-[1200px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 blog-grid">
           {{ range $paginator.Pages }}
             {{ partial "article-card.html" . }}
           {{ end }}
