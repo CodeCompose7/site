@@ -3,7 +3,7 @@
 {{- $context := .context }}
 
 {{- if or $imagePath $text }}
-  <div class="mb-8 lg:mb-0 lg:mr-6 lg:flex-shrink-0 lg:w-2/5">
+  <div class="mb-8 lg:mb-0 lg:mr-6 lg:flex-shrink-0 lg:w-2/5 sidebar-hero">
     {{- if $imagePath }}
       {{- $img := $context.Resources.GetMatch $imagePath }}
       {{- if not $img }}
