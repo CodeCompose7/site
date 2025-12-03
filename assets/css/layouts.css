@@ -89,10 +89,12 @@
   max-height: 2.25rem; /* 1줄 높이 (태그 높이 + gap 고려) */
   position: relative;
   overflow: hidden;
+  pointer-events: none; /* 배경 영역 클릭은 카드 전체 링크로 전달 */
 }
 
 .article-tag {
   display: inline-block;
+  pointer-events: auto; /* 태그 자체는 클릭 가능 */
 }
 
 .article-tag.hidden {
