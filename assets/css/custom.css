@@ -148,6 +148,26 @@ h1.font-extrabold {
   font-weight: 700;
 }
 
+/* ========================= */
+/* 홈 프로필 헤더 튜닝
+   - 이름(h1)과 헤드라인(h2) 사이 간격 살짝 확대
+   - 헤드라인 색을 조금 더 옅게 조정
+   (Congo 테마 템플릿은 건드리지 않고 CSS로만 오버라이드) */
+/* ========================= */
+
+article.flex.flex-col.items-center.justify-center.text-center > section.not-prose h1 + h2 {
+  margin-top: 0.9rem; /* 기본보다 약간 여유 있게 */
+}
+
+article.flex.flex-col.items-center.justify-center.text-center > section.not-prose h2 {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)) !important;
+  font-weight: 200; /* 살짝 더 가볍게 */
+}
+
+.dark article.flex.flex-col.items-center.justify-center.text-center > section.not-prose h2 {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)) !important;
+}
+
 /* Text alignment */
 .text-center {
   text-align: center;
