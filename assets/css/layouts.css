@@ -290,8 +290,10 @@ article.group.flex-row {
   .lg\:flex-row {
     flex-direction: row;
   }
+}
 
-  /* Sidebar hero image height: 데스크톱에서는 높이 제한 해제 */
+/* Sidebar hero image height: 데스크톱(1280px 이상)에서는 높이 제한 해제 */
+@media (min-width: 1280px) {
   .sidebar-hero-img-wrapper {
     max-height: none;
   }

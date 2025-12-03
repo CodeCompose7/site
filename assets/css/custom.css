@@ -168,6 +168,14 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)) !important;
 }
 
+/* ========================= */
+/* 홈 "최신 글" 제목 다크모드 색상 조정 */
+/* ========================= */
+
+.dark .recent-articles h2 {
+  color: rgba(var(--color-neutral-50), var(--tw-text-opacity, 1)) !important;
+}
+
 /* Text alignment */
 .text-center {
   text-align: center;
@@ -217,5 +225,24 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   .single-toc-col {
     flex: 0 0 18rem;   /* 기본 너비 16rem, shrink 방지 */
     min-width: 18rem;
+  }
+}
+
+/* ========================= */
+/* 블로그 리스트 + 사이드바 레이아웃 조정
+   - 1024px~1279px 구간에서는 모바일처럼 세로 배치 유지
+   - 1280px 이상에서만 사이드바가 옆으로 붙도록 (Congo 기본 lg 브레이크포인트 무효화) */
+/* ========================= */
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  .list-with-sidebar {
+    flex-direction: column !important; /* lg:flex-row 무효화 */
+  }
+
+  .list-with-sidebar .sidebar-hero {
+    margin-right: 0 !important;  /* lg:mr-6 무효화 */
+    margin-bottom: 2rem !important; /* mb-8 비슷하게 유지 */
+    width: 100% !important;      /* lg:w-2/5 무효화 */
+    flex-shrink: 0 !important;
   }
 }
