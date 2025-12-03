@@ -29,15 +29,15 @@ summaryLength = 30
       description = "코드컴포즈 회사 소개"
       [languages.ko.params.author]
         name = "코드컴포즈"
-        image = "img/profile.svg"
+        image = "img/profile.png"
         bio = "코드컴포즈의 기술 블로그 및 강의 소개 사이트입니다."
         links = [
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
         ]
       [languages.ko.params.header]
-        logo = "img/logo.svg"
-        logoDark = "img/logo-dark.svg"
+        logo = "img/logo_with_whitespace.png"
+        logoDark = "img/logo_with_whitespace.png"
         logoWidth = 40
         showTitle = false
     [[languages.ko.menu.main]]
@@ -80,7 +80,7 @@ summaryLength = 30
       description = "CodeCompose Company Introduction"
       [languages.en.params.author]
         name = "CodeCompose"
-        image = "img/profile.svg"
+        image = "img/profile.png"
         headline = "Not your ordinary tech blog!"
         bio = "CodeCompose's tech blog and course introduction site."
         links = [
@@ -88,8 +88,8 @@ summaryLength = 30
           { email = "mailto:dev@codecompose.net" },
         ]
       [languages.en.params.header]
-        logo = "img/logo.svg"
-        logoDark = "img/logo-dark.svg"
+        logo = "img/logo_with_whitespace.png"
+        logoDark = "img/logo_with_whitespace.png"
         logoWidth = 40
         showTitle = false
     [[languages.en.menu.main]]
