@@ -168,6 +168,14 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)) !important;
 }
 
+/* ========================= */
+/* 홈 "최신 글" 제목 다크모드 색상 조정 */
+/* ========================= */
+
+.dark .recent-articles h2 {
+  color: rgba(var(--color-neutral-50), var(--tw-text-opacity, 1)) !important;
+}
+
 /* Text alignment */
 .text-center {
   text-align: center;
