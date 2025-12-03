@@ -12,7 +12,7 @@
 {{- $sidebarText := $context.Params.sidebarText | default ($context.Site.Params.blog.sidebarText) }}
 {{- $hasSidebar := or $sidebarImage $sidebarText }}
 
-<div class="flex flex-col lg:flex-row">
+<div class="flex flex-col lg:flex-row list-with-sidebar">
   {{- if $hasSidebar }}
     {{ partial "sidebar-hero.html" (dict "image" $sidebarImage "text" $sidebarText "context" $context) }}
   {{- end }}
