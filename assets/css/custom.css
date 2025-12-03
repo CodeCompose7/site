@@ -549,3 +549,8 @@ article.group.flex-row {
   -webkit-line-clamp: 1;
   line-clamp: 1;
 }
+
+/* 난이도 별과 제목 사이 간격 (minify로 공백이 제거되어도 유지) */
+.difficulty-stars-wrapper {
+  margin-right: 0.5rem;
+}
