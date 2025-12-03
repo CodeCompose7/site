@@ -40,8 +40,15 @@ git submodule add --depth=1 https://github.com/jpanther/congo.git themes/congo
 
 ```bash
 # 로컬 개발용 (baseURL 오버라이드)
-hugo server -D --baseURL http://localhost:1313
+hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 ```
+
+```bash
+# 로컬 개발용 (baseURL 오버라이드) - Draft 제외
+hugo server --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
+```
+
+자동 실행을 하려면, `start-hugo.sh` 파일의 `로컬 개발용 baseURL 오버라이드` 부분을 주석 해제하세요.
 
 또는 환경 변수 사용:
 
