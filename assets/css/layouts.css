@@ -106,12 +106,19 @@
   cursor: default;
 }
 
-/* 카드 높이 고정 및 Summary 제한 (기본 카드 용도) */
+/* 카드 레이아웃 (기본 카드 용도)
+   - 모바일(단일 컬럼)에서는 높이를 자동으로 두고 내용에 맞게 확장
+   - 2~3컬럼 그리드가 되는 md(768px) 이상에서만 높이를 통일해 카드 어긋남 방지 */
 article.group {
   display: flex;
   flex-direction: column;
-  height: 18.5rem; /* 카드 높이 고정 (450px, 16px 기준) */
-  overflow: hidden; /* 넘치는 내용 숨김 */
+  overflow: hidden; /* 모서리 라운딩 유지 */
+}
+
+@media (min-width: 768px) {
+  article.group {
+    height: 19.5rem; /* 제목 2줄 + 태그 1줄 + 요약 5줄 기준 여유 있게 */
+  }
 }
 
 /* 강의 카드(course-card)는 높이를 고정하지 않고 내용에 맞게 확장 */
@@ -229,7 +236,13 @@ article.group.flex-row {
 /* ========================= */
 
 .recent-articles article.group {
-  height: 12.5rem; /* 약 200px: 제목 1줄 + 태그 1줄 + 설명 2줄 기준 */
+  /* 모바일에서는 내용에 맞게 높이 자동 */
+}
+
+@media (min-width: 768px) {
+  .recent-articles article.group {
+    height: 13.5rem; /* 제목 1줄 + 태그 1줄 + 요약 2줄 기준 */
+  }
 }
 
 .recent-articles article.group:hover {
