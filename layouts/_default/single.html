@@ -48,7 +48,7 @@
         (.Params.showEdit | default (.Site.Params.article.showEdit | default false))
       }}
         <div class="mb-10 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
-          <div class="flex flex-wrap items-center gap-2">
+          <div class="flex flex-col gap-2">
             {{ partial "article-meta.html" (dict "context" . "scope" "single") }}
             {{ partial "difficulty-stars.html" . }}
           </div>
