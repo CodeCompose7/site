@@ -191,3 +191,11 @@ h1.font-extrabold {
     display: block !important;
   }
 }
+
+/* 단일 글 TOC 컬럼이 너무 쪼그라들지 않도록 최소 너비 보장 (데스크톱) */
+@media (min-width: 1024px) {
+  .single-toc-col {
+    flex: 0 0 18rem;   /* 기본 너비 16rem, shrink 방지 */
+    min-width: 18rem;
+  }
+}
