@@ -82,7 +82,7 @@ summaryLength = 30
       [languages.en.params.author]
         name = "CodeCompose"
         image = "img/profile.png"
-        headline = "Deep learning and software engineering courses and tech content"
+        headline = "Courses and tech content on deep learning, programming,  \nand software development culture and workflows"
         bio = "CodeCompose's tech blog and course introduction site."
         links = [
           { github = "https://github.com/CodeCompose7" },
