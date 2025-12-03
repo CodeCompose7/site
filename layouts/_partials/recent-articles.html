@@ -1,0 +1,39 @@
+{{- /* 
+  홈 화면에서 "최신 글" 영역을 렌더링하는 커스텀 partial.
+  - 강의(`courses`)가 아닌 블로그(`blog`) 섹션 글만 표시
+  - 최신 글에서는 grid를 쓰지 않고, `article-card`를 세로로 쭉 나열
+  - 최대 개수는 .Site.Params.homepage.recentLimit (기본 5)
+*/ -}}
+
+{{- if .Site.Params.homepage.showRecent | default false }}
+  {{- $blogSection := .Site.Params.sections.blog | default "blog" }}
+
+  {{- /* 블로그 섹션 글만 수집 */}}
+  {{- $pages := where .Site.RegularPages "Section" $blogSection }}
+
+  {{- /* draft 필터링: buildDrafts가 false인 경우에만 draft 제외 */}}
+  {{- if not .Site.BuildDrafts }}
+    {{- $pages = where $pages "Draft" "!=" true }}
+  {{- end }}
+
+  {{- /* 날짜 기준 최신 글 정렬 후 제한 */}}
+  {{- $recentLimit := .Site.Params.homepage.recentLimit | default 5 }}
+  {{- $pages = first $recentLimit ($pages.ByDate.Reverse) }}
+
+  {{- if gt (len $pages) 0 }}
+    <section class="mt-10 recent-articles">
+      <h2 class="mb-6 pl-6 text-2xl font-extrabold text-neutral-900 dark:text-neutral-50">
+        {{ i18n "shortcode.recent_articles" | emojify }}
+      </h2>
+
+      {{- /* grid 대신 세로 row 형태로 나열 */}}
+      <div class="flex flex-col gap-6">
+        {{- range $pages }}
+          {{ partial "article-card.html" . }}
+        {{- end }}
+      </div>
+    </section>
+  {{- end }}
+{{- end }}
+
+

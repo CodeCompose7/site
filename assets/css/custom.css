@@ -148,7 +148,74 @@ h1.font-extrabold {
   font-weight: 700;
 }
 
+/* ========================= */
+/* 홈 프로필 헤더 튜닝
+   - 이름(h1)과 헤드라인(h2) 사이 간격 살짝 확대
+   - 헤드라인 색을 조금 더 옅게 조정
+   (Congo 테마 템플릿은 건드리지 않고 CSS로만 오버라이드) */
+/* ========================= */
+
+article.flex.flex-col.items-center.justify-center.text-center > section.not-prose h1 + h2 {
+  margin-top: 0.9rem; /* 기본보다 약간 여유 있게 */
+}
+
+article.flex.flex-col.items-center.justify-center.text-center > section.not-prose h2 {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)) !important;
+  font-weight: 200; /* 살짝 더 가볍게 */
+}
+
+.dark article.flex.flex-col.items-center.justify-center.text-center > section.not-prose h2 {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)) !important;
+}
+
 /* Text alignment */
 .text-center {
   text-align: center;
+}
+
+/* Spacing utilities (Tailwind 유사) */
+.pl-6 {
+  padding-left: 1.5rem; /* 24px */
+}
+
+/* ========================= */
+/* 단일 글 페이지 TOC 레이아웃 조정
+   - 1024px~1279px 구간에서는 모바일처럼 1컬럼 유지
+   - 1280px 이상에서만 2컬럼(본문 + TOC)으로 전환
+   (단일 글 템플릿에서만 사용되는 구조: article > section.prose 기준) */
+/* ========================= */
+
+@media (min-width: 1024px) and (max-width: 1279.98px) {
+  /* 단일 글의 본문/TOC 컨테이너를 다시 세로 배치 */
+  article > section.prose {
+    flex-direction: column !important; /* lg:flex-row 무효화 */
+  }
+
+  /* TOC 컬럼(wrapper): 단일 글에서만 첫 번째 div가 TOC를 감쌈 */
+  article > section.prose > div:first-child {
+    order: initial !important;       /* lg:order-last 무효화 */
+    max-width: 100% !important;      /* lg:max-w-xs 무효화 */
+    padding-left: 0 !important;      /* lg:ps-8 무효화 */
+    padding-right: 0 !important;
+  }
+
+  /* TOC 자체는 sticky 해제 */
+  article > section.prose > div:first-child .toc {
+    position: static !important;     /* lg:sticky 무효화 */
+    top: auto !important;
+  }
+
+  /* 원래 Congo에서는 1024px 이상에서 summary(= "목차")를 숨기는데,
+     단일 글 1024~1279 구간에서는 다시 보이도록 강제 */
+  article > section.prose > div:first-child .toc details > summary {
+    display: block !important;
+  }
+}
+
+/* 단일 글 TOC 컬럼이 너무 쪼그라들지 않도록 최소 너비 보장 (데스크톱) */
+@media (min-width: 1024px) {
+  .single-toc-col {
+    flex: 0 0 18rem;   /* 기본 너비 16rem, shrink 방지 */
+    min-width: 18rem;
+  }
 }
