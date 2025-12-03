@@ -143,3 +143,102 @@
   });
 })();
 </script>
+
+<script>
+(function() {
+  function measureBaselineHeight(options) {
+    const { sampleSelector, wrapperClass } = options;
+    const original = document.querySelector(sampleSelector);
+    if (!original) return null;
+
+    // 샘플을 감쌀 래퍼 생성 (recent-articles 같은 컨텍스트용)
+    const wrapper = document.createElement('div');
+    if (wrapperClass) {
+      wrapper.className = wrapperClass;
+    }
+    wrapper.style.position = 'absolute';
+    wrapper.style.visibility = 'hidden';
+    wrapper.style.pointerEvents = 'none';
+    wrapper.style.left = '-9999px';
+    wrapper.style.top = '0';
+
+    const sample = original.cloneNode(true);
+    // 인라인 스타일 초기화
+    sample.style.height = 'auto';
+    sample.style.minHeight = '0';
+    sample.style.maxHeight = 'none';
+
+    // 제목/요약 영역에 충분한 텍스트를 넣어 line-clamp 기준까지 차도록 함
+    const titleEl = sample.querySelector('.article-title-text');
+    if (titleEl) {
+      titleEl.textContent = 'Sample title text for measuring card height sample title text for measuring.';
+    }
+    const summaryEl = sample.querySelector('.article-summary');
+    if (summaryEl) {
+      summaryEl.textContent = 'Sample summary text for measuring card height. '.repeat(20);
+    }
+
+    wrapper.appendChild(sample);
+    document.body.appendChild(wrapper);
+
+    const rect = sample.getBoundingClientRect();
+    const height = rect.height;
+
+    document.body.removeChild(wrapper);
+    return height || null;
+  }
+
+  function applyEqualMinHeight(selector, minHeight) {
+    if (!minHeight) return;
+    const cards = document.querySelectorAll(selector);
+    if (!cards.length) return;
+
+    cards.forEach(card => {
+      card.style.minHeight = ''; // 초기화
+      card.style.minHeight = minHeight + 'px';
+    });
+  }
+
+  function equalizeCards() {
+    // 일반 카드(강의 카드 제외, recent-articles 제외)
+    const generalSampleSelector = 'article.group:not(.course-card)';
+    const generalSample = document.querySelector(generalSampleSelector);
+    if (generalSample) {
+      const baseHeight = measureBaselineHeight({
+        sampleSelector: generalSampleSelector,
+      });
+      applyEqualMinHeight('article.group:not(.course-card)', baseHeight);
+    }
+
+    // 홈 최신 글 카드 (recent-articles 내부)
+    const recentSampleSelector = '.recent-articles article.group';
+    const recentSample = document.querySelector(recentSampleSelector);
+    if (recentSample) {
+      const baseRecentHeight = measureBaselineHeight({
+        sampleSelector: recentSampleSelector,
+        wrapperClass: 'recent-articles',
+      });
+      applyEqualMinHeight('.recent-articles article.group', baseRecentHeight);
+    }
+  }
+
+  function runEqualize() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function () {
+        // 폰트 렌더링 반영을 위해 약간의 지연
+        setTimeout(equalizeCards, 150);
+      });
+    } else {
+      setTimeout(equalizeCards, 150);
+    }
+  }
+
+  runEqualize();
+
+  let resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(equalizeCards, 200);
+  });
+})();
+</script>
