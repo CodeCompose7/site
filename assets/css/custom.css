@@ -314,3 +314,43 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
     display: none !important;
   }
 }
+
+/* 스크린리더 전용 텍스트 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 데스크톱에서 목차 토글 버튼을 세로형 캡슐 + 삼각형 아이콘 형태로 표시 */
+@media (min-width: 1280px) {
+  [data-toc-toggle] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;   /* 약 44px */
+    height: 4rem;
+    padding: 0;
+    /* 왼쪽은 살짝만, 오른쪽은 완만하게 둥글게 */
+    border-radius: 0.3rem 1rem 1rem 0.3rem;
+    background-color: transparent;
+  }
+
+  [data-toc-icon] {
+    font-size: 1rem;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* 접힌 상태에서는 아이콘 방향만 바꿈 (JS에서 data-toc-state를 토대로 텍스트도 바뀜) */
+  [data-toc-toggle][data-toc-state="hidden"] [data-toc-icon] {
+    transform: scaleX(-1); /* ▶ 을 좌우 반전해서 ◀ 느낌 */
+  }
+}

@@ -79,11 +79,12 @@
             <div class="mb-4 flex justify-end">
               <button
                 type="button"
-                class="items-center gap-1 rounded-md border border-neutral-200 bg-neutral-50 px-3 py-1 text-xs font-medium text-neutral-600 shadow-sm hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                class="items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 px-0 text-xs font-medium text-neutral-600 shadow-sm hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                 data-toc-toggle
                 data-toc-state="visible"
               >
-                목차 숨기기
+                <span class="sr-only" data-toc-label>목차 숨기기</span>
+                <span aria-hidden="true" data-toc-icon>▶</span>
               </button>
             </div>
             <div data-toc-panel>
@@ -124,31 +125,55 @@
           var tocCol = document.querySelector('[data-toc-col]');
           if (!toggleBtn || !tocCol) return;
 
+          // 목차 접힘 상태를 스크립트 변수로 유지 (데스크톱에서만 적용)
+          var tocCollapsed = false;
+
+          function applyState() {
+            if (window.innerWidth >= 1280) {
+              if (tocCollapsed) {
+                tocCol.classList.add('toc-collapsed');
+              } else {
+                tocCol.classList.remove('toc-collapsed');
+              }
+            } else {
+              // 모바일/태블릿에서는 항상 펼쳐진 상태 유지
+              tocCol.classList.remove('toc-collapsed');
+            }
+          }
+
           function updateLabel() {
-            var isCollapsed = tocCol.classList.contains('toc-collapsed');
-            toggleBtn.textContent = isCollapsed ? '목차 보이기' : '목차 숨기기';
+            var isCollapsed = tocCollapsed && window.innerWidth >= 1280;
+            var label = isCollapsed ? '목차 보이기' : '목차 숨기기';
+
             toggleBtn.setAttribute('data-toc-state', isCollapsed ? 'hidden' : 'visible');
+            toggleBtn.setAttribute('aria-label', label);
+            toggleBtn.setAttribute('title', label);
+
+            var labelSpan = toggleBtn.querySelector('[data-toc-label]');
+            if (labelSpan) {
+              labelSpan.textContent = label;
+            }
           }
 
           function handleClick() {
             if (window.innerWidth < 1280) {
               return; // 모바일/태블릿에서는 기존 세로형 TOC 동작 유지
             }
-            tocCol.classList.toggle('toc-collapsed');
+            tocCollapsed = !tocCollapsed;
+            applyState();
             updateLabel();
           }
 
           toggleBtn.addEventListener('click', handleClick);
 
-          // 초기 라벨 설정
+          // 초기 상태/라벨 설정
+          applyState();
           updateLabel();
 
-          // 리사이즈 시 1280px 미만으로 내려가면 TOC를 항상 보이도록 복구
+          // 리사이즈 시 해상도에 맞게 상태를 다시 적용
           window.addEventListener('resize', function () {
-            if (window.innerWidth < 1280) {
-              tocCol.classList.remove('toc-collapsed');
-              updateLabel();
-            }
+            applyState();
+            updateLabel();
           });
         })();
       </script>
