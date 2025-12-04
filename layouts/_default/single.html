@@ -53,8 +53,9 @@
             <div class="single-article-meta">
               {{ partial "article-meta.html" (dict "context" . "scope" "single") }}
             </div>
-            <div class="single-difficulty">
+            <div class="single-difficulty flex items-center gap-1">
               {{ partial "difficulty-stars.html" . }}
+              {{ partial "difficulty-level.html" . }}
             </div>
           </div>
         </div>

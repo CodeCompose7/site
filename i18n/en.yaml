@@ -1,2 +1,16 @@
 category_filter_all:
   other: "All"
+
+course_level_label:
+  other: "Audience: {{ .Level }}"
+
+difficulty_level_1:
+  other: "Beginner"
+difficulty_level_2:
+  other: "Lower-intermediate"
+difficulty_level_3:
+  other: "Intermediate"
+difficulty_level_4:
+  other: "Upper-intermediate"
+difficulty_level_5:
+  other: "Advanced"

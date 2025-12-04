@@ -1,2 +1,16 @@
 category_filter_all:
   other: "전체 보기"
+
+course_level_label:
+  other: "강의 대상 : {{ .Level }}"
+
+difficulty_level_1:
+  other: "초급"
+difficulty_level_2:
+  other: "초중급"
+difficulty_level_3:
+  other: "중급"
+difficulty_level_4:
+  other: "중상급"
+difficulty_level_5:
+  other: "상급"

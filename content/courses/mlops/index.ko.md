@@ -8,6 +8,7 @@ summary: "데이터 처리부터 모델 학습, 배포, 모니터링까지 ML �
 feature: "ml_ops_main*"
 featureAlt: "MLOps 강의 대표 이미지"
 coverCaption: "MLOps: 머신러닝 시스템 운영과 자동화"
+level: 2
 ---
 
 ## 강의 개요
