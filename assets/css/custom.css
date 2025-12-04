@@ -256,11 +256,21 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   }
 }
 
-/* 단일 글 TOC 컬럼이 너무 쪼그라들지 않도록 최소 너비 보장 (데스크톱) */
+/* 단일 글 TOC 컬럼 레이아웃 (데스크톱) */
 @media (min-width: 1024px) {
   .single-toc-col {
-    flex: 0 0 18rem;   /* 기본 너비 16rem, shrink 방지 */
+    flex: 0 0 18rem;   /* 기본 너비 18rem, shrink 방지 */
     min-width: 18rem;
+  }
+
+  /* 목차 접힘 상태에서는 컬럼 폭을 버튼 크기 정도로만 유지 */
+  .single-toc-col.toc-collapsed {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+
+  .single-toc-col.toc-collapsed [data-toc-panel] {
+    display: none;
   }
 }
 
@@ -295,5 +305,12 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
 @media (max-width: 1279.98px) {
   article > header > div.prose {
     max-width: none !important;
+  }
+}
+
+/* 1280px 미만에서는 목차 토글 버튼 숨기기 (데스크톱에서만 보이도록) */
+@media (max-width: 1279.98px) {
+  [data-toc-toggle] {
+    display: none !important;
   }
 }
