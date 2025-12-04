@@ -79,14 +79,14 @@
           </span>
           <span
             class="inline-block align-middle"
-            style="vertical-align: middle; margin-bottom: 0.25rem; margin-left: -0.75rem;"
+            style="vertical-align: middle; margin-bottom: 0.25rem; margin-left: -0.5rem;"
           >
             {{ partial "course-card-duration-inline.html" $context }}
           </span>
         {{- end }}
 
         {{ with $context.Params.externalUrl }}
-          <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+          <span class="text-neutral-900 dark:text-neutral-100" style="margin-left: 0.25rem;">{{ $context.Title | emojify }}</span>
           <span
             class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
             title="{{ i18n "list.externalurl_title" }}"
