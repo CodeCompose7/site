@@ -55,6 +55,8 @@
             </div>
             <div class="single-difficulty mt-3">
               <ul class="single-difficulty-list ps-5 space-y-0.5 text-base font-light text-neutral-600 dark:text-neutral-300">
+                {{ partial "course-version-meta.html" . }}
+                {{ partial "course-meta-separator.html" . }}
                 {{ partial "difficulty-level.html" . }}
                 {{ partial "course-duration.html" . }}
               </ul>

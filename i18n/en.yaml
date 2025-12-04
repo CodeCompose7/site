@@ -25,3 +25,22 @@ duration_hours:
 duration_minutes:
   one: "{{ .Count }} min"
   other: "{{ .Count }} mins"
+
+course_uploaded_at_label:
+  other: "Created at"
+
+course_updated_at_label:
+  other: "Last updated"
+
+course_version_label:
+  other: "Version"
+
+course_version_value:
+  other: "{{ .Version }}"
+
+course_line_count_title:
+  other: "Line count"
+
+course_line_count:
+  one: "{{ .Count }} line"
+  other: "{{ .Count }} lines"

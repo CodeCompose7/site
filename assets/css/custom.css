@@ -222,6 +222,10 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   padding-left: 1.5rem; /* 24px */
 }
 
+.mt-3 {
+  margin-top: 0.75rem; /* 12px */
+}
+
 /* Font weight utility */
 .font-light {
   font-weight: 300;
@@ -354,6 +358,28 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
 
 .dark .course-meta-value {
   color: rgba(var(--color-neutral-50), var(--tw-text-opacity, 1));
+}
+
+.course-meta-separator {
+  margin: 0.35rem 0 0.45rem 0;
+}
+
+.course-meta-hr {
+  border: 0;
+  border-top: 1px solid rgba(var(--color-neutral-200), 1);
+  margin: 0;
+  width: 256px; /* 기본: 고정 길이 (데스크톱/태블릿) */
+}
+
+.dark .course-meta-hr {
+  border-top-color: rgba(var(--color-neutral-700), 1);
+}
+
+/* 모바일(768px 미만)에서는 구분선을 전체 폭으로 표시 */
+@media (max-width: 767.98px) {
+  .course-meta-hr {
+    width: 100%;
+  }
 }
 
 /* 스크린리더 전용 텍스트 */

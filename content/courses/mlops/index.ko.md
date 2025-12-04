@@ -1,6 +1,8 @@
 ---
 title: "MLOps: 머신러닝 시스템 운영과 자동화"
 date: 2025-12-02
+lastmod: 2025-12-03
+version: 2
 categories: ["dev-workflow"]
 tags: ["MLOps", "Machine Learning", "MLflow", "Kubernetes", "모델 관리"]
 description: "ML 프로젝트의 실전 운영을 위한 MLOps 개념과 파이프라인 구축"

@@ -1,0 +1,42 @@
+{{- /* 업로드 날짜 / 최종 수정 날짜 / 버전 정보 표시 */ -}}
+{{- $page := . -}}
+
+{{- /* 업로드 날짜 (front matter의 date 또는 기본 .Date) */ -}}
+<li class="leading-snug">
+  <span class="course-meta-label">
+    {{ i18n "course_uploaded_at_label" }}
+  </span>
+  <span class="course-meta-value">
+    {{ partial "functions/date.html" $page.Date }}
+  </span>
+</li>
+
+{{- /* 최종 수정 날짜: .Lastmod가 .Date와 다를 때만 표시 */ -}}
+{{- $dateStr := partial "functions/date.html" $page.Date -}}
+{{- $lastStr := partial "functions/date.html" $page.Lastmod -}}
+{{- if ne $dateStr $lastStr }}
+  <li class="leading-snug">
+    <span class="course-meta-label">
+      {{ i18n "course_updated_at_label" }}
+    </span>
+    <span class="course-meta-value">
+      {{ $lastStr }}
+    </span>
+  </li>
+{{- end }}
+
+{{- /* 버전: front matter의 .Params.version만 사용, 없으면 기본값 1
+      단, 1인 경우에는 화면에 표시하지 않음 */ -}}
+{{- $version := $page.Params.version | default 1 -}}
+{{- if ne $version 1 }}
+  <li class="leading-snug">
+    <span class="course-meta-label">
+      {{ i18n "course_version_label" }}
+    </span>
+    <span class="course-meta-value">
+      {{ i18n "course_version_value" (dict "Version" $version) }}
+    </span>
+  </li>
+{{- end }}
+
+

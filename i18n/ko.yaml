@@ -25,3 +25,22 @@ duration_hours:
 duration_minutes:
   one: "{{ .Count }}분"
   other: "{{ .Count }}분"
+
+course_uploaded_at_label:
+  other: "문서 생성"
+
+course_updated_at_label:
+  other: "최종 편집"
+
+course_version_label:
+  other: "버전"
+
+course_version_value:
+  other: "{{ .Version }}"
+
+course_line_count_title:
+  other: "문서 줄 수"
+
+course_line_count:
+  one: "{{ .Count }}줄"
+  other: "{{ .Count }}줄"
