@@ -421,3 +421,8 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
     transform: scaleX(-1); /* ▶ 을 좌우 반전해서 ◀ 느낌 */
   }
 }
+
+/* 다크 모드에서 목차 토글 버튼 hover 효과를 더 미묘하게 조정 */
+.dark [data-toc-toggle]:hover {
+  background-color: rgba(var(--color-neutral-600), var(--tw-bg-opacity, 1)) !important;
+}
