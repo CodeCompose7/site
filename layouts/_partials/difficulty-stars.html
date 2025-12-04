@@ -4,24 +4,25 @@
 
 {{- if gt $level 0 }}
   {{- $max := 5 -}}
-  {{- $stars := slice -}}
-
-  {{- range seq 1 $max }}
-    {{- if le . $level }}
-      {{- $stars = $stars | append "★" -}}
-    {{- else }}
-      {{- $stars = $stars | append "☆" -}}
-    {{- end }}
-  {{- end }}
-
-  {{- $starText := delimit $stars "" -}}
 
   <span
     class="inline-block align-middle difficulty-stars-wrapper"
     style="vertical-align: middle; margin-bottom: 0.25rem;"
     aria-label="{{ printf "난이도 %d/5" $level }}"
   >
-    {{ partial "badge.html" $starText }}
+    <span class="flex">
+      <span
+        class="ms-1 rounded-md border border-primary-400 px-1 py-[1px] text-xs font-normal text-primary-700 dark:border-primary-600 dark:text-primary-400"
+      >
+        {{- range seq 1 $max }}
+          {{- if le . $level }}
+            <span class="difficulty-star-full">★</span>
+          {{- else }}
+            <span class="difficulty-star-empty">☆</span>
+          {{- end }}
+        {{- end }}
+      </span>
+    </span>
   </span>
 {{- end }}
 

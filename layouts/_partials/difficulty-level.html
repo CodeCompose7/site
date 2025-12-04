@@ -1,0 +1,23 @@
+{{- /* 난이도 텍스트 표시: front matter의 level(1~5)을 읽어
+      레이블(옅은 색) + 값/별(진한 색)으로 분리 렌더링 */ -}}
+{{- $context := . -}}
+{{- $level := $context.Params.level | default 0 -}}
+
+{{- /* 1~5 범위 안에서만 처리 */ -}}
+{{- if and (ge $level 1) (le $level 5) }}
+  {{- $key := printf "difficulty_level_%d" $level -}}
+  {{- $label := i18n $key -}}
+  {{- if $label }}
+    <li class="leading-snug">
+      <span class="course-meta-label">
+        {{ i18n "course_level_label" (dict "LevelRaw" $level) }}
+      </span>
+      <span class="course-meta-value">
+        {{ $label }}
+        {{ partial "difficulty-stars-inline.html" . }}
+      </span>
+    </li>
+  {{- end }}
+{{- end }}
+
+

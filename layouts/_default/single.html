@@ -28,10 +28,11 @@
       <p class="text-sm text-neutral-500">이 페이지는 draft 상태입니다.</p>
     </div>
   {{- else }}
-    {{- /* draft가 아니거나 buildDrafts가 true인 경우 정상 렌더링 */}}
+  {{- /* draft가 아니거나 buildDrafts가 true인 경우 정상 렌더링 */}}
     {{- $images := .Resources.ByType "image" }}
   {{- $cover := $images.GetMatch (.Params.cover | default "*cover*") }}
   {{- $feature := $images.GetMatch (.Params.feature | default "*feature*") | default $cover }}
+  {{- $showToc := and (.Params.showTableOfContents | default (.Site.Params.article.showTableOfContents | default false)) (in .TableOfContents "<ul") }}
   <article>
     <header>
       {{ if .Params.showBreadcrumbs | default (.Site.Params.article.showBreadcrumbs | default false) }}
@@ -48,12 +49,27 @@
         (.Params.showEdit | default (.Site.Params.article.showEdit | default false))
       }}
         <div class="mb-10 text-base text-neutral-500 dark:text-neutral-400 print:hidden">
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col">
             <div class="single-article-meta">
               {{ partial "article-meta.html" (dict "context" . "scope" "single") }}
             </div>
-            <div class="single-difficulty">
-              {{ partial "difficulty-stars.html" . }}
+            <div class="single-difficulty mt-3">
+              {{- $level := .Params.level | default 0 -}}
+              {{- $hours := .Params.hours | default "" -}}
+              {{- $hasDifficulty := and (ge $level 1) (le $level 5) -}}
+              {{- $hasDuration := ne $hours "" -}}
+              <ul class="single-difficulty-list ps-5 space-y-0.5 text-base font-light text-neutral-600 dark:text-neutral-300">
+                {{- if $hasDifficulty }}
+                  {{ partial "difficulty-level.html" . }}
+                {{- end }}
+                {{- if $hasDuration }}
+                  {{ partial "course-duration.html" . }}
+                {{- end }}
+                {{- if or $hasDifficulty $hasDuration }}
+                  {{ partial "course-meta-separator.html" . }}
+                {{- end }}
+                {{ partial "course-version-meta.html" . }}
+              </ul>
             </div>
           </div>
         </div>
@@ -70,11 +86,25 @@
         </div>
       {{ end }}
     </header>
+
     <section class="prose mt-0 flex max-w-full flex-col dark:prose-invert lg:flex-row">
-      {{ if and (.Params.showTableOfContents | default (.Site.Params.article.showTableOfContents | default false)) (in .TableOfContents "<ul") }}
-        <div class="order-first px-0 lg:order-last lg:max-w-xs lg:ps-8 single-toc-col">
+      {{ if $showToc }}
+        <div class="order-first px-0 lg:order-last lg:max-w-xs lg:ps-8 single-toc-col" data-toc-col>
           <div class="toc pe-5 lg:sticky lg:top-10 print:hidden">
-            {{ partial "toc.html" . }}
+            <div class="mb-4 flex justify-end">
+              <button
+                type="button"
+                class="items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 px-0 text-xs font-medium text-neutral-600 shadow-sm hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
+                data-toc-toggle
+                data-toc-state="visible"
+              >
+                <span class="sr-only" data-toc-label>목차 숨기기</span>
+                <span aria-hidden="true" data-toc-icon>▶</span>
+              </button>
+            </div>
+            <div data-toc-panel>
+              {{ partial "toc.html" . }}
+            </div>
           </div>
         </div>
       {{ end }}
@@ -99,6 +129,70 @@
         {{ end }}
       {{ end }}
     </footer>
+
+    {{- /* 데스크톱(1280px 이상)에서 목차 토글 버튼으로 TOC 패널을 숨기고/보이게 제어하는 스크립트 */}}
+    {{- if $showToc }}
+      <script>
+        (function () {
+          if (typeof window === 'undefined') return;
+
+          var toggleBtn = document.querySelector('[data-toc-toggle]');
+          var tocCol = document.querySelector('[data-toc-col]');
+          if (!toggleBtn || !tocCol) return;
+
+          // 목차 접힘 상태를 스크립트 변수로 유지 (데스크톱에서만 적용)
+          var tocCollapsed = false;
+
+          function applyState() {
+            if (window.innerWidth >= 1280) {
+              if (tocCollapsed) {
+                tocCol.classList.add('toc-collapsed');
+              } else {
+                tocCol.classList.remove('toc-collapsed');
+              }
+            } else {
+              // 모바일/태블릿에서는 항상 펼쳐진 상태 유지
+              tocCol.classList.remove('toc-collapsed');
+            }
+          }
+
+          function updateLabel() {
+            var isCollapsed = tocCollapsed && window.innerWidth >= 1280;
+            var label = isCollapsed ? '목차 보이기' : '목차 숨기기';
+
+            toggleBtn.setAttribute('data-toc-state', isCollapsed ? 'hidden' : 'visible');
+            toggleBtn.setAttribute('aria-label', label);
+            toggleBtn.setAttribute('title', label);
+
+            var labelSpan = toggleBtn.querySelector('[data-toc-label]');
+            if (labelSpan) {
+              labelSpan.textContent = label;
+            }
+          }
+
+          function handleClick() {
+            if (window.innerWidth < 1280) {
+              return; // 모바일/태블릿에서는 기존 세로형 TOC 동작 유지
+            }
+            tocCollapsed = !tocCollapsed;
+            applyState();
+            updateLabel();
+          }
+
+          toggleBtn.addEventListener('click', handleClick);
+
+          // 초기 상태/라벨 설정
+          applyState();
+          updateLabel();
+
+          // 리사이즈 시 해상도에 맞게 상태를 다시 적용
+          window.addEventListener('resize', function () {
+            applyState();
+            updateLabel();
+          });
+        })();
+      </script>
+    {{- end }}
   </article>
   {{- end }}
 {{ end }}

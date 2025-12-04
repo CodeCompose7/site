@@ -1,2 +1,46 @@
 category_filter_all:
   other: "All"
+
+course_level_label:
+  other: "Audience"
+
+difficulty_level_1:
+  other: "Beginner"
+difficulty_level_2:
+  other: "Lower-intermediate"
+difficulty_level_3:
+  other: "Intermediate"
+difficulty_level_4:
+  other: "Upper-intermediate"
+difficulty_level_5:
+  other: "Advanced"
+
+course_duration_label:
+  other: "Duration"
+
+duration_hours:
+  one: "{{ .Count }} hour"
+  other: "{{ .Count }} hours"
+
+duration_minutes:
+  one: "{{ .Count }} min"
+  other: "{{ .Count }} mins"
+
+course_uploaded_at_label:
+  other: "Created at"
+
+course_updated_at_label:
+  other: "Last updated"
+
+course_version_label:
+  other: "Version"
+
+course_version_value:
+  other: "{{ .Version }}"
+
+course_line_count_title:
+  other: "Line count"
+
+course_line_count:
+  one: "{{ .Count }} line"
+  other: "{{ .Count }} lines"

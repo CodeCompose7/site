@@ -1,7 +1,7 @@
 ---
 title: "Git and Git Flow: Practical Guide"
 date: 2025-12-02
-categories: ["programming-general"]
+categories: ["dev-workflow"]
 tags: ["Git", "Git Flow", "Version Control", "Collaboration", "Branch Strategy"]
 description: "A practical course covering Git fundamentals and Git Flow-based collaboration workflows from personal projects to team development"
 summary: "Learn how to use Git effectively in real projects, from basic commands to branch strategies and Git Flow-based collaboration workflows."

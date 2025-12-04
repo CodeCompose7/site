@@ -1,7 +1,7 @@
 ---
 title: "DevOps 실전: CI/CD와 인프라 자동화"
 date: 2025-12-02
-categories: ["programming-general"]
+categories: ["dev-workflow"]
 tags: ["DevOps", "CI/CD", "Docker", "Kubernetes", "인프라 자동화"]
 description: "지속적 통합과 배포, 컨테이너와 오케스트레이션을 중심으로 한 DevOps 실전 강의"
 summary: "CI/CD 파이프라인 구축부터 Docker, Kubernetes를 활용한 인프라 자동화까지 DevOps의 핵심 개념과 실전 예제를 통해 학습합니다."
