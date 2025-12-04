@@ -10,5 +10,7 @@ cascade:
 ---
 
 {{< lead >}}
-Courses on deep learning, focusing on the latest models and applications in areas such as computer vision (image processing) and large language models (LLMs).
+Courses on deep learning, focusing on the latest models and applications  
+in areas such as computer vision (image processing) and  
+large language models (LLMs).
 {{< /lead >}}
