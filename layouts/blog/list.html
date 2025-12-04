@@ -32,7 +32,7 @@
   {{- end }}
   {{- $hasPages := gt (len $allPages) 0 }}
   {{ if $hasPages }}
-    <section class="mt-8">
+    <section>
       {{- /* 카테고리 필터 추가 */}}
       {{- $currentCategory := "" }}
       {{- if eq .Kind "term" }}

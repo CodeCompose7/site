@@ -77,7 +77,7 @@
   {{- end }}
   {{- $filteredCourses := where $allCourses "Params.categories" "intersect" (slice $categoryName) }}
   
-  <section class="mt-8">
+  <section>
     {{- /* 카테고리 필터는 항상 표시 */}}
     {{ partial "category-filter.html" (dict "context" . "currentCategory" $categoryName "blogSection" $coursesSection "section" "courses") }}
   
