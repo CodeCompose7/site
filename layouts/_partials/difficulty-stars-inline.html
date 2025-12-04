@@ -4,20 +4,15 @@
 
 {{- if gt $level 0 }}
   {{- $max := 5 -}}
-  {{- $stars := slice -}}
-
-  {{- range seq 1 $max }}
-    {{- if le . $level }}
-      {{- $stars = $stars | append "★" -}}
-    {{- else }}
-      {{- $stars = $stars | append "☆" -}}
-    {{- end }}
-  {{- end }}
-
-  {{- $starText := delimit $stars "" -}}
 
   <span class="ml-1">
-    {{ $starText }}
+    {{- range seq 1 $max }}
+      {{- if le . $level }}
+        <span class="difficulty-star-full">★</span>
+      {{- else }}
+        <span class="difficulty-star-empty">☆</span>
+      {{- end }}
+    {{- end }}
   </span>
 {{- end }}
 

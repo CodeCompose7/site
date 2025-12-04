@@ -426,3 +426,8 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
 .dark [data-toc-toggle]:hover {
   background-color: rgba(var(--color-neutral-600), var(--tw-bg-opacity, 1)) !important;
 }
+
+/* 난이도 별: 비어있는 별은 조금 더 옅게 표시 */
+.difficulty-star-empty {
+  opacity: 0.35;
+}
