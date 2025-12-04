@@ -5,6 +5,9 @@ categories: ["dev-workflow"]
 tags: ["MLOps", "Machine Learning", "MLflow", "Kubernetes", "모델 관리"]
 description: "ML 프로젝트의 실전 운영을 위한 MLOps 개념과 파이프라인 구축"
 summary: "데이터 처리부터 모델 학습, 배포, 모니터링까지 ML 시스템의 전체 생명주기를 자동화하고 관리하는 MLOps 실전 과정입니다."
+feature: "ml_ops_main*"
+featureAlt: "MLOps 강의 대표 이미지"
+coverCaption: "MLOps: 머신러닝 시스템 운영과 자동화"
 ---
 
 ## 강의 개요

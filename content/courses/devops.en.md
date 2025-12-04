@@ -1,7 +1,7 @@
 ---
 title: "DevOps in Practice: CI/CD and Infrastructure Automation"
 date: 2025-12-02
-categories: ["programming-general"]
+categories: ["dev-workflow"]
 tags: ["DevOps", "CI/CD", "Docker", "Kubernetes", "Automation"]
 description: "A practical DevOps course focusing on CI/CD pipelines, containers, and infrastructure automation"
 summary: "Learn the core concepts of DevOps through hands-on examples, from building CI/CD pipelines to deploying applications with Docker and Kubernetes."
