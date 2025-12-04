@@ -13,7 +13,7 @@ cascade:
 We offer courses on deep learning, programming, and engineering culture & workflows.
 {{< /lead >}}
 
-- Deep learning: latest models and applications in areas such as computer vision (image processing) and large language models (LLMs)
+- Deep learning: latest models and applications in areas such as computer vision and LLMs
 - Programming: core programming courses focused on languages such as Python, Java, and C
 - Mobile development: mobile app development with Swift, Kotlin, and Dart (Flutter)
 - Engineering culture & workflows: courses on collaboration, deployment, and operations workflows
