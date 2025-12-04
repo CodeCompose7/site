@@ -1,6 +1,6 @@
 ---
 title: "Courses"
-description: "Courses and tech content on deep learning, programming, engineering culture, and workflows"
+description: "Courses on deep learning, programming, engineering culture, and workflows"
 
 cascade:
   showDate: true
@@ -10,12 +10,12 @@ cascade:
 ---
 
 {{< lead >}}
-We offer courses and tech content on deep learning, programming, and engineering culture & workflows.
+We offer courses on deep learning, programming, and engineering culture & workflows.
 {{< /lead >}}
 
 - Deep learning: latest models and applications in areas such as computer vision (image processing) and large language models (LLMs)
 - Programming: core programming courses focused on languages such as Python, Java, and C
 - Mobile development: mobile app development with Swift, Kotlin, and Dart (Flutter)
-- Engineering culture & workflows: collaboration, deployment, and operations workflows using Git, GitFlow, DevOps, and MLOps
+- Engineering culture & workflows: courses on collaboration, deployment, and operations workflows
 
 Courses are offered as in-person or online classes (using Zoom and other platforms).
