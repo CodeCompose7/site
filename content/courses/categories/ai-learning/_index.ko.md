@@ -1,5 +1,5 @@
 ---
-title: "AI 학습"
+title: "딥러닝 AI"
 pagerSize: 4
 
 cascade:
@@ -10,7 +10,6 @@ cascade:
 ---
 
 {{< lead >}}
-AI 학습 카테고리입니다.
+딥러닝 이미지 처리·LLM 등 최신 모델과  
+활용 사례를 다루는 딥러닝 AI 강의를 제공합니다.
 {{< /lead >}}
-
-

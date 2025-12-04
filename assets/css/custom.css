@@ -130,6 +130,22 @@ section.prose,
   font-family: "MaruBuri", "Apple SD Gothic Neo", "Noto Sans KR", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+/* lead 문단의 위 여백을 기본 본문과 맞추기 (Congo 기본 1.2em → 0.75rem) */
+.prose :where([class~="lead"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0.75rem;
+}
+
+/* 본문 내 헤더(h1~h6)는 Pretendard 유지 */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
 .prose {
   font-size: 1.1rem;
 }
