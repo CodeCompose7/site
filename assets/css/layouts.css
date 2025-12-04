@@ -231,6 +231,11 @@ article.group.flex-row {
   margin-bottom: 0.25rem; /* mb-1: 최신 글에서만 간격 축소 */
 }
 
+/* lead 쇼트코드(letter-spacing 오버라이드) */
+.prose :where([class~="lead"]):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  letter-spacing: -0.05rem;
+}
+
 /* Hover 배경색 */
 .hover\:bg-neutral-100:hover {
   background-color: rgba(var(--color-neutral-100), 1);

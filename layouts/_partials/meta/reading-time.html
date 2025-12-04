@@ -1,0 +1,16 @@
+{{- /* courses 섹션에서는 '줄 수'를, 그 외에는 기본 읽기 시간 표시 */ -}}
+{{- if eq .Section "courses" }}
+  {{- $lines := len (split .Plain "\n") -}}
+  {{- if gt $lines 0 }}
+    <span title="{{ i18n "course_line_count_title" }}">
+      {{ i18n "course_line_count" (dict "Count" $lines) | markdownify | emojify }}
+    </span>
+  {{- end }}
+{{- else }}
+  <span title="{{ i18n "article.reading_time_title" }}">
+    {{- i18n "article.reading_time" .ReadingTime | markdownify | emojify -}}
+  </span>
+{{- end }}
+{{- /* Trim EOF */ -}}
+
+

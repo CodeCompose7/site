@@ -1,5 +1,5 @@
 ---
-title: "프로그래밍 일반"
+title: "모바일 프로그래밍"
 pagerSize: 4
 
 cascade:
@@ -10,5 +10,5 @@ cascade:
 ---
 
 {{< lead >}}
-프로그래밍 일반 카테고리입니다.
+Swift·Kotlin·Dart(Flutter) 등으로 모바일 앱을 만드는 강의를 제공합니다.
 {{< /lead >}}

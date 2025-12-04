@@ -5,6 +5,9 @@ categories: ["dev-workflow"]
 tags: ["MLOps", "Machine Learning", "Pipelines", "Model Deployment", "Monitoring"]
 description: "A practical MLOps course covering automated ML pipelines, model deployment, and monitoring"
 summary: "Learn how to build end-to-end MLOps pipelines, manage model versions, and operate ML systems in production with deployment and monitoring strategies."
+feature: "ml_ops_main*"
+featureAlt: "MLOps course main image"
+coverCaption: "MLOps: Production Machine Learning Pipelines"
 ---
 
 ## Course Overview

@@ -115,6 +115,12 @@
 /* 기본 폰트: 고딕 계열 (메뉴, 헤더, 시스템 요소) */
 body {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  /* 한국어·영어 혼용 시 줄바꿈 정책
+     - 기본적으로 단어/구 단위로 줄바꿈을 시도
+     - 너무 긴 단어/연속 문자열은 필요한 경우에만 강제 개행 */
+  word-break: keep-all;
+  overflow-wrap: break-word; /* 구 브라우저 호환용 */
+  word-wrap: break-word;
 }
 
 /* 본문 폰트 변경 (메인 페이지 제외) */
@@ -122,6 +128,36 @@ body {
 section.prose,
 .prose:not(article.prose) {
   font-family: "MaruBuri", "Apple SD Gothic Neo", "Noto Sans KR", serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* lead 문단의 위 여백을 기본 본문과 맞추기 (Congo 기본 1.2em → 0.75rem) */
+.prose :where([class~="lead"]):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  margin-top: 0.75rem;
+}
+
+/* 본문 내 헤더(h1~h6)는 Pretendard 유지 */
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+/* 단일 글 대표 이미지(picture.mb-6.rounded-md) 하단 여백 축소 (mb-6 → 약 mb-4 수준) */
+.prose > picture.mb-6.rounded-md {
+  margin-bottom: 1rem; /* Tailwind mb-4와 동일 (16px) */
+}
+
+/* 단일 글 이미지 캡션(figcaption) 스타일 조정 */
+.prose :where(figcaption):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.7em;
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)); /* 기본 caption 색보다 조금 더 옅게 */
+  margin-top: -1rem; /* figcaption에만 적용되는 위 여백 조정 */
 }
 
 .prose {
@@ -186,6 +222,20 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   padding-left: 1.5rem; /* 24px */
 }
 
+.mt-3 {
+  margin-top: 0.75rem; /* 12px */
+}
+
+/* Font weight utility */
+.font-light {
+  font-weight: 300;
+}
+
+/* Gap utility (flex/grid) */
+.gap-2 {
+  gap: 0.5rem; /* 8px */
+}
+
 /* ========================= */
 /* 단일 글 페이지 TOC 레이아웃 조정
    - 1024px~1279px 구간에서는 모바일처럼 1컬럼 유지
@@ -220,11 +270,21 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   }
 }
 
-/* 단일 글 TOC 컬럼이 너무 쪼그라들지 않도록 최소 너비 보장 (데스크톱) */
+/* 단일 글 TOC 컬럼 레이아웃 (데스크톱) */
 @media (min-width: 1024px) {
   .single-toc-col {
-    flex: 0 0 18rem;   /* 기본 너비 16rem, shrink 방지 */
+    flex: 0 0 18rem;   /* 기본 너비 18rem, shrink 방지 */
     min-width: 18rem;
+  }
+
+  /* 목차 접힘 상태에서는 컬럼 폭을 버튼 크기 정도로만 유지 */
+  .single-toc-col.toc-collapsed {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+
+  .single-toc-col.toc-collapsed [data-toc-panel] {
+    display: none;
   }
 }
 
@@ -245,4 +305,129 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
     width: 100% !important;      /* lg:w-2/5 무효화 */
     flex-shrink: 0 !important;
   }
+}
+
+/* 1280px 미만에서는 세로형 TOC 컨테이너의 pe-5 패딩 제거 */
+@media (max-width: 1279.98px) {
+  .toc.pe-5 {
+    padding-right: 0 !important;
+    padding-inline-end: 0 !important;
+  }
+}
+
+/* 1280px 미만에서는 헤더 안의 feature 이미지 래퍼 .prose 에 max-width 적용하지 않기 */
+@media (max-width: 1279.98px) {
+  article > header > div.prose {
+    max-width: none !important;
+  }
+}
+
+/* 1280px 미만에서는 목차 토글 버튼 숨기기 (데스크톱에서만 보이도록) */
+@media (max-width: 1279.98px) {
+  [data-toc-toggle] {
+    display: none !important;
+  }
+}
+
+/* ========================= */
+/* 단일 강의 난이도/시간 리스트 - 불릿 제거 + 레이블/값 색상 구분 */
+/* ========================= */
+
+.single-difficulty-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.single-difficulty-list > li {
+  padding-left: 0;
+}
+
+.course-meta-label {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1));
+  margin-right: 0.35rem;
+}
+
+.dark .course-meta-label {
+  color: rgba(var(--color-neutral-500), var(--tw-text-opacity, 1));
+}
+
+.course-meta-value {
+  color: rgba(var(--color-neutral-700), var(--tw-text-opacity, 1));
+}
+
+.dark .course-meta-value {
+  color: rgba(var(--color-neutral-50), var(--tw-text-opacity, 1));
+}
+
+.course-meta-separator {
+  margin: 0.35rem 0 0.45rem 0;
+}
+
+.course-meta-hr {
+  border: 0;
+  border-top: 1px solid rgba(var(--color-neutral-200), 1);
+  margin: 0;
+  width: 256px; /* 기본: 고정 길이 (데스크톱/태블릿) */
+}
+
+.dark .course-meta-hr {
+  border-top-color: rgba(var(--color-neutral-700), 1);
+}
+
+/* 모바일(768px 미만)에서는 구분선을 전체 폭으로 표시 */
+@media (max-width: 767.98px) {
+  .course-meta-hr {
+    width: 100%;
+  }
+}
+
+/* 스크린리더 전용 텍스트 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 데스크톱에서 목차 토글 버튼을 세로형 캡슐 + 삼각형 아이콘 형태로 표시 */
+@media (min-width: 1280px) {
+  [data-toc-toggle] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;   /* 약 44px */
+    height: 4rem;
+    padding: 0;
+    /* 왼쪽은 살짝만, 오른쪽은 완만하게 둥글게 */
+    border-radius: 0.3rem 1rem 1rem 0.3rem;
+    background-color: transparent;
+  }
+
+  [data-toc-icon] {
+    font-size: 0.8rem;
+    line-height: 1;
+    display: inline-block;
+  }
+
+  /* 접힌 상태에서는 아이콘 방향만 바꿈 (JS에서 data-toc-state를 토대로 텍스트도 바뀜) */
+  [data-toc-toggle][data-toc-state="hidden"] [data-toc-icon] {
+    transform: scaleX(-1); /* ▶ 을 좌우 반전해서 ◀ 느낌 */
+  }
+}
+
+/* 다크 모드에서 목차 토글 버튼 hover 효과를 더 미묘하게 조정 */
+.dark [data-toc-toggle]:hover {
+  background-color: rgba(var(--color-neutral-600), var(--tw-bg-opacity, 1)) !important;
+}
+
+/* 난이도 별: 비어있는 별은 조금 더 옅게 표시 */
+.difficulty-star-empty {
+  opacity: 0.35;
 }

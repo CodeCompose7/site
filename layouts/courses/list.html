@@ -20,7 +20,7 @@
         </div>
       </div>
     {{ end }}
-    <div class="min-h-0 min-w-0 max-w-prose grow">
+    <div class="min-h-0 min-w-0 grow">
       {{ .Content | emojify }}
     </div>
   </section>
@@ -44,7 +44,7 @@
   {{- end }}
   {{- $hasPages := gt (len $sortedPages) 0 }}
   {{ if $hasPages }}
-    <section class="mt-8">
+    <section>
       {{- /* 카테고리 필터 추가 */}}
       {{- $currentCategory := "" }}
       {{- if eq .Kind "term" }}

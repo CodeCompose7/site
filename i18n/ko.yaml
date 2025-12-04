@@ -1,0 +1,46 @@
+category_filter_all:
+  other: "전체 보기"
+
+course_level_label:
+  other: "강의 대상"
+
+difficulty_level_1:
+  other: "초급"
+difficulty_level_2:
+  other: "초중급"
+difficulty_level_3:
+  other: "중급"
+difficulty_level_4:
+  other: "중상급"
+difficulty_level_5:
+  other: "상급"
+
+course_duration_label:
+  other: "강의 시간"
+
+duration_hours:
+  one: "{{ .Count }}시간"
+  other: "{{ .Count }}시간"
+
+duration_minutes:
+  one: "{{ .Count }}분"
+  other: "{{ .Count }}분"
+
+course_uploaded_at_label:
+  other: "문서 생성"
+
+course_updated_at_label:
+  other: "최종 편집"
+
+course_version_label:
+  other: "버전"
+
+course_version_value:
+  other: "{{ .Version }}"
+
+course_line_count_title:
+  other: "문서 줄 수"
+
+course_line_count:
+  one: "{{ .Count }}줄"
+  other: "{{ .Count }}줄"

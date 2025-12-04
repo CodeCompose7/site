@@ -1,7 +1,7 @@
 ---
 title: "Git 및 Git Flow 실전 가이드"
 date: 2025-12-02
-categories: ["programming-general"]
+categories: ["dev-workflow"]
 tags: ["Git", "Git Flow", "버전관리", "협업", "브랜치 전략"]
 description: "개인 프로젝트부터 팀 협업까지, Git과 Git Flow를 활용한 실전 버전 관리 워크플로를 다루는 강의"
 summary: "Git의 기본 개념부터 브랜치 전략, Git Flow를 활용한 협업 워크플로까지 실무에서 바로 사용할 수 있는 버전 관리 방법을 학습합니다."

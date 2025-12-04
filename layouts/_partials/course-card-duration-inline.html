@@ -1,0 +1,38 @@
+{{- /* 강의 카드용 인라인 강의 시간 표시 (★★★☆☆ 옆에 보라색 배지로, 예: 15h 30m) */ -}}
+{{- $context := . -}}
+{{- $raw := $context.Params.hours | default "" -}}
+
+{{- if $raw }}
+  {{- $parts := split $raw ":" -}}
+  {{- $hours := 0 -}}
+  {{- $minutes := 0 -}}
+
+  {{- if ge (len $parts) 1 }}
+    {{- $hours = int (index $parts 0) -}}
+  {{- end }}
+  {{- if ge (len $parts) 2 }}
+    {{- $minutes = int (index $parts 1) -}}
+  {{- end }}
+
+  {{- $hasHours := gt $hours 0 -}}
+  {{- $hasMinutes := gt $minutes 0 -}}
+
+  {{- if or $hasHours $hasMinutes }}
+    {{- /* 15h 30m 스타일로 포맷 */ -}}
+    {{- $duration := "" -}}
+    {{- if $hasHours }}
+      {{- $duration = printf "%dh" $hours -}}
+    {{- end }}
+    {{- if $hasMinutes }}
+      {{- if $hasHours }}
+        {{- $duration = printf "%s %dm" $duration $minutes -}}
+      {{- else }}
+        {{- $duration = printf "%dm" $minutes -}}
+      {{- end }}
+    {{- end }}
+
+    {{ partial "badge.html" $duration }}
+  {{- end }}
+{{- end }}
+
+
