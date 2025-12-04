@@ -146,6 +146,20 @@ section.prose,
     "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
+/* 단일 글 대표 이미지(picture.mb-6.rounded-md) 하단 여백 축소 (mb-6 → 약 mb-4 수준) */
+.prose > picture.mb-6.rounded-md {
+  margin-bottom: 1rem; /* Tailwind mb-4와 동일 (16px) */
+}
+
+/* 단일 글 이미지 캡션(figcaption) 스타일 조정 */
+.prose :where(figcaption):not(:where([class~="not-prose"],[class~="not-prose"] *)) {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size: 0.7em;
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1)); /* 기본 caption 색보다 조금 더 옅게 */
+  margin-top: -1rem; /* figcaption에만 적용되는 위 여백 조정 */
+}
+
 .prose {
   font-size: 1.1rem;
 }
@@ -266,5 +280,20 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
     margin-bottom: 2rem !important; /* mb-8 비슷하게 유지 */
     width: 100% !important;      /* lg:w-2/5 무효화 */
     flex-shrink: 0 !important;
+  }
+}
+
+/* 1280px 미만에서는 세로형 TOC 컨테이너의 pe-5 패딩 제거 */
+@media (max-width: 1279.98px) {
+  .toc.pe-5 {
+    padding-right: 0 !important;
+    padding-inline-end: 0 !important;
+  }
+}
+
+/* 1280px 미만에서는 헤더 안의 feature 이미지 래퍼 .prose 에 max-width 적용하지 않기 */
+@media (max-width: 1279.98px) {
+  article > header > div.prose {
+    max-width: none !important;
   }
 }
