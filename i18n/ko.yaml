@@ -2,7 +2,7 @@ category_filter_all:
   other: "전체 보기"
 
 course_level_label:
-  other: "강의 대상 : {{ .Level }}"
+  other: "강의 대상"
 
 difficulty_level_1:
   other: "초급"
@@ -16,7 +16,7 @@ difficulty_level_5:
   other: "상급"
 
 course_duration_label:
-  other: "강의 시간 : {{ .Duration }}"
+  other: "강의 시간"
 
 duration_hours:
   one: "{{ .Count }}시간"

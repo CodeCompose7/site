@@ -325,6 +325,37 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   }
 }
 
+/* ========================= */
+/* 단일 강의 난이도/시간 리스트 - 불릿 제거 + 레이블/값 색상 구분 */
+/* ========================= */
+
+.single-difficulty-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.single-difficulty-list > li {
+  padding-left: 0;
+}
+
+.course-meta-label {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1));
+  margin-right: 0.35rem;
+}
+
+.dark .course-meta-label {
+  color: rgba(var(--color-neutral-500), var(--tw-text-opacity, 1));
+}
+
+.course-meta-value {
+  color: rgba(var(--color-neutral-700), var(--tw-text-opacity, 1));
+}
+
+.dark .course-meta-value {
+  color: rgba(var(--color-neutral-50), var(--tw-text-opacity, 1));
+}
+
 /* 스크린리더 전용 텍스트 */
 .sr-only {
   position: absolute;

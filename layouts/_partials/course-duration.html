@@ -1,4 +1,5 @@
-{{- /* 강의 시간 표시: front matter의 hours("H:MM" 형식)을 읽어 i18n으로 렌더링 */ -}}
+{{- /* 강의 시간 표시: front matter의 hours("H:MM" 형식)을 읽어
+      레이블(옅은 색) + 값(진한 색)으로 분리 렌더링 */ -}}
 {{- $context := . -}}
 {{- $raw := $context.Params.hours | default "" -}}
 
@@ -32,7 +33,12 @@
     {{- end }}
 
     <li class="leading-snug">
-      {{ i18n "course_duration_label" (dict "Duration" $duration "Hours" $hours "Minutes" $minutes) }}
+      <span class="course-meta-label">
+        {{ i18n "course_duration_label" (dict "Hours" $hours "Minutes" $minutes) }}
+      </span>
+      <span class="course-meta-value">
+        {{ $duration }}
+      </span>
     </li>
   {{- end }}
 {{- end }}

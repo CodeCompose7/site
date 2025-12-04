@@ -2,7 +2,7 @@ category_filter_all:
   other: "All"
 
 course_level_label:
-  other: "Audience: {{ .Level }}"
+  other: "Audience"
 
 difficulty_level_1:
   other: "Beginner"
@@ -16,7 +16,7 @@ difficulty_level_5:
   other: "Advanced"
 
 course_duration_label:
-  other: "Duration: {{ .Duration }}"
+  other: "Duration"
 
 duration_hours:
   one: "{{ .Count }} hour"

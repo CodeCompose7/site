@@ -1,4 +1,5 @@
-{{- /* 난이도 텍스트 표시: front matter의 level(1~5)을 읽어 i18n 레이블 + 별(★★☆☆☆)까지 한 줄로 렌더링 (목록 아이템) */ -}}
+{{- /* 난이도 텍스트 표시: front matter의 level(1~5)을 읽어
+      레이블(옅은 색) + 값/별(진한 색)으로 분리 렌더링 */ -}}
 {{- $context := . -}}
 {{- $level := $context.Params.level | default 0 -}}
 
@@ -8,8 +9,13 @@
   {{- $label := i18n $key -}}
   {{- if $label }}
     <li class="leading-snug">
-      {{ i18n "course_level_label" (dict "Level" $label "LevelRaw" $level) }}
-      {{ partial "difficulty-stars-inline.html" . }}
+      <span class="course-meta-label">
+        {{ i18n "course_level_label" (dict "LevelRaw" $level) }}
+      </span>
+      <span class="course-meta-value">
+        {{ $label }}
+        {{ partial "difficulty-stars-inline.html" . }}
+      </span>
     </li>
   {{- end }}
 {{- end }}
