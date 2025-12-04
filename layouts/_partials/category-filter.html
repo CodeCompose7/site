@@ -90,7 +90,7 @@
       href="{{ $blogHref }}"
       class="category-filter-btn {{ if eq $currentCategory "" }}category-filter-btn-active{{ else }}category-filter-btn-inactive{{ end }}"
     >
-      전체 보기
+      {{ i18n "category_filter_all" }}
       {{- if $isLocal }}
         <span class="category-count">({{ $totalCount }} - {{ $totalCountWithDrafts }})</span>
       {{- else }}
