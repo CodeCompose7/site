@@ -1,0 +1,40 @@
+{{- /* 강의 시간 표시: front matter의 hours("H:MM" 형식)을 읽어 i18n으로 렌더링 */ -}}
+{{- $context := . -}}
+{{- $raw := $context.Params.hours | default "" -}}
+
+{{- if $raw }}
+  {{- $parts := split $raw ":" -}}
+  {{- $hours := 0 -}}
+  {{- $minutes := 0 -}}
+
+  {{- if ge (len $parts) 1 }}
+    {{- $hours = int (index $parts 0) -}}
+  {{- end }}
+  {{- if ge (len $parts) 2 }}
+    {{- $minutes = int (index $parts 1) -}}
+  {{- end }}
+
+  {{- $hasHours := gt $hours 0 -}}
+  {{- $hasMinutes := gt $minutes 0 -}}
+
+  {{- if or $hasHours $hasMinutes }}
+    {{- $duration := "" -}}
+    {{- if $hasHours }}
+      {{- $duration = i18n "duration_hours" (dict "Count" $hours) -}}
+    {{- end }}
+    {{- if $hasMinutes }}
+      {{- $minutesText := i18n "duration_minutes" (dict "Count" $minutes) -}}
+      {{- if $hasHours }}
+        {{- $duration = printf "%s %s" $duration $minutesText -}}
+      {{- else }}
+        {{- $duration = $minutesText -}}
+      {{- end }}
+    {{- end }}
+
+    <li class="leading-snug">
+      {{ i18n "course_duration_label" (dict "Duration" $duration "Hours" $hours "Minutes" $minutes) }}
+    </li>
+  {{- end }}
+{{- end }}
+
+

@@ -222,6 +222,16 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   padding-left: 1.5rem; /* 24px */
 }
 
+/* Font weight utility */
+.font-light {
+  font-weight: 300;
+}
+
+/* Gap utility (flex/grid) */
+.gap-2 {
+  gap: 0.5rem; /* 8px */
+}
+
 /* ========================= */
 /* 단일 글 페이지 TOC 레이아웃 조정
    - 1024px~1279px 구간에서는 모바일처럼 1컬럼 유지

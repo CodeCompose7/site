@@ -14,3 +14,14 @@ difficulty_level_4:
   other: "중상급"
 difficulty_level_5:
   other: "상급"
+
+course_duration_label:
+  other: "강의 시간 : {{ .Duration }}"
+
+duration_hours:
+  one: "{{ .Count }}시간"
+  other: "{{ .Count }}시간"
+
+duration_minutes:
+  one: "{{ .Count }}분"
+  other: "{{ .Count }}분"

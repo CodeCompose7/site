@@ -53,9 +53,11 @@
             <div class="single-article-meta">
               {{ partial "article-meta.html" (dict "context" . "scope" "single") }}
             </div>
-            <div class="single-difficulty flex items-center gap-1">
-              {{ partial "difficulty-stars.html" . }}
-              {{ partial "difficulty-level.html" . }}
+            <div class="single-difficulty mt-3">
+              <ul class="ps-5 space-y-0.5 text-base font-light text-neutral-600 dark:text-neutral-300" style="list-style-type: disc;">
+                {{ partial "difficulty-level.html" . }}
+                {{ partial "course-duration.html" . }}
+              </ul>
             </div>
           </div>
         </div>

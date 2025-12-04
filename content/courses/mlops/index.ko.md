@@ -9,6 +9,7 @@ feature: "ml_ops_main*"
 featureAlt: "MLOps 강의 대표 이미지"
 coverCaption: "MLOps: 머신러닝 시스템 운영과 자동화"
 level: 2
+hours: "3:00"
 ---
 
 ## 강의 개요

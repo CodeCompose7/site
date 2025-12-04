@@ -1,0 +1,24 @@
+{{- /* 난이도 별 텍스트: front matter의 level(1~5)을 읽어 ★★☆☆☆ 형태로 반환 (테두리 없음, 인라인용) */ -}}
+{{- $context := . -}}
+{{- $level := $context.Params.level | default 0 -}}
+
+{{- if gt $level 0 }}
+  {{- $max := 5 -}}
+  {{- $stars := slice -}}
+
+  {{- range seq 1 $max }}
+    {{- if le . $level }}
+      {{- $stars = $stars | append "★" -}}
+    {{- else }}
+      {{- $stars = $stars | append "☆" -}}
+    {{- end }}
+  {{- end }}
+
+  {{- $starText := delimit $stars "" -}}
+
+  <span class="ml-1">
+    {{ $starText }}
+  </span>
+{{- end }}
+
+

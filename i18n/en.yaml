@@ -14,3 +14,14 @@ difficulty_level_4:
   other: "Upper-intermediate"
 difficulty_level_5:
   other: "Advanced"
+
+course_duration_label:
+  other: "Duration: {{ .Duration }}"
+
+duration_hours:
+  one: "{{ .Count }} hour"
+  other: "{{ .Count }} hours"
+
+duration_minutes:
+  one: "{{ .Count }} min"
+  other: "{{ .Count }} mins"
