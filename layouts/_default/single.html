@@ -140,8 +140,30 @@
           var tocCol = document.querySelector('[data-toc-col]');
           if (!toggleBtn || !tocCol) return;
 
-          // 목차 접힘 상태를 스크립트 변수로 유지 (데스크톱에서만 적용)
-          var tocCollapsed = false;
+          // 세션 스토리지 키 (모든 문서에서 공유)
+          var STORAGE_KEY = 'toc-collapsed';
+
+          // 세션 스토리지에서 초기 상태 읽기 (기본값: false)
+          function getTocState() {
+            try {
+              var stored = sessionStorage.getItem(STORAGE_KEY);
+              return stored === 'true';
+            } catch (e) {
+              return false;
+            }
+          }
+
+          // 세션 스토리지에 상태 저장
+          function saveTocState(collapsed) {
+            try {
+              sessionStorage.setItem(STORAGE_KEY, collapsed ? 'true' : 'false');
+            } catch (e) {
+              // 스토리지 사용 불가 시 무시
+            }
+          }
+
+          // 목차 접힘 상태를 세션 스토리지에서 읽어옴
+          var tocCollapsed = getTocState();
 
           function applyState() {
             if (window.innerWidth >= 1280) {
@@ -175,6 +197,7 @@
               return; // 모바일/태블릿에서는 기존 세로형 TOC 동작 유지
             }
             tocCollapsed = !tocCollapsed;
+            saveTocState(tocCollapsed); // 세션 스토리지에 저장
             applyState();
             updateLabel();
           }
