@@ -1,5 +1,35 @@
-{{- /* 레이아웃/카드 전용 CSS 번들 */ -}}
+{{- /* 카드 전용 CSS 번들 */ -}}
 {{- $algorithm := .Site.Params.fingerprintAlgorithm | default "sha256" -}}
+{{- $commonCardCSS := resources.Get "css/_partials/common-card.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $commonCardCSS.Permalink }}"
+  integrity="{{ $commonCardCSS.Data.Integrity }}"
+/>
+{{- $articleCardCSS := resources.Get "css/_partials/article-card.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $articleCardCSS.Permalink }}"
+  integrity="{{ $articleCardCSS.Data.Integrity }}"
+/>
+{{- $courseCardCSS := resources.Get "css/_partials/course-card.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $courseCardCSS.Permalink }}"
+  integrity="{{ $courseCardCSS.Data.Integrity }}"
+/>
+{{- $tagCardCSS := resources.Get "css/_partials/tag-card.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $tagCardCSS.Permalink }}"
+  integrity="{{ $tagCardCSS.Data.Integrity }}"
+/>
+
+{{- /* 레이아웃 전용 CSS 번들 */ -}}
 {{- $layoutsCSS := resources.Get "css/layouts.css" | resources.Minify | resources.Fingerprint $algorithm -}}
 <link
   type="text/css"

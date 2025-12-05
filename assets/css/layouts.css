@@ -31,12 +31,7 @@
   overflow: hidden;
 }
 
-/* Tag card에서도 강의 난이도/시간 메타 행을 한 줄로 타이트하게 정렬 */
-.tag-card .course-card-meta-row {
-  display: inline-flex;
-  align-items: center;
-  line-height: 1;
-}
+/* Tag card 관련 스타일은 assets/css/tag-card.css로 이동됨 */
 
 .line-clamp-3 {
   display: -webkit-box;
@@ -46,18 +41,7 @@
   overflow: hidden;
 }
 
-/* Hover 효과 (태블릿 구간 1024~1279px에서만 카드 살짝 떠오르게) */
-@media (min-width: 1024px) {
-  .hover\:-translate-y-2:hover {
-    transform: translateY(-0.5rem);
-  }
-}
-
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
-}
+/* 카드 hover/transition 효과는 assets/css/article-card.css로 이동됨 */
 
 /* Border radius 유틸리티 */
 .rounded-xl {
@@ -77,184 +61,14 @@
   margin-bottom: 0.25rem;
 }
 
-/* 제목: 상단 정렬 (기본 카드 용도)
-   - 줄 수 제한/높이 고정은 데스크톱(min-width: 1280px)에서만 적용 */
-.article-title {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* 상단 정렬 */
-}
-
-.article-title-text {
-  display: block;
-  overflow: hidden; /* 너무 긴 단어만 잘림 처리 */
-}
-
-/* 태그 영역 1줄 제한 */
-.article-tags-container {
-  max-height: 2.25rem; /* 1줄 높이 (태그 높이 + gap 고려) */
-  position: relative;
-  overflow: hidden;
-  pointer-events: none; /* 배경 영역 클릭은 카드 전체 링크로 전달 */
-}
-
-.article-tag {
-  display: inline-block;
-  pointer-events: auto; /* 태그 자체는 클릭 가능 */
-}
-
-.article-tag.hidden {
-  display: none;
-}
-
-.article-tag-more {
-  display: inline-block;
-  cursor: default;
-}
-
-/* 카드 레이아웃 (기본 카드 용도)
-   - 높이는 JS에서 기기별 기준에 맞춰 min-height로 통일
-   - CSS에서는 레이아웃과 오버플로우만 담당 */
-article.group {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden; /* 모서리 라운딩 유지 */
-}
-
-/* 강의 카드(course-card)는 높이를 고정하지 않고 내용에 맞게 확장 */
-article.course-card {
-  height: auto;
-  overflow: hidden; /* 모서리 라운딩 유지 위해 숨김만 유지 */
-}
-
-/* Course card는 가로 배치 유지 */
-article.group.flex-row {
-  flex-direction: row !important;
-  height: auto;
-  min-height: 12rem;
-}
-
-.article-card-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0; /* flex-1과 함께 사용할 때 필요 */
-  overflow: hidden;
-}
-
-/* 태그 skeleton */
-.article-tags-wrapper {
-  position: relative;
-  min-height: 2.25rem; /* 1줄 높이 */
-}
-
-.article-tags-skeleton {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  align-items: normal;
-  z-index: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.article-tags-skeleton.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.skeleton-tag {
-  height: 1.6rem;
-  width: 4rem;
-  background-color: rgba(var(--color-neutral-100), 1);
-  background-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.3) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  border-radius: 0.375rem;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-}
-
-.dark .skeleton-tag {
-  background-color: rgba(var(--color-neutral-700), 1);
-  background-image: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-}
-
-.skeleton-tag-short {
-  width: 2.5rem;
-}
-
-@keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-.article-tags-container {
-  transition: opacity 0.3s ease-in-out;
-}
-
-.article-tags-container.visible {
-  opacity: 1 !important;
-}
-
-.article-summary {
-  display: block;
-  overflow: visible;
-  text-overflow: clip;
-  min-height: 0;
-  word-break: break-word; /* 긴 단어 줄바꿈 */
-  line-height: 1.45rem; /* text-base의 line-height */
-}
-
-/* line-clamp가 적용된 경우 확실히 작동하도록 */
-.article-summary[style*="-webkit-line-clamp"] {
-  display: -webkit-box !important;
-  -webkit-box-orient: vertical !important;
-  overflow: hidden !important;
-  flex: none !important; /* flex: 1과 충돌 방지 */
-}
-
-/* ========================= */
-/* 홈 최신 글(recent-articles) 전용 스타일 */
-/* ========================= */
-
-.recent-articles article.group:hover {
-  transform: none; /* 최신 글에서는 hover 시 위로 올라가지 않도록 고정 */
-}
-
-.recent-articles .article-title {
-  margin-bottom: 0.25rem; /* mb-1: 최신 글에서만 간격 축소 */
-}
+/* 카드 관련 스타일은 assets/css/article-card.css, course-card.css, tag-card.css로 분리됨 */
 
 /* lead 쇼트코드(letter-spacing 오버라이드) */
 .prose :where([class~="lead"]):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   letter-spacing: -0.05rem;
 }
 
-/* Hover 배경색 (데스크톱 이상에서만 적용) */
-@media (min-width: 1024px) {
-  .hover\:bg-neutral-100:hover {
-    background-color: rgba(var(--color-neutral-100), 1);
-  }
-
-  .dark .dark\:hover\:bg-neutral-700:hover {
-    background-color: rgba(var(--color-neutral-700), 1);
-  }
-}
+/* 카드 hover 효과는 assets/css/article-card.css로 이동됨 */
 
 /* Sidebar hero image height (mobile 우선) */
 .sidebar-hero-img-wrapper {
@@ -294,42 +108,7 @@ article.group.flex-row {
     max-height: none;
   }
 
-  /* 데스크톱에서는 카드 제목/요약 줄 수 및 높이 통일 */
-  .article-title {
-    min-height: 3.5rem; /* 제목 2줄 기준 높이 */
-  }
-
-  .article-title-text {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .article-summary {
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  /* 데스크톱에서의 홈 최신 글(최근 글) 제목/요약 줄 수 제한 */
-  .recent-articles .article-title {
-    min-height: 1.8rem; /* 제목 1줄 기준 */
-  }
-
-  .recent-articles .article-title-text {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-  }
-
-  .recent-articles .article-summary {
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-  }
+  /* 카드 제목/요약 관련 스타일은 assets/css/article-card.css로 이동됨 */
 }
 
 /* ========================= */
@@ -343,16 +122,7 @@ article.group.flex-row {
     grid-template-columns: minmax(0, 1fr) !important;
   }
 
-  /* 태블릿 구간에서는 일반 카드 제목을 1줄로 축소 */
-  .article-title-text {
-    -webkit-line-clamp: 1;
-    line-clamp: 1;
-  }
-
-  /* 제목 컨테이너 높이도 1줄 기준으로 줄이기 */
-  .article-title {
-    min-height: 1.9rem; /* recent-articles와 비슷한 1줄 높이 */
-  }
+  /* 카드 제목 태블릿 스타일은 assets/css/article-card.css로 이동됨 */
 }
 
 /* 카테고리 필터 버튼 스타일 */
@@ -433,115 +203,8 @@ article.group.flex-row {
   }
 }
 
-/* Course card 레이아웃 */
-.course-card-image {
-  width: 100%;
-  flex-shrink: 0;
-  min-height: 12rem;
-}
-
-.course-card-image img {
-  object-fit: cover;
-  object-position: center;
-}
-
-.course-card-content {
-  width: 100%;
-  flex: 1;
-}
-
-/* 데스크톱에서는 가로 배치 */
-@media (min-width: 640px) {
-  .course-card-image {
-    width: 35% !important;
-    min-height: 12rem;
-  }
-
-  .course-card-content {
-    width: 65% !important;
-    flex: 0 0 65%;
-  }
-}
-
-@media (max-width: 640px) {
-  .course-card-image {
-    height: 14rem;
-  }
-}
-
-/* Course card는 가로 배치 유지 (데스크톱) */
-@media (min-width: 640px) {
-  article.course-card {
-    flex-direction: row !important;
-    height: auto;
-    min-height: 17rem;
-  }
-}
-
-/* Course card 제목은 한 줄로 제한 (텍스트 줄만) */
-.course-card .article-title {
-  min-height: auto;
-}
-
-.course-card .course-card-title-text {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Tag card 제목은 한 줄로 제한 */
-.tag-card-title-text {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Tag card 제목 min-height 오버라이드 (데스크톱에서 3.5rem이 적용되는 것을 방지) */
-@media (min-width: 1280px) {
-  .tag-card .article-title {
-    min-height: auto;
-  }
-}
-
-/* Tag card 이미지: 모바일에서 높이 제한 및 세로 가운데 정렬 */
-.tag-card-image-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tag-card-image {
-  object-position: center;
-}
-
-@media (max-width: 767px) {
-  .tag-card-image-wrapper {
-    max-height: 14rem;
-  }
-
-  .tag-card-image {
-    max-height: 14rem;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    object-position: center;
-  }
-}
-
-/* Course card 별/시간 메타 행 정렬 */
-.course-card .course-card-meta-row {
-  display: inline-flex;
-  align-items: center;
-}
-
-/* 난이도 별과 제목 사이 간격 (minify로 공백이 제거되어도 유지) */
-.difficulty-stars-wrapper {
-  margin-right: 0.5rem;
-}
+/* Course card 관련 스타일은 assets/css/course-card.css로 이동됨 */
+/* Tag card 관련 스타일은 assets/css/tag-card.css로 이동됨 */
 
 /* Single article meta: taxonomy 태그 좌측 여백 제거 */
 .single-article-meta a.mx-1 {
