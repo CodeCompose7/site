@@ -50,3 +50,6 @@ content_type_course:
 
 content_type_blog:
   other: "Blog"
+
+tag_label:
+  other: "Tag"

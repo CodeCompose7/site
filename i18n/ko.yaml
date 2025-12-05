@@ -50,3 +50,6 @@ content_type_course:
 
 content_type_blog:
   other: "블로그"
+
+tag_label:
+  other: "태그"

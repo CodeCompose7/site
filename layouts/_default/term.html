@@ -4,7 +4,13 @@
     {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
       {{ partial "breadcrumbs.html" . }}
     {{ end }}
-    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+      {{- if eq .Data.Singular "tag" -}}
+        {{ i18n "tag_label" }}: {{ .Title }}
+      {{- else -}}
+        {{ .Title }}
+      {{- end -}}
+    </h1>
   </header>
   <section
     class="{{ if $toc -}}
