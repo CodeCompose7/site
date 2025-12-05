@@ -59,3 +59,12 @@ toc_show:
 
 toc_hide:
   other: "Hide table of contents"
+
+error_404_title:
+  other: "Page not found"
+
+error_404_message:
+  other: "The requested page does not exist."
+
+error_404_draft_message:
+  other: "This page is in draft status."
