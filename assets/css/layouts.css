@@ -530,4 +530,84 @@ article.group.flex-row {
   margin-left: 0 !important;
 }
 
+/* Taxonomy (태그 목록) 스타일 개선 */
+.taxonomy-terms-section {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .taxonomy-terms-section {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .taxonomy-terms-section {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .taxonomy-terms-section {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .taxonomy-terms-section {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.taxonomy-term-item {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.625rem;
+  padding: 0.75rem 1rem;
+  transition: all 0.2s ease;
+}
+
+.taxonomy-term-item:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+.dark .taxonomy-term-item {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .taxonomy-term-item:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.taxonomy-term-link {
+  color: rgb(38, 38, 38);
+  text-decoration: none;
+}
+
+.dark .taxonomy-term-link {
+  color: rgb(245, 245, 245);
+}
+
+.taxonomy-term-link:hover {
+  color: rgb(139, 92, 246);
+  text-decoration: underline;
+}
+
+.dark .taxonomy-term-link:hover {
+  color: rgb(196, 181, 253);
+}
+
+.taxonomy-term-count {
+  color: rgb(115, 115, 115);
+  font-weight: 500;
+}
+
+.dark .taxonomy-term-count {
+  color: rgb(163, 163, 163);
+}
+
 
