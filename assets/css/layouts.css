@@ -39,9 +39,11 @@
   overflow: hidden;
 }
 
-/* Hover 효과 */
-.hover\:-translate-y-2:hover {
-  transform: translateY(-0.5rem);
+/* Hover 효과 (태블릿 구간 1024~1279px에서만 카드 살짝 떠오르게) */
+@media (min-width: 1024px) {
+  .hover\:-translate-y-2:hover {
+    transform: translateY(-0.5rem);
+  }
 }
 
 .transition-all {
@@ -236,13 +238,15 @@ article.group.flex-row {
   letter-spacing: -0.05rem;
 }
 
-/* Hover 배경색 */
-.hover\:bg-neutral-100:hover {
-  background-color: rgba(var(--color-neutral-100), 1);
-}
+/* Hover 배경색 (데스크톱 이상에서만 적용) */
+@media (min-width: 1024px) {
+  .hover\:bg-neutral-100:hover {
+    background-color: rgba(var(--color-neutral-100), 1);
+  }
 
-.dark .dark\:hover\:bg-neutral-700:hover {
-  background-color: rgba(var(--color-neutral-700), 1);
+  .dark .dark\:hover\:bg-neutral-700:hover {
+    background-color: rgba(var(--color-neutral-700), 1);
+  }
 }
 
 /* Sidebar hero image height (mobile 우선) */
@@ -367,11 +371,13 @@ article.group.flex-row {
   font-weight: 600;
 }
 
-.category-filter-btn-active:hover {
-  border-color: rgba(var(--color-primary-600), 1);
-  background-color: rgba(var(--color-primary-600), 1);
-  box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.4);
-  transform: translateY(-1px);
+@media (min-width: 1024px) {
+  .category-filter-btn-active:hover {
+    border-color: rgba(var(--color-primary-600), 1);
+    background-color: rgba(var(--color-primary-600), 1);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.4);
+    transform: translateY(-1px);
+  }
 }
 
 .dark .category-filter-btn-active {
@@ -380,10 +386,12 @@ article.group.flex-row {
   box-shadow: 0 2px 8px rgba(var(--color-primary-500), 0.4);
 }
 
-.dark .category-filter-btn-active:hover {
-  border-color: rgba(var(--color-primary-400), 1);
-  background-color: rgba(var(--color-primary-400), 1);
-  box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.5);
+@media (min-width: 1024px) {
+  .dark .category-filter-btn-active:hover {
+    border-color: rgba(var(--color-primary-400), 1);
+    background-color: rgba(var(--color-primary-400), 1);
+    box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.5);
+  }
 }
 
 /* 선택되지 않은 카테고리 버튼 */
@@ -393,12 +401,14 @@ article.group.flex-row {
   color: rgba(var(--color-neutral-700), 1);
 }
 
-.category-filter-btn-inactive:hover {
-  border-color: rgba(var(--color-primary-300), 1);
-  background-color: rgba(var(--color-primary-50), 1);
-  color: rgba(var(--color-primary-700), 1);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(var(--color-neutral-200), 0.3);
+@media (min-width: 1024px) {
+  .category-filter-btn-inactive:hover {
+    border-color: rgba(var(--color-primary-300), 1);
+    background-color: rgba(var(--color-primary-50), 1);
+    color: rgba(var(--color-primary-700), 1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(var(--color-neutral-200), 0.3);
+  }
 }
 
 .dark .category-filter-btn-inactive {
@@ -407,11 +417,13 @@ article.group.flex-row {
   color: rgba(var(--color-neutral-300), 1);
 }
 
-.dark .category-filter-btn-inactive:hover {
-  border-color: rgba(var(--color-primary-600), 1);
-  background-color: rgba(var(--color-primary-900), 1);
-  color: rgba(var(--color-primary-400), 1);
-  box-shadow: 0 2px 4px rgba(var(--color-neutral-700), 0.3);
+@media (min-width: 1024px) {
+  .dark .category-filter-btn-inactive:hover {
+    border-color: rgba(var(--color-primary-600), 1);
+    background-color: rgba(var(--color-primary-900), 1);
+    color: rgba(var(--color-primary-400), 1);
+    box-shadow: 0 2px 4px rgba(var(--color-neutral-700), 0.3);
+  }
 }
 
 /* Course card 레이아웃 */
