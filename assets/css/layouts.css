@@ -563,24 +563,30 @@ article.group.flex-row {
 }
 
 .taxonomy-term-item {
+  display: block;
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 0.625rem;
   padding: 0.75rem 1rem;
   transition: all 0.2s ease;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-.taxonomy-term-item:hover {
-  border-color: rgba(0, 0, 0, 0.15);
-  background-color: rgba(0, 0, 0, 0.02);
+/* hover 효과는 768px 이상에서만 적용 (모바일 sticky 방지) */
+@media (min-width: 768px) {
+  .taxonomy-term-item:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .taxonomy-term-item:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.05);
+  }
 }
 
 .dark .taxonomy-term-item {
   border-color: rgba(255, 255, 255, 0.1);
-}
-
-.dark .taxonomy-term-item:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .taxonomy-term-link {
@@ -592,13 +598,15 @@ article.group.flex-row {
   color: rgb(245, 245, 245);
 }
 
-.taxonomy-term-link:hover {
-  color: rgb(139, 92, 246);
-  text-decoration: underline;
-}
+/* 링크 hover 효과는 768px 이상에서만 적용 */
+@media (min-width: 768px) {
+  .taxonomy-term-item:hover .taxonomy-term-link {
+    color: rgb(139, 92, 246);
+  }
 
-.dark .taxonomy-term-link:hover {
-  color: rgb(196, 181, 253);
+  .dark .taxonomy-term-item:hover .taxonomy-term-link {
+    color: rgb(196, 181, 253);
+  }
 }
 
 .taxonomy-term-count {

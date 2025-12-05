@@ -14,13 +14,14 @@
   {{ end }}
   <section class="taxonomy-terms-section grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
     {{ range .Data.Terms }}
-      <article class="taxonomy-term-item">
+      <a
+        href="{{ .Page.Permalink }}"
+        class="taxonomy-term-item"
+      >
         <h2 class="flex items-center">
-          <a
-            class="taxonomy-term-link text-xl font-medium decoration-primary-500 hover:underline hover:underline-offset-2"
-            href="{{ .Page.Permalink }}"
-            >{{ .Page.Title }}</a
-          >
+          <span class="taxonomy-term-link text-xl font-medium">
+            {{ .Page.Title }}
+          </span>
           {{ if $.Site.Params.taxonomy.showTermCount | default true }}
             <span class="px-2 text-base text-primary-500">&middot;</span>
             <span class="taxonomy-term-count text-base text-neutral-400">
@@ -28,7 +29,7 @@
             </span>
           {{ end }}
         </h2>
-      </article>
+      </a>
     {{ end }}
   </section>
 {{ end }}
