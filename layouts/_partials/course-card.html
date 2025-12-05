@@ -71,32 +71,36 @@
         {{- $level := $context.Params.level | default 0 -}}
         {{- $hours := $context.Params.hours | default "" -}}
         {{- if or (gt $level 0) (ne $hours "") }}
-          <span
-            class="inline-block align-middle"
-            style="vertical-align: middle; margin-bottom: 0.25rem; margin-left: -0.25rem;"
-          >
-            {{ partial "difficulty-stars.html" $context }}
-          </span>
-          <span
-            class="inline-block align-middle"
-            style="vertical-align: middle; margin-bottom: 0.25rem; margin-left: -0.5rem;"
-          >
-            {{ partial "course-card-duration-inline.html" $context }}
+          <span class="course-card-meta-row">
+            <span
+              class="inline-block align-middle"
+              style="vertical-align: middle; margin-left: -0.25rem;"
+            >
+              {{ partial "difficulty-stars.html" $context }}
+            </span>
+            <span
+              class="inline-block align-middle"
+              style="vertical-align: middle; margin-left: -0.5rem;"
+            >
+              {{ partial "course-card-duration-inline.html" $context }}
+            </span>
           </span>
         {{- end }}
 
-        {{ with $context.Params.externalUrl }}
-          <span class="text-neutral-900 dark:text-neutral-100" style="margin-left: 0.25rem;">{{ $context.Title | emojify }}</span>
-          <span
-            class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
-            title="{{ i18n "list.externalurl_title" }}"
-          >
-            <span class="rtl:hidden">&#8599;</span>
-            <span class="ltr:hidden">&#8598;</span>
-          </span>
-        {{ else }}
-          <span class="text-neutral-900 dark:text-neutral-100" style="margin-left: 0.25rem;">{{ $context.Title | emojify }}</span>
-        {{ end }}
+        <span class="course-card-title-text">
+          {{ with $context.Params.externalUrl }}
+            <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+            <span
+              class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
+              title="{{ i18n "list.externalurl_title" }}"
+            >
+              <span class="rtl:hidden">&#8599;</span>
+              <span class="ltr:hidden">&#8598;</span>
+            </span>
+          {{ else }}
+            <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+          {{ end }}
+        </span>
       </span>
     </h3>
 
