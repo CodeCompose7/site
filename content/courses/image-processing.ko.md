@@ -5,7 +5,7 @@ categories: ["ai-learning"]
 feature: "img/course/default_course2.jpg"
 tags: ["이미지 처리", "Computer Vision", "Python", "OpenCV", "딥러닝"]
 description: "AI 기반 이미지 처리 기법부터 실전 프로젝트까지 다루는 실전 강의"
-summary: "컴퓨터 비전과 딥러닝을 활용한 이미지 처리의 기초부터 고급 기법까지 실전 프로젝트를 통해 배웁니다. OpenCV, PIL, TensorFlow/PyTorch를 활용한 이미지 전처리, 객체 탐지, 이미지 분류 등 다양한 실습을 포함합니다."
+summary: "컴퓨터 비전과 딥러닝을 활용한 이미지 처리의 기초부터 고급 기법까지 실전 프로젝트를 통해 배웁니다. OpenCV, PIL"
 ---
 
 ## 강의 개요

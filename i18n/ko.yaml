@@ -44,3 +44,27 @@ course_line_count_title:
 course_line_count:
   one: "{{ .Count }}줄"
   other: "{{ .Count }}줄"
+
+content_type_course:
+  other: "강의"
+
+content_type_blog:
+  other: "블로그"
+
+tag_label:
+  other: "태그"
+
+toc_show:
+  other: "목차 보이기"
+
+toc_hide:
+  other: "목차 숨기기"
+
+error_404_title:
+  other: "페이지를 찾을 수 없습니다"
+
+error_404_message:
+  other: "요청하신 페이지가 존재하지 않습니다."
+
+error_404_draft_message:
+  other: "이 페이지는 draft 상태입니다."

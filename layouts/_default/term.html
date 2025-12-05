@@ -4,7 +4,13 @@
     {{ if .Params.showBreadcrumbs | default (.Site.Params.list.showBreadcrumbs | default false) }}
       {{ partial "breadcrumbs.html" . }}
     {{ end }}
-    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+    <h1 class="mt-0 text-4xl font-extrabold text-neutral-900 dark:text-neutral">
+      {{- if eq .Data.Singular "tag" -}}
+        {{ i18n "tag_label" }}: {{ .Title }}
+      {{- else -}}
+        {{ .Title }}
+      {{- end -}}
+    </h1>
   </header>
   <section
     class="{{ if $toc -}}
@@ -65,10 +71,14 @@
         {{- /* sidebar가 있는 경우 list-sidebar-wrapper 사용 */}}
         {{ partial "list-sidebar-wrapper.html" (dict "context" . "pages" $paginator.Pages) }}
       {{- else }}
-        {{- /* sidebar가 없는 경우 article-card 레이아웃 사용 */}}
+        {{- /* sidebar가 없는 경우: tag는 전용 tag-card, 나머지는 article-card 사용 */}}
         <div class="grid min-h-[1200px] grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {{ range $paginator.Pages }}
-            {{ partial "article-card.html" . }}
+            {{- if eq $.Data.Singular "tag" }}
+              {{ partial "tag-card.html" . }}
+            {{- else }}
+              {{ partial "article-card.html" . }}
+            {{- end }}
           {{ end }}
         </div>
       {{- end }}

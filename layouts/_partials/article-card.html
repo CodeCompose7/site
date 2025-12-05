@@ -5,29 +5,32 @@
   {{- $images := $context.Resources.ByType "image" }}
   {{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
   {{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
-  {{- with $feature }}
-    <div class="relative z-20 mb-4 overflow-hidden rounded-md">
-        <img
-          alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default "" }}"
-          {{ if eq .MediaType.SubType "svg" }}
-            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
-            src="{{ .Permalink }}"
-          {{ else }}
-            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
-            srcset="
-            {{- (.Fill "400x300 smart").Permalink }}
-            400w, {{- (.Fill "800x600 smart").Permalink }} 2x"
-            src="{{ (.Fill "400x300 smart").Permalink }}" width="400" height="300"
-          {{ end }}
-          {{ if $context.Site.Params.enableImageLazyLoading | default true }}
-            loading="lazy"
-          {{ end }}
-        />
-    </div>
+  {{- $showFeatureOnList := $context.Params.featureImgOnList | default false }}
+  {{- if and $feature $showFeatureOnList }}
+    {{- with $feature }}
+      <div class="relative z-20 mb-4 overflow-hidden">
+          <img
+            alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default "" }}"
+            {{ if eq .MediaType.SubType "svg" }}
+              class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+              src="{{ .Permalink }}"
+            {{ else }}
+              class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+              srcset="
+              {{- (.Fill "400x300 smart").Permalink }}
+              400w, {{- (.Fill "800x600 smart").Permalink }} 2x"
+              src="{{ (.Fill "400x300 smart").Permalink }}" width="400" height="300"
+            {{ end }}
+            {{ if $context.Site.Params.enableImageLazyLoading | default true }}
+              loading="lazy"
+            {{ end }}
+          />
+      </div>
+    {{- end }}
   {{- end }}
   
   <div class="article-card-content relative z-20 flex flex-1 flex-col px-6 py-6">
-    <h3 class="article-title relative z-20 mb-2 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+    <h3 class="article-title relative z-20 mb-1 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
       <span class="article-title-text">
         {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
           <span class="inline-block" style="vertical-align: top; margin-top: 0.25rem;">
@@ -50,14 +53,36 @@
       </span>
     </h3>
 
-    <div class="mb-2 text-xs font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-      {{ if $context.Params.showDate | default ($context.Site.Params.article.showDate | default true) }}
-        {{ partial "meta/date.html" $context.Date }}
-        {{ if and ($context.Params.showReadingTime | default ($context.Site.Params.article.showReadingTime | default true)) (ne $context.ReadingTime 0) }}
-          <span class="px-1 text-primary-500">&middot;</span>
-          {{ partial "meta/reading-time.html" $context }}
-        {{ end }}
-      {{ end }}
+    {{- /* 2. 메타 정보: 문서 생성 / 최종 편집 / 버전 / 읽기 시간 (course-card 스타일과 통일) */}}
+    <div class="mb-2 text-xs font-light text-neutral-500 dark:text-neutral-400">
+      {{- $dateStr := partial "functions/date.html" $context.Date -}}
+      {{- $lastStr := partial "functions/date.html" $context.Lastmod -}}
+      {{- if ne $dateStr $lastStr }}
+        <span class="course-meta-label">
+          {{ i18n "course_updated_at_label" }}
+        </span>
+        <span class="course-meta-value">
+          {{ $lastStr }}
+        </span>
+      {{- else }}
+        <span class="course-meta-label">
+          {{ i18n "course_uploaded_at_label" }}
+        </span>
+        <span class="course-meta-value">
+          {{ $dateStr }}
+        </span>
+      {{- end }}
+
+      {{- $version := $context.Params.version | default 1 -}}
+      {{- if ne $version 1 }}
+        <span class="px-1 text-primary-500">&middot;</span>
+        <span class="course-meta-label">
+          {{ i18n "course_version_label" }}
+        </span>
+        <span class="course-meta-value">
+          {{ i18n "course_version_value" (dict "Version" $version) }}
+        </span>
+      {{- end }}
     </div>
 
     {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}

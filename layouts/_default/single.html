@@ -19,13 +19,13 @@
   {{- /* buildDrafts가 false이고 draft인 경우에만 차단 */}}
   {{- if and $isDraft (not .Site.BuildDrafts) }}
     {{- /* 404 페이지 표시 */}}
-    <h1 class="mb-3 text-4xl font-extrabold">페이지를 찾을 수 없습니다</h1>
+    <h1 class="mb-3 text-4xl font-extrabold">{{ i18n "error_404_title" }}</h1>
     <p class="mb-12 mt-8 text-neutral-400 dark:text-neutral-500">
       Error 404
     </p>
     <div class="prose dark:prose-invert">
-      <p>요청하신 페이지가 존재하지 않습니다.</p>
-      <p class="text-sm text-neutral-500">이 페이지는 draft 상태입니다.</p>
+      <p>{{ i18n "error_404_message" }}</p>
+      <p class="text-sm text-neutral-500">{{ i18n "error_404_draft_message" }}</p>
     </div>
   {{- else }}
   {{- /* draft가 아니거나 buildDrafts가 true인 경우 정상 렌더링 */}}
@@ -97,8 +97,10 @@
                 class="items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 px-0 text-xs font-medium text-neutral-600 shadow-sm hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                 data-toc-toggle
                 data-toc-state="visible"
+                data-toc-label-show="{{ i18n "toc_show" }}"
+                data-toc-label-hide="{{ i18n "toc_hide" }}"
               >
-                <span class="sr-only" data-toc-label>목차 숨기기</span>
+                <span class="sr-only" data-toc-label>{{ i18n "toc_hide" }}</span>
                 <span aria-hidden="true" data-toc-icon>▶</span>
               </button>
             </div>
@@ -140,8 +142,34 @@
           var tocCol = document.querySelector('[data-toc-col]');
           if (!toggleBtn || !tocCol) return;
 
-          // 목차 접힘 상태를 스크립트 변수로 유지 (데스크톱에서만 적용)
-          var tocCollapsed = false;
+          // i18n 라벨 (data 속성에서 읽어옴)
+          var TOC_LABEL_SHOW = toggleBtn.getAttribute('data-toc-label-show') || 'Show table of contents';
+          var TOC_LABEL_HIDE = toggleBtn.getAttribute('data-toc-label-hide') || 'Hide table of contents';
+
+          // 세션 스토리지 키 (모든 문서에서 공유)
+          var STORAGE_KEY = 'toc-collapsed';
+
+          // 세션 스토리지에서 초기 상태 읽기 (기본값: false)
+          function getTocState() {
+            try {
+              var stored = sessionStorage.getItem(STORAGE_KEY);
+              return stored === 'true';
+            } catch (e) {
+              return false;
+            }
+          }
+
+          // 세션 스토리지에 상태 저장
+          function saveTocState(collapsed) {
+            try {
+              sessionStorage.setItem(STORAGE_KEY, collapsed ? 'true' : 'false');
+            } catch (e) {
+              // 스토리지 사용 불가 시 무시
+            }
+          }
+
+          // 목차 접힘 상태를 세션 스토리지에서 읽어옴
+          var tocCollapsed = getTocState();
 
           function applyState() {
             if (window.innerWidth >= 1280) {
@@ -158,7 +186,7 @@
 
           function updateLabel() {
             var isCollapsed = tocCollapsed && window.innerWidth >= 1280;
-            var label = isCollapsed ? '목차 보이기' : '목차 숨기기';
+            var label = isCollapsed ? TOC_LABEL_SHOW : TOC_LABEL_HIDE;
 
             toggleBtn.setAttribute('data-toc-state', isCollapsed ? 'hidden' : 'visible');
             toggleBtn.setAttribute('aria-label', label);
@@ -175,6 +203,7 @@
               return; // 모바일/태블릿에서는 기존 세로형 TOC 동작 유지
             }
             tocCollapsed = !tocCollapsed;
+            saveTocState(tocCollapsed); // 세션 스토리지에 저장
             applyState();
             updateLabel();
           }
