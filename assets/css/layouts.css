@@ -507,6 +507,31 @@ article.group.flex-row {
   }
 }
 
+/* Tag card 이미지: 모바일에서 높이 제한 및 세로 가운데 정렬 */
+.tag-card-image-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tag-card-image {
+  object-position: center;
+}
+
+@media (max-width: 767px) {
+  .tag-card-image-wrapper {
+    max-height: 14rem;
+  }
+
+  .tag-card-image {
+    max-height: 14rem;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    object-position: center;
+  }
+}
+
 /* Course card 별/시간 메타 행 정렬 */
 .course-card .course-card-meta-row {
   display: inline-flex;

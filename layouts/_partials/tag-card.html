@@ -11,14 +11,14 @@
   {{- $defaultImageResource := resources.Get $defaultImage }}
   {{- if $feature }}
     {{- with $feature }}
-      <div class="relative z-20 mb-4 overflow-hidden">
+      <div class="tag-card-image-wrapper relative z-20 mb-4 overflow-hidden">
         <img
           alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default $context.Title }}"
           {{ if eq .MediaType.SubType "svg" }}
-            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+            class="tag-card-image h-48 w-full object-cover object-center transition-transform group-hover:scale-105"
             src="{{ .Permalink }}"
           {{ else }}
-            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+            class="tag-card-image h-48 w-full object-cover object-center transition-transform group-hover:scale-105"
             srcset="
             {{- (.Fill "400x300 smart").Permalink }}
             400w, {{- (.Fill "800x600 smart").Permalink }} 2x"
@@ -31,10 +31,10 @@
       </div>
     {{- end }}
   {{- else if $defaultImageResource }}
-    <div class="relative z-20 mb-4 overflow-hidden">
+    <div class="tag-card-image-wrapper relative z-20 mb-4 overflow-hidden">
       <img
         alt="{{ $context.Title }}"
-        class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+        class="tag-card-image h-48 w-full object-cover object-center transition-transform group-hover:scale-105"
         srcset="
         {{- ($defaultImageResource.Fill "400x300 smart").Permalink }}
         400w, {{- ($defaultImageResource.Fill "800x600 smart").Permalink }} 2x"
