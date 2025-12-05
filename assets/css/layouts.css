@@ -471,14 +471,23 @@ article.group.flex-row {
   }
 }
 
-/* Course card 제목은 한 줄로 제한 */
+/* Course card 제목은 한 줄로 제한 (텍스트 줄만) */
 .course-card .article-title {
   min-height: auto;
 }
 
-.course-card .article-title-text {
+.course-card .course-card-title-text {
+  display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Course card 별/시간 메타 행 정렬 */
+.course-card .course-card-meta-row {
+  display: inline-flex;
+  align-items: center;
 }
 
 /* 난이도 별과 제목 사이 간격 (minify로 공백이 제거되어도 유지) */
