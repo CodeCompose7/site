@@ -500,6 +500,13 @@ article.group.flex-row {
   overflow: hidden;
 }
 
+/* Tag card 제목 min-height 오버라이드 (데스크톱에서 3.5rem이 적용되는 것을 방지) */
+@media (min-width: 1280px) {
+  .tag-card .article-title {
+    min-height: auto;
+  }
+}
+
 /* Course card 별/시간 메타 행 정렬 */
 .course-card .course-card-meta-row {
   display: inline-flex;

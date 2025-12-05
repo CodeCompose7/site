@@ -230,19 +230,19 @@
 
     // 데스크톱 미만에서는 높이 통일을 적용하지 않고, 기존 min-height를 제거
     if (vw < 1280) {
-      clearMinHeight('article.group:not(.course-card)');
+      clearMinHeight('article.group:not(.course-card):not(.tag-card)');
       clearMinHeight('.recent-articles article.group');
       return;
     }
 
-    // 일반 카드(강의 카드 제외, recent-articles 제외)
-    const generalSampleSelector = 'article.group:not(.course-card)';
+    // 일반 카드(강의 카드/태그 전용 카드/tag-card, recent-articles 제외)
+    const generalSampleSelector = 'article.group:not(.course-card):not(.tag-card)';
     const generalSample = document.querySelector(generalSampleSelector);
     if (generalSample) {
       const baseHeight = measureBaselineHeight({
         sampleSelector: generalSampleSelector,
       });
-      applyEqualMinHeight('article.group:not(.course-card)', baseHeight);
+      applyEqualMinHeight('article.group:not(.course-card):not(.tag-card)', baseHeight);
     }
 
     // 홈 최신 글 카드 (recent-articles 내부)
