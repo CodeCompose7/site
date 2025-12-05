@@ -44,3 +44,9 @@ course_line_count_title:
 course_line_count:
   one: "{{ .Count }} line"
   other: "{{ .Count }} lines"
+
+content_type_course:
+  other: "Course"
+
+content_type_blog:
+  other: "Blog"

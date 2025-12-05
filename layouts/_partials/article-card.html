@@ -8,7 +8,7 @@
   {{- $showFeatureOnList := $context.Params.featureImgOnList | default false }}
   {{- if and $feature $showFeatureOnList }}
     {{- with $feature }}
-      <div class="relative z-20 mb-4 overflow-hidden rounded-md">
+      <div class="relative z-20 mb-4 overflow-hidden">
           <img
             alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default "" }}"
             {{ if eq .MediaType.SubType "svg" }}

@@ -31,6 +31,13 @@
   overflow: hidden;
 }
 
+/* Tag card에서도 강의 난이도/시간 메타 행을 한 줄로 타이트하게 정렬 */
+.tag-card .course-card-meta-row {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -477,6 +484,15 @@ article.group.flex-row {
 }
 
 .course-card .course-card-title-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Tag card 제목은 한 줄로 제한 */
+.tag-card-title-text {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   line-clamp: 1;

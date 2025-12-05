@@ -44,3 +44,9 @@ course_line_count_title:
 course_line_count:
   one: "{{ .Count }}줄"
   other: "{{ .Count }}줄"
+
+content_type_course:
+  other: "강의"
+
+content_type_blog:
+  other: "블로그"

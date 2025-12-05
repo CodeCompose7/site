@@ -1,0 +1,180 @@
+{{- $context := . }}
+{{- $linkUrl := cond $context.Params.externalUrl $context.Params.externalUrl $context.Permalink }}
+<article class="tag-card group relative flex h-full flex-col rounded-2xl border border-neutral-200 bg-neutral-50 p-8 transition-all duration-300 hover:-translate-y-2 hover:bg-neutral-100 hover:shadow-xl dark:border-neutral-700 dark:bg-neutral-800 dark:hover:bg-neutral-700">
+  <a href="{{ $linkUrl }}" class="absolute inset-0 z-10" aria-label="{{ $context.Title | emojify }}"></a>
+
+  {{- /* 태그 페이지 전용 카드: 강의/블로그 타입 라벨 + 대표 이미지 항상 표시 */}}
+  {{- $images := $context.Resources.ByType "image" }}
+  {{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
+  {{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
+  {{- $defaultImage := "img/no_img.jpg" }}
+  {{- $defaultImageResource := resources.Get $defaultImage }}
+  {{- if $feature }}
+    {{- with $feature }}
+      <div class="relative z-20 mb-4 overflow-hidden">
+        <img
+          alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default $context.Title }}"
+          {{ if eq .MediaType.SubType "svg" }}
+            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+            src="{{ .Permalink }}"
+          {{ else }}
+            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+            srcset="
+            {{- (.Fill "400x300 smart").Permalink }}
+            400w, {{- (.Fill "800x600 smart").Permalink }} 2x"
+            src="{{ (.Fill "400x300 smart").Permalink }}" width="400" height="300"
+          {{ end }}
+          {{ if $context.Site.Params.enableImageLazyLoading | default true }}
+            loading="lazy"
+          {{ end }}
+        />
+      </div>
+    {{- end }}
+  {{- else if $defaultImageResource }}
+    <div class="relative z-20 mb-4 overflow-hidden">
+      <img
+        alt="{{ $context.Title }}"
+        class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+        srcset="
+        {{- ($defaultImageResource.Fill "400x300 smart").Permalink }}
+        400w, {{- ($defaultImageResource.Fill "800x600 smart").Permalink }} 2x"
+        src="{{ ($defaultImageResource.Fill "400x300 smart").Permalink }}" width="400" height="300"
+        {{ if $context.Site.Params.enableImageLazyLoading | default true }}
+          loading="lazy"
+        {{ end }}
+      />
+    </div>
+  {{- end }}
+
+  <div class="article-card-content relative z-20 flex flex-1 flex-col px-6 py-6">
+    {{- /* 1. 타입 라벨 (강의 / 블로그) + (강의일 때) 난이도/시간 메타를 한 줄에 배치 */}}
+    {{- $scratch := newScratch }}
+    {{- if eq $context.Section "courses" }}
+      {{- $scratch.Set "typeLabel" (i18n "content_type_course") }}
+    {{- else if eq $context.Section "blog" }}
+      {{- $scratch.Set "typeLabel" (i18n "content_type_blog") }}
+    {{- end }}
+    {{- with $scratch.Get "typeLabel" }}
+      <div class="mb-1 flex flex-wrap items-center gap-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+        <span class="tag-card-type-badge" style="margin-left: -0.25rem;">
+          {{ partial "badge.html" . }}
+        </span>
+
+        {{- if eq $context.Section "courses" }}
+          {{- $level := $context.Params.level | default 0 -}}
+          {{- $hours := $context.Params.hours | default "" -}}
+          {{- if or (gt $level 0) (ne $hours "") }}
+            <span class="course-card-meta-row">
+              <span
+                class="inline-block align-middle"
+                style="vertical-align: middle; 
+    margin-bottom: -0.25rem; margin-left: -0.25rem;"
+              >
+                {{ partial "difficulty-stars.html" $context }}
+              </span>
+              <span
+                class="inline-block align-middle"
+                style="vertical-align: middle; margin-left: -0.5rem;"
+              >
+                {{ partial "course-card-duration-inline.html" $context }}
+              </span>
+            </span>
+          {{- end }}
+        {{- end }}
+      </div>
+    {{- end }}
+
+    {{- /* 2. 제목 (1줄 제한) */}}
+    <h3 class="article-title relative z-20 mb-1 min-h-[3.5rem] text-xl font-semibold text-neutral-900 dark:text-neutral-100">
+      <span class="article-title-text">
+        {{ if and $context.Draft $context.Site.Params.article.showDraftLabel }}
+          <span class="inline-block" style="vertical-align: top; margin-top: 0.25rem;">
+            {{ partial "badge.html" (i18n "article.draft" | emojify) }}
+          </span>
+        {{ end }}
+
+        <span class="tag-card-title-text">
+          {{ with $context.Params.externalUrl }}
+            <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+            <span
+              class="cursor-default align-top text-xs text-neutral-400 dark:text-neutral-500"
+              title="{{ i18n "list.externalurl_title" }}"
+            >
+              <span class="rtl:hidden">&#8599;</span>
+              <span class="ltr:hidden">&#8598;</span>
+            </span>
+          {{ else }}
+            <span class="text-neutral-900 dark:text-neutral-100">{{ $context.Title | emojify }}</span>
+          {{ end }}
+        </span>
+      </span>
+    </h3>
+
+    {{- /* 3. 메타 정보: 문서 생성 / 최종 편집 / 버전 */}}
+    <div class="mb-2 text-xs font-light text-neutral-500 dark:text-neutral-400">
+      {{- $dateStr := partial "functions/date.html" $context.Date -}}
+      {{- $lastStr := partial "functions/date.html" $context.Lastmod -}}
+      {{- if ne $dateStr $lastStr }}
+        <span class="course-meta-label">
+          {{ i18n "course_updated_at_label" }}
+        </span>
+        <span class="course-meta-value">
+          {{ $lastStr }}
+        </span>
+      {{- else }}
+        <span class="course-meta-label">
+          {{ i18n "course_uploaded_at_label" }}
+        </span>
+        <span class="course-meta-value">
+          {{ $dateStr }}
+        </span>
+      {{- end }}
+
+      {{- $version := $context.Params.version | default 1 -}}
+      {{- if ne $version 1 }}
+        <span class="px-1 text-primary-500">&middot;</span>
+        <span class="course-meta-label">
+          {{ i18n "course_version_label" }}
+        </span>
+        <span class="course-meta-value">
+          {{ i18n "course_version_value" (dict "Version" $version) }}
+        </span>
+      {{- end }}
+    </div>
+
+    {{- /* 4. 태그 */}}
+    {{ $showTaxonomies := $context.Params.showTaxonomies | default ($context.Site.Params.list.showTaxonomies | default ($context.Site.Params.article.showTaxonomies | default true)) }}
+    {{ if $showTaxonomies }}
+      <div class="article-tags-wrapper relative z-20 mt-auto pt-2 mb-2">
+        <div class="article-tags-skeleton">
+          <div class="skeleton-tag"></div>
+          <div class="skeleton-tag"></div>
+          <div class="skeleton-tag skeleton-tag-short"></div>
+        </div>
+        <div class="article-tags-container relative z-10 flex flex-wrap overflow-hidden opacity-0">
+          {{ range $taxonomy, $terms := $context.Site.Taxonomies }}
+            {{ if and (ne $taxonomy "categories") (gt (len ($context.GetTerms $taxonomy)) 0) }}
+              {{ range $context.GetTerms $taxonomy }}
+                <a
+                  href="{{ .Permalink }}"
+                  onclick="event.stopPropagation();"
+                  class="article-tag rounded-md border border-neutral-200 bg-neutral-100 px-2 py-1 text-xs text-neutral-600 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-700 dark:border-neutral-600 dark:bg-neutral-700 dark:text-neutral-300 dark:hover:border-primary-600 dark:hover:bg-primary-900 dark:hover:text-primary-400 mb-1 mr-1"
+                  >{{ .LinkTitle }}</a
+                >
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        </div>
+      </div>
+    {{ end }}
+
+    {{- /* 5. 요약 */}}
+    {{ if $context.Params.showSummary | default ($context.Site.Params.list.showSummary | default false) }}
+      <div class="article-summary relative z-20 mb-4 flex-1 overflow-hidden text-base text-neutral-500 dark:text-neutral-400">
+        {{ $context.Summary | emojify | plainify }}
+      </div>
+    {{ end }}
+  </div>
+</article>
+
+
