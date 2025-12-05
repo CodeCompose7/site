@@ -4,6 +4,9 @@ date: 2024-11-26
 tags: ["Paper Review", "NLP", "Deep Learning", "Transformer", "Attention"]
 description: "Analysis of the Transformer architecture that revolutionized NLP"
 summary: "An analysis of the core ideas and structure of the Transformer architecture published by Google in 2017, exploring the revolutionary Self-Attention mechanism that overcame the limitations of RNN/LSTM."
+feature: "ml_ops_main*"
+featureAlt: "Feature image for the Transformer paper review"
+coverCaption: "Attention is All You Need: Transformer Architecture"
 ---
 
 ## Introduction

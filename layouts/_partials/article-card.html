@@ -5,25 +5,28 @@
   {{- $images := $context.Resources.ByType "image" }}
   {{- $thumbnail := $images.GetMatch ($context.Params.thumbnail | default "*thumb*") }}
   {{- $feature := $images.GetMatch ($context.Params.feature | default "*feature*") | default $thumbnail }}
-  {{- with $feature }}
-    <div class="relative z-20 mb-4 overflow-hidden rounded-md">
-        <img
-          alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default "" }}"
-          {{ if eq .MediaType.SubType "svg" }}
-            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
-            src="{{ .Permalink }}"
-          {{ else }}
-            class="h-48 w-full object-cover transition-transform group-hover:scale-105"
-            srcset="
-            {{- (.Fill "400x300 smart").Permalink }}
-            400w, {{- (.Fill "800x600 smart").Permalink }} 2x"
-            src="{{ (.Fill "400x300 smart").Permalink }}" width="400" height="300"
-          {{ end }}
-          {{ if $context.Site.Params.enableImageLazyLoading | default true }}
-            loading="lazy"
-          {{ end }}
-        />
-    </div>
+  {{- $showFeatureOnList := $context.Params.featureImgOnList | default false }}
+  {{- if and $feature $showFeatureOnList }}
+    {{- with $feature }}
+      <div class="relative z-20 mb-4 overflow-hidden rounded-md">
+          <img
+            alt="{{ $context.Params.featureAlt | default $context.Params.thumbnailAlt | default "" }}"
+            {{ if eq .MediaType.SubType "svg" }}
+              class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+              src="{{ .Permalink }}"
+            {{ else }}
+              class="h-48 w-full object-cover transition-transform group-hover:scale-105"
+              srcset="
+              {{- (.Fill "400x300 smart").Permalink }}
+              400w, {{- (.Fill "800x600 smart").Permalink }} 2x"
+              src="{{ (.Fill "400x300 smart").Permalink }}" width="400" height="300"
+            {{ end }}
+            {{ if $context.Site.Params.enableImageLazyLoading | default true }}
+              loading="lazy"
+            {{ end }}
+          />
+      </div>
+    {{- end }}
   {{- end }}
   
   <div class="article-card-content relative z-20 flex flex-1 flex-col px-6 py-6">
