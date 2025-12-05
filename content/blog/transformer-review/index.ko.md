@@ -1,6 +1,8 @@
 ---
 title: "Transformer 논문 리뷰: Attention is All You Need"
 date: 2024-11-25
+lastmod: 2025-12-03
+version: 2
 categories: ["paper-review"]
 tags: ["논문리뷰", "NLP", "딥러닝", "Transformer", "Attention"]
 description: "NLP의 패러다임을 바꾼 Transformer 아키텍처 분석"
