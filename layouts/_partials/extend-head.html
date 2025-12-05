@@ -8,10 +8,28 @@
   integrity="{{ $layoutsCSS.Data.Integrity }}"
 />
 
-{{/* 마루부리 폰트는 static/fonts 폴더에 직접 파일을 넣어서 사용합니다 */}}
-{{/* 폰트 preload: 가장 중요한 폰트를 먼저 로드하여 FOUT 방지 */}}
+{{/* 마루부리 / Pretendard 폰트는 CDN에서 로드합니다.
+      기존 로컬 폰트 preload는 보관용으로 주석 처리합니다. */}}
+{{/*
 <link rel="preload" href="/fonts/Pretendard-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 <link rel="preload" href="/fonts/MaruBuri-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+*/}}
+
+{{/* 주요 가중치만 CDN에서 미리 로드 (선택 사항) */}}
+<link
+  rel="preload"
+  href="https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Regular.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin="anonymous"
+>
+<link
+  rel="preload"
+  href="https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin="anonymous"
+>
 
 <script>
 (function() {
