@@ -532,3 +532,15 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
 .difficulty-star-empty {
   opacity: 0.35;
 }
+
+/* 스크롤바 유무에 상관없이 레이아웃 폭을 안정적으로 유지 */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* scrollbar-gutter를 지원하지 않는 브라우저용 fallback */
+@supports not (scrollbar-gutter: stable) {
+  html {
+    overflow-y: scroll;
+  }
+}
