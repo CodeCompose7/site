@@ -100,8 +100,8 @@
     
     {{- /* 각 카테고리 버튼 */}}
     {{- range $index, $term := $allCategories }}
-      {{- /* 섹션 전용 카테고리 페이지(/<sectionName>/categories/<slug>/)만 사용 */}}
-      {{- $termPage := $context.Site.GetPage (printf "/%s/categories/%s" $sectionName $term) }}
+      {{- /* 섹션 전용 카테고리 페이지(/<sectionName>/_categories/<slug>/)만 사용 */}}
+      {{- $termPage := $context.Site.GetPage (printf "/%s/_categories/%s" $sectionName $term) }}
       {{- if $termPage }}
         {{- /* 해당 섹션의 페이지들 중에서 해당 카테고리에 속한 것만 필터링 */}}
         {{- $categoryPagesWithDrafts := where $allPagesWithDrafts "Params.categories" "intersect" (slice $term) }}

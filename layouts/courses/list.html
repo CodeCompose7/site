@@ -50,9 +50,9 @@
       {{- if eq .Kind "term" }}
         {{- $currentCategory = .Data.Term }}
       {{- end }}
-      {{- /* 섹션 기반 카테고리 페이지(/.../categories/<slug>/)인 경우 경로에서 카테고리명 추출 */}}
+      {{- /* 섹션 기반 카테고리 페이지(/.../_categories/<slug>/)인 경우 경로에서 카테고리명 추출 */}}
       {{- if and (eq $currentCategory "") .RelPermalink }}
-        {{- if in .RelPermalink "/categories/" }}
+        {{- if in .RelPermalink "/_categories/" }}
           {{- $pathParts := split (strings.TrimSuffix "/" .RelPermalink) "/" }}
           {{- $currentCategory = index $pathParts (sub (len $pathParts) 1) }}
         {{- end }}
