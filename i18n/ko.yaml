@@ -53,3 +53,9 @@ content_type_blog:
 
 tag_label:
   other: "태그"
+
+toc_show:
+  other: "목차 보이기"
+
+toc_hide:
+  other: "목차 숨기기"

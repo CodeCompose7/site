@@ -53,3 +53,9 @@ content_type_blog:
 
 tag_label:
   other: "Tag"
+
+toc_show:
+  other: "Show table of contents"
+
+toc_hide:
+  other: "Hide table of contents"

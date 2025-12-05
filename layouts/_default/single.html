@@ -97,8 +97,10 @@
                 class="items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 px-0 text-xs font-medium text-neutral-600 shadow-sm hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-200"
                 data-toc-toggle
                 data-toc-state="visible"
+                data-toc-label-show="{{ i18n "toc_show" }}"
+                data-toc-label-hide="{{ i18n "toc_hide" }}"
               >
-                <span class="sr-only" data-toc-label>목차 숨기기</span>
+                <span class="sr-only" data-toc-label>{{ i18n "toc_hide" }}</span>
                 <span aria-hidden="true" data-toc-icon>▶</span>
               </button>
             </div>
@@ -140,6 +142,10 @@
           var tocCol = document.querySelector('[data-toc-col]');
           if (!toggleBtn || !tocCol) return;
 
+          // i18n 라벨 (data 속성에서 읽어옴)
+          var TOC_LABEL_SHOW = toggleBtn.getAttribute('data-toc-label-show') || 'Show table of contents';
+          var TOC_LABEL_HIDE = toggleBtn.getAttribute('data-toc-label-hide') || 'Hide table of contents';
+
           // 세션 스토리지 키 (모든 문서에서 공유)
           var STORAGE_KEY = 'toc-collapsed';
 
@@ -180,7 +186,7 @@
 
           function updateLabel() {
             var isCollapsed = tocCollapsed && window.innerWidth >= 1280;
-            var label = isCollapsed ? '목차 보이기' : '목차 숨기기';
+            var label = isCollapsed ? TOC_LABEL_SHOW : TOC_LABEL_HIDE;
 
             toggleBtn.setAttribute('data-toc-state', isCollapsed ? 'hidden' : 'visible');
             toggleBtn.setAttribute('aria-label', label);
