@@ -68,3 +68,6 @@ error_404_message:
 
 error_404_draft_message:
   other: "This page is in draft status."
+
+staff_title:
+  other: "Staff"

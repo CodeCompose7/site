@@ -1,7 +1,7 @@
 {{- $staff := .Params.staff | default (slice) -}}
 {{- if gt (len $staff) 0 }}
   <div class="mt-14 space-y-8">
-    <h2 class="text-3xl font-bold leading-tight">스태프</h2>
+    <h2 class="text-3xl font-bold leading-tight">{{ i18n "staff_title" }}</h2>
     {{- range $member := $staff }}
       {{- $img := $.Resources.GetMatch ($member.image | default "profile_image_2*") -}}
       {{- if not $img }}
