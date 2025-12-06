@@ -1,0 +1,22 @@
+{{- $biz := site.Params.business -}}
+{{- if $biz }}
+  {{- $isKo := eq .Site.Language.Lang "ko" -}}
+  <div class="mb-4 text-sm text-neutral-500 dark:text-neutral-400 space-y-1">
+    {{- if $isKo -}}
+      <p class="footer-biz-line"><span class="footer-biz-label">상호</span> <span class="footer-biz-value">{{ $biz.name }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">대표자명</span> <span class="footer-biz-value">{{ $biz.representative }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">사업자등록번호</span> <span class="footer-biz-value">{{ $biz.regNo }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">통신판매업 신고번호</span> <span class="footer-biz-value">{{ $biz.mailOrderNo }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">사업장 주소</span> <span class="footer-biz-value">{{ $biz.addressKo }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">이메일</span> <a class="footer-biz-value hover:underline hover:text-primary-500" href="mailto:{{ $biz.email }}">{{ $biz.email }}</a></p>
+    {{- else -}}
+      <p class="footer-biz-line"><span class="footer-biz-label">Business Name</span> <span class="footer-biz-value">{{ $biz.nameEn | default $biz.name }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">CEO</span> <span class="footer-biz-value">{{ $biz.representativeEn | default $biz.representative }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">Business Reg. No.</span> <span class="footer-biz-value">{{ $biz.regNo }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">Mail-order Report No.</span> <span class="footer-biz-value">{{ $biz.mailOrderNo }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">Address</span> <span class="footer-biz-value">{{ $biz.addressEn }}</span></p>
+      <p class="footer-biz-line"><span class="footer-biz-label">Email</span> <a class="footer-biz-value hover:underline hover:text-primary-500" href="mailto:{{ $biz.email }}">{{ $biz.email }}</a></p>
+    {{- end -}}
+  </div>
+{{- end }}
+

@@ -323,6 +323,10 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
   padding-left: 1.5rem; /* 24px */
 }
 
+.mb-4 {
+  margin-bottom: 1rem; /* 16px */
+}
+
 .mt-3 {
   margin-top: 0.75rem; /* 12px */
 }
@@ -335,6 +339,28 @@ article.flex.flex-col.items-center.justify-center.text-center > section.not-pros
 /* Gap utility (flex/grid) */
 .gap-2 {
   gap: 0.5rem; /* 8px */
+}
+
+/* Footer business info */
+.footer-biz-line {
+  margin: 0;
+  line-height: 1.5;
+}
+.footer-biz-label {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1));
+  font-weight: 300;
+  font-size: 0.75rem;
+}
+.footer-biz-value {
+  color: rgba(var(--color-neutral-700), var(--tw-text-opacity, 1));
+  font-weight: 300;
+  margin-left: 0.3rem;
+}
+.dark .footer-biz-label {
+  color: rgba(var(--color-neutral-500), var(--tw-text-opacity, 1));
+}
+.dark .footer-biz-value {
+  color: rgba(var(--color-neutral-400), var(--tw-text-opacity, 1));
 }
 
 /* ========================= */

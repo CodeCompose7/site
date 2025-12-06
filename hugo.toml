@@ -130,6 +130,16 @@ summaryLength = 30
   env = "production"
   description = "코드컴포즈 회사 소개"
   enableSearch = true
+  [params.business]
+    name = "코드컴포즈"
+    nameEn = "CodeCompose"
+    representative = "이태규"
+    representativeEn = "Taekyu Lee"
+    regNo = "784-18-01999"
+    mailOrderNo = "2023-인천연수구-0106"
+    addressKo = "인천광역시 연수구 한나루로 133, 4층 433호(옥련동, 박프라자)"
+    addressEn = "4F #433, 133 Hannaru-ro, Yeonsu-gu, Incheon, Republic of Korea (Okryeon-dong, Park Plaza)"
+    email = "dev@codecompose.net"
   
   # 홈페이지 레이아웃 설정
   [params.homepage]
