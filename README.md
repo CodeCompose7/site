@@ -11,25 +11,32 @@ hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 
 ```text
 .
-├── .devcontainer/          # VS Code devcontainer 설정
-├── assets/                 # 커스텀 스타일, 이미지 등
-│   ├── css/
-│   └── img/
-├── content/                # 마크다운 컨텐츠
-│   ├── _index.ko.md        # 한국어 홈
-│   ├── _index.en.md        # 영어 홈
-│   ├── about.ko.md         # 한국어 소개 페이지
-│   ├── about.en.md         # 영어 소개 페이지
-│   ├── blog/               # 블로그 글
+├── .devcontainer/             # VS Code devcontainer 설정
+├── assets/                    # 커스텀 스타일, 이미지 등
+│   ├── css/                   # 커스텀 CSS (partials, layouts 번들)
+│   └── img/                   # 이미지 자원
+├── content/                   # 마크다운 컨텐츠
+│   ├── _index.ko.md           # 한국어 홈
+│   ├── _index.en.md           # 영어 홈
+│   ├── about/                 # 소개 페이지 (다국어)
+│   │   ├── _index.ko.md
+│   │   └── _index.en.md
+│   ├── blog/                  # 블로그 글
 │   │   ├── _index.*.md
-│   │   └── *.ko.md / *.en.md
-│   └── courses/            # 강의 소개
+│   │   └── */*.ko.md / */*.en.md 또는 *.ko.md / *.en.md
+│   └── courses/               # 강의 소개
 │       ├── _index.*.md
-│       └── *.ko.md / *.en.md
-├── layouts/                # 커스텀 레이아웃 (Congo 테마 확장)
+│       └── *.ko.md / *.en.md, 하위 폴더 포함
+├── layouts/                   # 커스텀 레이아웃 (Congo 테마 확장)
+│   ├── about/                 # about 페이지 전용 템플릿
+│   ├── _default/              # 기본 단일/목록 템플릿
+│   ├── blog/                  # 블로그 카테고리/목록 템플릿
+│   ├── courses/               # 강의 카테고리/목록 템플릿
+│   ├── _partials/             # 공용 partials (헤더, 카드 등)
+│   └── index.json             # 검색용 인덱스 템플릿
 ├── themes/
-│   └── congo/              # Hugo 테마 (이미 포함됨)
-├── hugo.toml               # Hugo 설정 파일
+│   └── congo/                 # Hugo 테마 (이미 포함됨)
+├── hugo.toml                  # Hugo 설정 파일
 └── README.md
 ```
 
@@ -129,11 +136,20 @@ Hugo에서는 **shortcode 링크**를 이용해서 다른 컨텐츠를 안정적
 
 ```yaml
 ---
-title: "쿠버네티스 기초 강의"
-date: 2024-11-27
-categories: ["ai-learning"]          # 예: content/courses/categories/ai-learning/
-tags: ["쿠버네티스", "K3s", "DevOps"]
-description: "쿠버네티스의 기초부터 실전까지"
+title: "딥러닝 기초부터 실전까지"                  # 글 제목
+date: 2024-11-27                             # 생성일(정렬에 필요)
+lastmod: 2025-12-03                          # (선택) 최근 수정일
+version: 2                                   # (선택) 문서/글 버전
+categories: ["ai-learning"]                  # 카테고리 (_categories 내 폴더 이름)
+tags: ["딥러닝", "TensorFlow", "Python", "신경망"]  # 태그 목록
+description: "딥러닝의 기초 개념부터 실제 프로젝트 적용까지 다루는 실전 강의"  # 기본 설명
+summary: "딥러닝 입문~실전: CNN, RNN, Transformer까지 프로젝트로 학습"          # 목록에 노출되는 짧은 설명
+level: 1                                     # (선택) 난이도(1~5)
+hours: "3:00"                                # (선택) 예상 소요 시간 (예: H:MM)
+weight: 1                                    # 정렬 우선순위. 작을수록 위, 없으면 날짜 역순.
+feature: "ml_ops_main*"                      # (선택) 대표 이미지 리소스 키(와일드카드 가능)
+featureAlt: "MLOps 강의 대표 이미지"             # (선택) 대표 이미지 대체 텍스트
+coverCaption: "MLOps: 머신러닝 시스템 운영과 자동화" # (선택) 이미지 캡션
 ---
 ```
 
@@ -141,11 +157,17 @@ description: "쿠버네티스의 기초부터 실전까지"
 
 ```yaml
 ---
-title: "K3s 클러스터 구축하기"
-date: 2024-11-27
-categories: ["paper-review"]         # 예: content/blog/categories/paper-review/
-tags: ["쿠버네티스", "K3s", "실습"]
-description: "경량 쿠버네티스 K3s로 클러스터 만들기"
+title: "K3s 클러스터 구축하기"                   # 글 제목
+date: 2024-11-27                            # 생성일(정렬에 필요)
+lastmod: 2025-12-03                         # (선택) 최근 수정일
+version: 2                                  # (선택) 문서/글 버전
+categories: ["paper-review"]                # 카테고리 (_categories 내 폴더 이름)
+tags: ["쿠버네티스", "K3s", "실습"]             # 태그 목록
+description: "경량 쿠버네티스 K3s로 클러스터 만들기" # 기본 설명
+summary: "경량 쿠버네티스 K3s로 클러스터 만들기: 클러스터 구축과 실습" # 목록에 노출되는 짧은 설명
+feature: "ml_ops_main*"                     # (선택) 대표 이미지 리소스 키(와일드카드 가능)
+featureAlt: "Transformer 논문 리뷰 글의 대표 이미지" # (선택) 대표 이미지 대체 텍스트
+coverCaption: "Attention is All You Need: Transformer 아키텍처" # (선택) 이미지 캡션
 ---
 ```
 
