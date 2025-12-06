@@ -544,3 +544,13 @@ html {
     overflow-y: scroll;
   }
 }
+
+/* OLED-friendly: force true black background in dark mode */
+:root.dark,
+html.dark,
+body.dark {
+  background-color: #000 !important;
+}
+.dark body {
+  background-color: #000 !important;
+}

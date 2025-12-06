@@ -75,6 +75,17 @@
   margin: 0;
 }
 
+/* Dark mode */
+.dark .about-staff-role {
+  color: #cdd3de; /* lighter neutral for dark bg */
+}
+.dark .about-staff-name {
+  color: #f3f4f6; /* near-neutral-50 */
+}
+.dark .about-staff-bio {
+  color: #d1d5db; /* neutral-300 */
+}
+
 @media (min-width: 640px) {
   .about-staff-card {
     flex-direction: row;

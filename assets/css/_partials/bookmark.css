@@ -18,12 +18,6 @@
   box-shadow: none;
 }
 
-.bookmark-card__body:hover {
-  background: #f5f7ff;
-  border-color: #cbd5e1;
-  border-radius: 12px;
-}
-
 .bookmark-card__main {
   min-width: 0;
   display: flex;
@@ -92,17 +86,20 @@
   border-radius: 999px;
 }
 
+@media (min-width: 1024px) {
+  .bookmark-card__body:hover {
+    background: #f5f7ff;
+    border-color: #cbd5e1;
+    border-radius: 12px;
+  }
+}
+
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
   .bookmark-card__body {
-    background: #262a32;
-    border-color: #343a45;
+    background: #0f0f0f;
+    border-color: #191a1c;
     box-shadow: none;
-    border-radius: 12px;
-  }
-  .bookmark-card__body:hover {
-    background: #2e333d;
-    border-color: #3f4652;
     border-radius: 12px;
   }
   .bookmark-card__title {
@@ -116,23 +113,18 @@
   }
   .bookmark-card__pill {
     color: #e5e7eb;
-    background: #3a3f47;
+    background: #1f2023;
   }
   .bookmark-card__meta-pill {
     color: #e5e7eb;
-    background: #3a3f47;
+    background: #1f2023;
   }
 }
 
 .dark .bookmark-card__body {
-  background: #262a32;
-  border-color: #343a45;
+  background: #0f0f0f;
+  border-color: #191a1c;
   box-shadow: none;
-  border-radius: 12px;
-}
-.dark .bookmark-card__body:hover {
-  background: #2e333d;
-  border-color: #3f4652;
   border-radius: 12px;
 }
 .dark .bookmark-card__title {
@@ -146,11 +138,11 @@
 }
 .dark .bookmark-card__pill {
   color: #e5e7eb;
-  background: #3a3f47;
+  background: #1f2023;
 }
 .dark .bookmark-card__meta-pill {
   color: #e5e7eb;
-  background: #3a3f47;
+  background: #1f2023;
 }
 
 @media (max-width: 640px) {
@@ -164,3 +156,18 @@
   }
 }
 
+@media (prefers-color-scheme: dark) and (min-width: 1024px) {
+  .bookmark-card__body:hover {
+    background: #151618;
+    border-color: #1f2023;
+    border-radius: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dark .bookmark-card__body:hover {
+    background: #151618;
+    border-color: #1f2023;
+    border-radius: 12px;
+  }
+}
