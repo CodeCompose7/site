@@ -59,7 +59,7 @@ summaryLength = 30
       url = "/ko/tags/"
       weight = 4
     [[languages.ko.menu.main]]
-      name = "About"
+      name = "소개"
       url = "/ko/about/"
       weight = 5
     [[languages.ko.menu.main]]

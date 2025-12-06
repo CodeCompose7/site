@@ -7,23 +7,37 @@ showTableOfContents: false
 showTaxonomies: false
 showReadingTime: false
 showWordCount: false
+staff:
+  - role: "CEO"
+    name: "Taekyu Lee"
+    image: "tkl_profile_image.png"
+    bio: "Deep learning systems engineer who also loves building applications."
 ---
 
-## Hello 👋
+## We deliver external training
 
-I'm Taekyu, a freelance developer based in Korea.
+We design custom curricula for schools, companies, and institutions, and run hands-on sessions.
 
-### Expertise
+### Topics & contact
 
-- **Deep Learning**: Model development with TensorFlow, PyTorch
-- **Kubernetes**: K3s, Microservices Architecture
-- **Mobile Development**: Cross-platform apps with Flutter
-- **Web Development**: Python and various frameworks
+- Deep Learning, MLOps, Git, and other computer science topics for schools/companies/institutions
+- Curriculum customization and practical labs tailored to goals and context
+- Adjustable duration and difficulty, with references and code examples provided
+- Training/workshop inquiries
+  - Email: <dev@codecompose.net>
 
-### Teaching
+## We design and build AI systems
 
-I conduct online and offline courses on various topics including Deep Learning, Kubernetes, and Git.
+We research and architect deep-learning-based services, productize from data pipelines to serving/operations, and also build the applications needed around them.
 
-### Contact
+### What we do
 
-Feel free to reach out for course inquiries or collaboration opportunities.
+- Deep learning system architecture and optimization
+- Model serving, MLOps, and data pipeline build-out
+- Mobile/Web application integration, prototyping, and PoC (Proof of Concept)
+
+### Core strengths
+
+- Deployment, monitoring, and performance tuning with production in mind
+- Infrastructure design for both cloud and on-prem
+- Development culture and automation that enable fast experimentation and iteration
