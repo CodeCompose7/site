@@ -27,11 +27,12 @@ summaryLength = 30
     copyright = "&copy; 2025 코드컴포즈"
     [languages.ko.params]
       description = "코드컴포즈 회사 소개"
+      dateFormat = "2006년 1월 2일"
       [languages.ko.params.author]
         name = "코드컴포즈"
         image = "img/profile.png"
         headline = "딥러닝, 프로그래밍,  \n개발 문화·워크플로 전반에 대한  \n강의와 테크 콘텐츠 제공"
-        bio = "코드컴포즈의 기술 블로그 및 강의 소개 사이트입니다."
+        bio = "온라인·오프라인 강의, 딥러닝·쿠버네티스 개발/셋업, 모바일·웹 개발을 제공합니다."
         links = [
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
@@ -58,7 +59,7 @@ summaryLength = 30
       url = "/ko/tags/"
       weight = 4
     [[languages.ko.menu.main]]
-      name = "About"
+      name = "소개"
       url = "/ko/about/"
       weight = 5
     [[languages.ko.menu.main]]
@@ -79,11 +80,12 @@ summaryLength = 30
     copyright = "&copy; 2025 CodeCompose"
     [languages.en.params]
       description = "CodeCompose Company Introduction"
+      dateFormat = "2 Jan 2006"
       [languages.en.params.author]
         name = "CodeCompose"
         image = "img/profile.png"
         headline = "Courses and tech content on deep learning, programming,  \nand software development culture and workflows"
-        bio = "CodeCompose's tech blog and course introduction site."
+        bio = "CodeCompose offers online/offline courses, deep learning & Kubernetes development/setup, and mobile/web development."
         links = [
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
@@ -128,6 +130,16 @@ summaryLength = 30
   env = "production"
   description = "코드컴포즈 회사 소개"
   enableSearch = true
+  [params.business]
+    name = "코드컴포즈"
+    nameEn = "CodeCompose"
+    representative = "이태규"
+    representativeEn = "Taekyu Lee"
+    regNo = "784-18-01999"
+    mailOrderNo = "2023-인천연수구-0106"
+    addressKo = "인천광역시 연수구 한나루로 133, 4층 433호(옥련동, 박프라자)"
+    addressEn = "4F #433, 133 Hannaru-ro, Yeonsu-gu, Incheon, Republic of Korea (Okryeon-dong, Park Plaza)"
+    email = "dev@codecompose.net"
   
   # 홈페이지 레이아웃 설정
   [params.homepage]

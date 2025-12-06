@@ -28,6 +28,20 @@
   href="{{ $tagCardCSS.Permalink }}"
   integrity="{{ $tagCardCSS.Data.Integrity }}"
 />
+{{- $aboutProfileCardCSS := resources.Get "css/_partials/about-profile-card.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $aboutProfileCardCSS.Permalink }}"
+  integrity="{{ $aboutProfileCardCSS.Data.Integrity }}"
+/>
+{{- $bookmarkCSS := resources.Get "css/_partials/bookmark.css" | resources.Minify | resources.Fingerprint $algorithm -}}
+<link
+  type="text/css"
+  rel="stylesheet"
+  href="{{ $bookmarkCSS.Permalink }}"
+  integrity="{{ $bookmarkCSS.Data.Integrity }}"
+/>
 
 {{- /* 레이아웃 전용 CSS 번들 */ -}}
 {{- $layoutsCSS := resources.Get "css/layouts.css" | resources.Minify | resources.Fingerprint $algorithm -}}

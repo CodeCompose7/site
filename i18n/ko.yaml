@@ -68,3 +68,6 @@ error_404_message:
 
 error_404_draft_message:
   other: "이 페이지는 draft 상태입니다."
+
+staff_title:
+  other: "스태프"

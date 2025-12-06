@@ -2,7 +2,7 @@ category_filter_all:
   other: "All"
 
 course_level_label:
-  other: "Audience"
+  other: "Created for"
 
 difficulty_level_1:
   other: "Beginner"
@@ -68,3 +68,6 @@ error_404_message:
 
 error_404_draft_message:
   other: "This page is in draft status."
+
+staff_title:
+  other: "Staff"

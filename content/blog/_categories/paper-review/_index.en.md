@@ -1,7 +1,6 @@
 ---
-title: "Blog"
-description: "Paper reviews and tech blog"
-sidebarImage: banner1.jpg
+title: "Paper Reviews"
+sidebarImage: banner2.jpg
 sidebarText: "Code. Research. Innovation."
 pagerSize: 4
 
@@ -14,5 +13,6 @@ cascade:
 ---
 
 {{< lead >}}
-We share paper reviews and technical insights.
+Paper review category.
 {{< /lead >}}
+
