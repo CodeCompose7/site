@@ -1,6 +1,12 @@
 ---
 title: "소개"
 date: 2024-11-27
+showDate: false
+showDateUpdated: false
+showTableOfContents: false
+showTaxonomies: false
+showReadingTime: false
+showWordCount: false
 ---
 
 ## 안녕하세요 👋
