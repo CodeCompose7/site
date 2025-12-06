@@ -27,6 +27,7 @@ summaryLength = 30
     copyright = "&copy; 2025 코드컴포즈"
     [languages.ko.params]
       description = "코드컴포즈 회사 소개"
+      dateFormat = "2006년 1월 2일"
       [languages.ko.params.author]
         name = "코드컴포즈"
         image = "img/profile.png"
@@ -79,6 +80,7 @@ summaryLength = 30
     copyright = "&copy; 2025 CodeCompose"
     [languages.en.params]
       description = "CodeCompose Company Introduction"
+      dateFormat = "2 Jan 2006"
       [languages.en.params.author]
         name = "CodeCompose"
         image = "img/profile.png"
