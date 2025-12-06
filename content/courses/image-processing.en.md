@@ -5,7 +5,7 @@ categories: ["ai-learning"]
 feature: "img/course/default_course2.jpg"
 tags: ["Image Processing", "Computer Vision", "Python", "OpenCV", "Deep Learning"]
 description: "A practical course covering AI-based image processing techniques from fundamentals to real-world projects"
-summary: "Learn image processing from basics to advanced techniques using computer vision and deep learning through practical projects. Includes hands-on practice with OpenCV, PIL, TensorFlow/PyTorch for image preprocessing, object detection, image classification, and more."
+summary: "Learn computer vision and deep learning–based image processing from fundamentals to advanced techniques through hands-on projects with tools like OpenCV and PIL."
 ---
 
 ## Course Overview

@@ -29,16 +29,16 @@ article.course-card.rounded-2xl,
 article.tag-card.rounded-2xl {
   border: 1px solid rgba(var(--color-neutral-200), 1);
   background-color: rgba(var(--color-neutral-50), 1);
-  transition-property: all;
+  transition-property: background-color, border-color, transform, box-shadow;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 300ms;
+  transition-duration: 220ms;
 }
 
 .dark article.group.rounded-2xl,
 .dark article.course-card.rounded-2xl,
 .dark article.tag-card.rounded-2xl {
-  border-color: rgba(var(--color-neutral-700), 1);
-  background-color: rgba(var(--color-neutral-800), 1);
+  border-color: #191a1c;
+  background-color: #0f0f0f;
 }
 
 /* Hover 효과 (데스크톱 이상에서만 적용) */
@@ -46,15 +46,17 @@ article.tag-card.rounded-2xl {
   article.group.rounded-2xl:hover,
   article.course-card.rounded-2xl:hover,
   article.tag-card.rounded-2xl:hover {
-    transform: translateY(-0.5rem);
+    transform: translateY(-0.35rem);
     background-color: rgba(var(--color-neutral-100), 1);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 12px 20px -6px rgba(0, 0, 0, 0.08);
   }
 
   .dark article.group.rounded-2xl:hover,
   .dark article.course-card.rounded-2xl:hover,
   .dark article.tag-card.rounded-2xl:hover {
-    background-color: rgba(var(--color-neutral-700), 1);
+    background-color: #151618;
+    border-color: #1f2023;
+    box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.4);
   }
 }
 

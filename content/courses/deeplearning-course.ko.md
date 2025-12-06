@@ -1,11 +1,18 @@
 ---
-title: "딥러닝 기초부터 실전까지"
-date: 2024-11-27
-categories: ["ai-learning"]
-tags: ["딥러닝", "TensorFlow", "Python", "신경망"]
-description: "딥러닝의 기초 개념부터 실제 프로젝트 적용까지 다루는 실전 강의"
-summary: "딥러닝을 처음 시작하는 분들부터 실무에 적용하고자 하는 분들까지 모두를 위한 과정입니다. 신경망 기초부터 CNN, RNN, Transformer까지 실전 프로젝트를 통해 배웁니다."
-level: 1
+title: "딥러닝 기초부터 실전까지"         # 글 제목
+date: 2024-11-27                   # 생성일
+# lastmod: 2025-12-03              # (선택) 최근 수정일
+# version: 2                       # (선택) 문서/글 버전
+categories: ["ai-learning"]        # 카테고리 (_categories 내 폴더 이름 중 하나)
+tags: ["딥러닝", "TensorFlow", "Python", "신경망"]  # 태그
+description: "딥러닝의 기초 개념부터 실제 프로젝트 적용까지 다루는 실전 강의"  # 기본 설명
+summary: "딥러닝을 처음 시작하는 분들부터 실무에 적용하고자 하는 분들까지 모두를 위한 과정입니다. 신경망 기초부터 CNN, RNN, Transformer까지 실전 프로젝트를 통해 배웁니다."  # 목록에 나타나는 설명
+# level: 1                         # (선택) 난이도(1~5)
+# hours: "3:00"                    # (선택) 강의 시간
+# weight: 1                        # (선택) 코스 목록 정렬 우선순위. 작을수록 위, 없으면 날짜 역순.
+# feature: "ml_ops_main*"          # (선택) 대표 이미지 리소스 키(와일드카드 가능). 폴더 내 이미지 필요.
+# featureAlt: "MLOps 강의 대표 이미지"  # (선택) 대표 이미지 대체 텍스트
+coverCaption: "MLOps: 머신러닝 시스템 운영과 자동화" # (선택) 이미지 캡션
 ---
 
 ## 강의 개요
