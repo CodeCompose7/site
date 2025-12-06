@@ -132,7 +132,7 @@ Hugo에서는 **shortcode 링크**를 이용해서 다른 컨텐츠를 안정적
 
 ### Front Matter 예시
 
-**강의 글(`content/courses/`):**
+#### 강의 글(`content/courses/`)
 
 ```yaml
 ---
@@ -153,7 +153,7 @@ coverCaption: "MLOps: 머신러닝 시스템 운영과 자동화" # (선택) 이
 ---
 ```
 
-**블로그 글(`content/blog/`):**
+#### 블로그 글(`content/blog/`)
 
 ```yaml
 ---
@@ -170,6 +170,30 @@ featureAlt: "Transformer 논문 리뷰 글의 대표 이미지" # (선택) 대�
 coverCaption: "Attention is All You Need: Transformer 아키텍처" # (선택) 이미지 캡션
 ---
 ```
+
+### Shortcodes
+
+#### 링크
+
+`bookmark` 하나로 사용하면,  
+`type`이 없을 경우 `github.com` 포함 여부를 자동으로 감지하여,  
+GitHub 카드/일반 링크 카드로 분기합니다.  
+
+필요 시 `type="github"`로 강제 지정하거나 `icon`으로 커스텀 아이콘을 줄 수 있습니다.
+
+```markdown
+<!-- markdownlint-disable MD034 -->
+{{< bookmark
+    url="https://github.com/CodeCompose7/ops_demo"
+    title="ops_demo"
+    desc="DevOps/ML Ops 실습 예제 코드" >}}
+<!-- markdownlint-enable MD034 -->
+```
+
+- 필수: `url`
+- 선택: `title`(기본 url), `desc`, `icon`, `type`(`github` 강제용)
+- GitHub 자동 감지: `type`이 비어 있고 `url`에 `github.com`이 포함되면 GitHub 카드로 렌더
+- 다크모드/라이트모드 색상 대응, Pretendard 폰트 적용
 
 ## GitHub Pages 배포
 

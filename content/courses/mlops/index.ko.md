@@ -85,7 +85,12 @@ hours: "3:00"
 
 ### 주요 실습 프로젝트
 
-**ops_demo**: <https://github.com/CodeCompose7/ops_demo>
+<!-- markdownlint-disable MD034 -->
+{{< bookmark
+    url="https://github.com/CodeCompose7/ops_demo"
+    title="ops_demo"
+    desc="DevOps/ML Ops 실습 예제 코드" >}}
+<!-- markdownlint-enable MD034 -->
 
 - 0.0.1: Python 프로젝트 기본 구조
 - 0.0.2: ML 파이프라인 구현
