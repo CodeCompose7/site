@@ -145,6 +145,7 @@ summaryLength = 30
   [params.homepage]
     layout = "profile"
     showRecent = true
+    showRecentFolders = ["blog"]
     recentLimit = 5
   
   # 리스트 페이지 설정

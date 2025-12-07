@@ -6,33 +6,36 @@
 */ -}}
 
 {{- if .Site.Params.homepage.showRecent | default false }}
-  {{- $blogSection := .Site.Params.sections.blog | default "blog" }}
+  {{- /* 표시할 섹션 목록: homepage.showRecentFolders (없으면 비워두고 렌더 생략) */}}
+  {{- $sectionList := .Site.Params.homepage.showRecentFolders | default (slice) }}
+  {{- if gt (len $sectionList) 0 }}
 
-  {{- /* 블로그 섹션 글만 수집 */}}
-  {{- $pages := where .Site.RegularPages "Section" $blogSection }}
+    {{- /* 지정 섹션 글만 수집 */}}
+    {{- $pages := where .Site.RegularPages "Section" "in" $sectionList }}
 
-  {{- /* draft 필터링: buildDrafts가 false인 경우에만 draft 제외 */}}
-  {{- if not .Site.BuildDrafts }}
-    {{- $pages = where $pages "Draft" "!=" true }}
-  {{- end }}
+    {{- /* draft 필터링: buildDrafts가 false인 경우에만 draft 제외 */}}
+    {{- if not .Site.BuildDrafts }}
+      {{- $pages = where $pages "Draft" "!=" true }}
+    {{- end }}
 
-  {{- /* 날짜 기준 최신 글 정렬 후 제한 */}}
-  {{- $recentLimit := .Site.Params.homepage.recentLimit | default 5 }}
-  {{- $pages = first $recentLimit ($pages.ByDate.Reverse) }}
+    {{- /* 날짜 기준 최신 글 정렬 후 제한 */}}
+    {{- $recentLimit := .Site.Params.homepage.recentLimit | default 5 }}
+    {{- $pages = first $recentLimit ($pages.ByDate.Reverse) }}
 
-  {{- if gt (len $pages) 0 }}
-    <section class="mt-10 recent-articles">
-      <h2 class="mb-6 pl-6 text-2xl font-extrabold text-neutral-900 dark:text-neutral-50">
-        {{ i18n "shortcode.recent_articles" | emojify }}
-      </h2>
+    {{- if gt (len $pages) 0 }}
+      <section class="mt-10 recent-articles">
+        <h2 class="mb-6 pl-6 text-2xl font-extrabold text-neutral-900 dark:text-neutral-50">
+          {{ i18n "shortcode.recent_articles" | emojify }}
+        </h2>
 
-      {{- /* grid 대신 세로 row 형태로 나열 */}}
-      <div class="flex flex-col gap-6">
-        {{- range $pages }}
-          {{ partial "article-card.html" . }}
-        {{- end }}
-      </div>
-    </section>
+        {{- /* grid 대신 세로 row 형태로 나열 */}}
+        <div class="flex flex-col gap-6">
+          {{- range $pages }}
+            {{ partial "article-card.html" . }}
+          {{- end }}
+        </div>
+      </section>
+    {{- end }}
   {{- end }}
 {{- end }}
 

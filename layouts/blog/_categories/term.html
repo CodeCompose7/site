@@ -39,33 +39,11 @@
       {{- $categoryName = index $pathParts 3 }}
     {{- end }}
   {{- end }}
-  {{- /* 블로그 섹션을 경로로 직접 찾기 */}}
-  {{- $currentLang := .Language.Lang | default "ko" }}
-  {{- $blogSectionName := .Site.Params.sections.blog | default "blog" }}
-  {{- $blogPath := printf "/%s/%s" $currentLang $blogSectionName }}
-  {{- $blogSection := .Site.GetPage $blogPath }}
-  {{- /* 찾은 페이지가 현재 페이지인지 확인하고, 그렇다면 다시 찾기 */}}
-  {{- if and $blogSection (eq $blogSection .) }}
-    {{- $blogSection = false }}
-  {{- end }}
-  {{- if not $blogSection }}
-    {{- $foundSection := .Site.GetPage (printf "/%s" $blogSectionName) }}
-    {{- if and $foundSection (ne $foundSection .) }}
-      {{- $blogSection = $foundSection }}
-    {{- end }}
-  {{- end }}
-  {{- if not $blogSection }}
-    {{- $foundSection := .Site.GetPage "section" $blogSectionName }}
-    {{- if and $foundSection (ne $foundSection .) }}
-      {{- $blogSection = $foundSection }}
-    {{- end }}
-  {{- end }}
-  {{- if not $blogSection }}
-    {{- $foundSection := .Site.GetPage $blogSectionName }}
-    {{- if and $foundSection (ne $foundSection .) }}
-      {{- $blogSection = $foundSection }}
-    {{- end }}
-  {{- end }}
+  {{- /* 섹션 루트는 helper로 해결: front matter(sectionKey/categorySection) 우선 */}}
+  {{- $sectionArg := .Params.categorySection | default (.Params.sectionKey | default "") }}
+  {{- $resolved := partial "functions/section-root.html" (dict "context" . "section" $sectionArg) }}
+  {{- $blogSection := $resolved.page }}
+  {{- $blogSectionName := $resolved.name }}
   {{- $allPosts := slice }}
   {{- if $blogSection }}
     {{- $allPosts = $blogSection.Pages }}

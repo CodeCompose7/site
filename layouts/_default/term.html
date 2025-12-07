@@ -39,25 +39,16 @@
   {{- end }}
   
   <section class="mt-8">
-    {{- /* 카테고리 필터 추가 (categories taxonomy인 경우) - 항상 표시 */}}
-    {{- if eq .Data.Singular "category" }}
+  {{- /* 카테고리 필터 추가 (categories taxonomy인 경우) - 항상 표시 */}}
+  {{- if eq .Data.Singular "category" }}
       {{- $currentCategory := .Data.Term }}
-      {{- /* 블로그 섹션을 현재 언어를 고려해서 찾기 */}}
-      {{- $currentLang := .Language.Lang | default "ko" }}
-      {{- $blogSectionName := .Site.Params.sections.blog | default "blog" }}
-      {{- $blogPath := printf "/%s/%s" $currentLang $blogSectionName }}
-      {{- $blogSection := .Site.GetPage $blogPath }}
-      {{- if not $blogSection }}
-        {{- $blogSection = .Site.GetPage (printf "/%s" $blogSectionName) }}
-      {{- end }}
-      {{- if not $blogSection }}
-        {{- $blogSection = .Site.GetPage "section" $blogSectionName }}
-      {{- end }}
-      {{- if not $blogSection }}
-        {{- $blogSection = .Site.GetPage $blogSectionName }}
-      {{- end }}
-      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" $blogSection) }}
-    {{- end }}
+      {{- /* 섹션 루트는 front matter 우선(.Params.categorySection / sectionKey) */}}
+      {{- $sectionArg := .Params.categorySection | default (.Params.sectionKey | default "") }}
+      {{- $resolved := partial "functions/section-root.html" (dict "context" . "section" $sectionArg) }}
+      {{- $categorySection := $resolved.page }}
+      {{- $categorySectionName := $resolved.name }}
+      {{ partial "category-filter.html" (dict "context" . "currentCategory" $currentCategory "blogSection" $categorySection "section" $categorySectionName) }}
+  {{- end }}
   
   {{ if $filteredPages }}
       

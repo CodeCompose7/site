@@ -4,6 +4,11 @@ description: "논문 리뷰 및 기술 블로그"
 sidebarImage: banner1.jpg  # assets/banner/ 폴더에 있는 이미지 파일명
 sidebarText: "Code. Research. Innovation."  # 이미지 아래에 표시될 텍스트
 pagerSize: 4  # 한 페이지에 표시할 글 개수
+sectionKey: blog
+categorySection: blog
+sidebarDefaults:
+  image: banner1.jpg
+  text: "Code. Research. Innovation."
 
 cascade:
   showDate: true
