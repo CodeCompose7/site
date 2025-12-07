@@ -6,7 +6,10 @@
       "version": "latest",
       "extended": true
     },
-    "ghcr.io/devcontainers/features/git:1": {}
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/go:1": {
+      "version": "1.23"
+    }
   },
   "customizations": {
     "vscode": {

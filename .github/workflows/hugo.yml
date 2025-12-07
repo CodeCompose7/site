@@ -27,6 +27,17 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
+
+      - name: Go 설정 (Hugo Modules용)
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+          cache: false
+      
+      - name: Hugo Modules 정리
+        run: |
+          go env
+          hugo mod tidy
           
       - name: Hugo 설정
         uses: peaceiris/actions-hugo@v2
