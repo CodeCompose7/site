@@ -81,6 +81,18 @@ VS Code에서:
 2. Command Palette (Ctrl+Shift+P) 열기
 3. "Dev Containers: Reopen in Container" 선택
 
+### Devcontainer 선택 가이드
+
+#### 콘텐츠만 편집
+
+`.devcontainer/devcontainer.json`(이름: "Courses 컨텐츠 개발")으로 열면, Hugo 콘텐츠 작업에 집중할 수 있습니다.
+
+#### 레이아웃+콘텐츠 동시 편집
+
+`.devcontainer/layout/devcontainer.json`(이름: "CC Layout 개발")으로 열면 `cc-layouts`가 함께 마운트되어 레이아웃과 콘텐츠를 한 번에 수정할 수 있습니다.
+
+- 두 리포를 한 화면에서: VS Code에서 `File: Open Workspace from File...`로 `.devcontainer/layout/courses.code-workspace`를 연 뒤 "Dev Containers: Reopen in Container"를 실행하면 `courses`와 `cc-layouts`가 동시에 열린 상태로 컨테이너가 올라옵니다.
+
 ### 2. Hugo 테마 확인
 
 이 템플릿에는 `themes/congo` 디렉터리에 Congo 테마가 **이미 포함**되어 있습니다.
