@@ -7,7 +7,6 @@ defaultContentLanguage = "ko"
 defaultContentLanguageInSubdir = true
 
 title = "코드컴포즈"
-theme = "congo"
 
 enableRobotsTXT = true
 buildDrafts = false
@@ -15,6 +14,12 @@ buildFuture = false
 buildExpired = false
 
 summaryLength = 30
+
+[module]
+  [[module.imports]]
+    path = "github.com/CodeCompose7/cc-layouts"
+  [[module.imports]]
+    path = "github.com/jpanther/congo/v2"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
