@@ -33,17 +33,17 @@ jobs:
         with:
           go-version: "1.23.x"
           cache: false
-      
-      - name: Hugo Modules 정리
-        run: |
-          go env
-          hugo mod tidy
-          
+
       - name: Hugo 설정
         uses: peaceiris/actions-hugo@v2
         with:
           hugo-version: 'latest'
           extended: true
+
+      - name: Hugo Modules 정리
+        run: |
+          go env
+          hugo mod tidy
           
       - name: Pages 설정
         id: pages
