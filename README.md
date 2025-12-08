@@ -7,6 +7,37 @@
 hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 ```
 
+## 모듈(테마/레이아웃) 구성
+
+- 테마: `github.com/jpanther/congo/v2` (v2.12.2)
+- 커스텀 레이아웃: `github.com/CodeCompose7/cc-layouts` (v0.1.0)
+- `theme = "congo"`는 사용하지 않고,  
+  `hugo.toml`의 `[module.imports]` 순서로 congo → cc-layouts가 로드됩니다.
+- 의존성 파일: `go.mod`, `go.sum` (반드시 커밋)
+- 업데이트/동기화
+  
+  ```bash
+  # 모듈 버전 반영 후 정리
+  hugo mod tidy
+
+  # 특정 버전으로 올리고 싶을 때
+  hugo mod get github.com/jpanther/congo/v2@v2.12.2
+  hugo mod get github.com/CodeCompose7/cc-layouts@v0.1.0
+  hugo mod tidy
+
+  # 모든 모듈을 최신(동일 major)으로 올리고 싶을 때
+  hugo mod get -u
+  hugo mod tidy
+
+  # 특정 모듈만 최신으로 올릴 때
+  hugo mod get -u github.com/jpanther/congo/v2
+  hugo mod get -u github.com/CodeCompose7/cc-layouts
+  hugo mod tidy
+  ```
+  
+- CI(GitHub Actions)는  
+  `setup-go` → `hugo mod tidy` → `hugo --minify` 순서로 동작해 모듈을 자동으로 내려받습니다.
+
 ## 프로젝트 구조
 
 ```text
@@ -49,6 +80,18 @@ VS Code에서:
 1. 이 폴더를 열기
 2. Command Palette (Ctrl+Shift+P) 열기
 3. "Dev Containers: Reopen in Container" 선택
+
+### Devcontainer 선택 가이드
+
+#### 콘텐츠만 편집
+
+`.devcontainer/devcontainer.json`(이름: "Courses 컨텐츠 개발")으로 열면, Hugo 콘텐츠 작업에 집중할 수 있습니다.
+
+#### 레이아웃+콘텐츠 동시 편집
+
+`.devcontainer/layout/devcontainer.json`(이름: "CC Layout 개발")으로 열면 `cc-layouts`가 함께 마운트되어 레이아웃과 콘텐츠를 한 번에 수정할 수 있습니다.
+
+- 두 리포를 한 화면에서: VS Code에서 `File: Open Workspace from File...`로 `.devcontainer/layout/courses.code-workspace`를 연 뒤 "Dev Containers: Reopen in Container"를 실행하면 `courses`와 `cc-layouts`가 동시에 열린 상태로 컨테이너가 올라옵니다.
 
 ### 2. Hugo 테마 확인
 
@@ -314,8 +357,16 @@ hugo server -D --baseURL http://localhost:1313
 # 빌드 (public 폴더에 생성, 프로덕션용)
 hugo
 
-# 테마 업데이트
-git submodule update --remote --merge
+### 테마/레이아웃 모듈 업데이트
+# 기본: go.mod/go.sum 버전에 따라 빌드
+# 전체 최신화(동일 major 내)
+hugo mod get -u
+hugo mod tidy
+
+# 특정 모듈만 최신화
+hugo mod get -u github.com/jpanther/congo/v2
+hugo mod get -u github.com/CodeCompose7/cc-layouts
+hugo mod tidy
 ```
 
 ## 다음 단계

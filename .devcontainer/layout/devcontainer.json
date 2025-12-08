@@ -1,5 +1,5 @@
 {
-  "name": "Courses 컨텐츠 개발",
+  "name": "CC Layout 개발",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
     "ghcr.io/devcontainers/features/hugo:1": {
@@ -20,8 +20,11 @@
       ]
     }
   },
-  "postCreateCommand": "chmod +x .devcontainer/start-hugo.sh .devcontainer/disable-layout-dev.sh && .devcontainer/disable-layout-dev.sh && hugo version",
-  "postAttachCommand": ".devcontainer/disable-layout-dev.sh && .devcontainer/start-hugo.sh",
+  "mounts": [
+    "source=${localWorkspaceFolder}/../cc-layouts,target=/workspaces/cc-layouts,type=bind,consistency=cached"
+  ],
+  "postCreateCommand": "chmod +x .devcontainer/enable-layout-dev.sh && hugo version",
+  "postAttachCommand": ".devcontainer/enable-layout-dev.sh",
   "forwardPorts": [
     1313
   ],
@@ -33,3 +36,4 @@
   },
   "remoteUser": "vscode"
 }
+

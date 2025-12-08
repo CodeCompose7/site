@@ -4,6 +4,11 @@ description: "Paper reviews and tech blog"
 sidebarImage: banner1.jpg
 sidebarText: "Code. Research. Innovation."
 pagerSize: 4
+sectionKey: blog
+categorySection: blog
+sidebarDefaults:
+  image: banner1.jpg
+  text: "Code. Research. Innovation."
 
 cascade:
   showDate: true
