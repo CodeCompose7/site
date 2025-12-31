@@ -10,7 +10,7 @@ hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 ## 모듈(테마/레이아웃) 구성
 
 - 테마: `github.com/jpanther/congo/v2` (v2.12.2)
-- 커스텀 레이아웃: `github.com/CodeCompose7/cc-layouts` (v0.1.0)
+- 커스텀 레이아웃: `github.com/CodeCompose7/cc-layouts` (v0.1.1)
 - `theme = "congo"`는 사용하지 않고,  
   `hugo.toml`의 `[module.imports]` 순서로 congo → cc-layouts가 로드됩니다.
 - 의존성 파일: `go.mod`, `go.sum` (반드시 커밋)
@@ -22,7 +22,7 @@ hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 
   # 특정 버전으로 올리고 싶을 때
   hugo mod get github.com/jpanther/congo/v2@v2.12.2
-  hugo mod get github.com/CodeCompose7/cc-layouts@v0.1.0
+  hugo mod get github.com/CodeCompose7/cc-layouts@v0.1.1
   hugo mod tidy
 
   # 모든 모듈을 최신(동일 major)으로 올리고 싶을 때
