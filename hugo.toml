@@ -182,7 +182,6 @@ summaryLength = 30
 
 [markup]
   [markup.highlight]
-    style = "monokai"
     lineNos = true
     lineNumbersInTable = true
   [markup.goldmark]
