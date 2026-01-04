@@ -1,6 +1,8 @@
 ---
 title: "강의"
 description: "딥러닝·프로그래밍·개발 문화·워크플로 전반에 대한 강의"
+sortBy: "weight"
+sortOrder: "desc"
 
 cascade:
   showDate: true
