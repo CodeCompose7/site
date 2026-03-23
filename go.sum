@@ -3,3 +3,5 @@ github.com/CodeCompose7/cc-layouts v0.1.3/go.mod h1:SvBG0bb8MyUcYB41xYC1qX/ZNDRN
 github.com/CodeCompose7/cc-layouts v0.2.0 h1:S/0J1XlbUVe4C0JABuEYwZDm5z7eDxdJd8YamGYMKrQ=
 github.com/CodeCompose7/cc-layouts v0.2.0/go.mod h1:SvBG0bb8MyUcYB41xYC1qX/ZNDRNjDr4srb7bgkyV0I=
 github.com/CodeCompose7/cc-layouts v0.2.2/go.mod h1:SvBG0bb8MyUcYB41xYC1qX/ZNDRNjDr4srb7bgkyV0I=
+github.com/CodeCompose7/cc-layouts v0.2.3 h1:fn74t+bYPLRlN/PNZTBgV/FToU1wy+DV5aVbydgdbas=
+github.com/CodeCompose7/cc-layouts v0.2.3/go.mod h1:SvBG0bb8MyUcYB41xYC1qX/ZNDRNjDr4srb7bgkyV0I=
