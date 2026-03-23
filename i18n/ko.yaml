@@ -71,3 +71,49 @@ error_404_draft_message:
 
 staff_title:
   other: "스태프"
+
+# Navigation
+nav_home:
+  other: "홈"
+nav_courses:
+  other: "강의"
+nav_blog:
+  other: "블로그"
+nav_tags:
+  other: "태그"
+nav_about:
+  other: "소개"
+
+# Breadcrumbs
+breadcrumb_home:
+  other: "홈"
+
+# Reading time and word count
+reading_time:
+  other: "{{ .Count }}분"
+word_count:
+  other: "{{ .Count }}자"
+
+# Recent articles
+recent_articles_title:
+  other: "최근 글"
+view_all:
+  other: "전체 보기"
+
+# TOC
+toc_title:
+  other: "목차"
+
+# Draft
+draft_label:
+  other: "초안"
+
+# 404
+not_found_title:
+  other: "페이지를 찾을 수 없습니다"
+go_home:
+  other: "홈으로"
+
+# No articles
+no_articles:
+  other: "게시글이 없습니다."
