@@ -71,3 +71,49 @@ error_404_draft_message:
 
 staff_title:
   other: "Staff"
+
+# Navigation
+nav_home:
+  other: "Home"
+nav_courses:
+  other: "Courses"
+nav_blog:
+  other: "Blog"
+nav_tags:
+  other: "Tags"
+nav_about:
+  other: "About"
+
+# Breadcrumbs
+breadcrumb_home:
+  other: "Home"
+
+# Reading time and word count
+reading_time:
+  other: "{{ .Count }} min"
+word_count:
+  other: "{{ .Count }} words"
+
+# Recent articles
+recent_articles_title:
+  other: "Recent Posts"
+view_all:
+  other: "View All"
+
+# TOC
+toc_title:
+  other: "Table of Contents"
+
+# Draft
+draft_label:
+  other: "Draft"
+
+# 404
+not_found_title:
+  other: "Page not found"
+go_home:
+  other: "Go Home"
+
+# No articles
+no_articles:
+  other: "No articles found."

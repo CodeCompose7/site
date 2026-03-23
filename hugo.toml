@@ -13,16 +13,12 @@ buildDrafts = false
 buildFuture = false
 buildExpired = false
 
-summaryLength = 30
-
 [module]
   [[module.imports]]
     path = "github.com/CodeCompose7/cc-layouts"
-  [[module.imports]]
-    path = "github.com/jpanther/congo/v2"
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS"]
 
 [languages]
   [languages.ko]
@@ -33,6 +29,16 @@ summaryLength = 30
     [languages.ko.params]
       description = "코드컴포즈 회사 소개"
       dateFormat = "2006년 1월 2일"
+      nav_courses = "강의"
+      nav_blog = "블로그"
+      nav_tags = "태그"
+      nav_about = "소개"
+      footer_courses = "강의"
+      footer_blog = "블로그"
+      footer_about = "소개"
+      footer_contact = "연락처"
+      footer_company = "코드컴포즈"
+      footer_business = "상호 코드컴포즈 · 대표자명 이태규 · 사업자등록번호 784-18-01999<br>통신판매업 신고번호 2023-인천연수구-0106<br>인천광역시 연수구 한나루로 133, 4층 433호(옥련동, 박프라자)"
       [languages.ko.params.author]
         name = "코드컴포즈"
         image = "img/profile.png"
@@ -42,14 +48,9 @@ summaryLength = 30
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
         ]
-      [languages.ko.params.header]
-        logo = "img/logo_with_whitespace.png"
-        logoDark = "img/logo_with_whitespace.png"
-        logoWidth = 40
-        showTitle = false
     [[languages.ko.menu.main]]
       name = "홈"
-      url = "/"
+      pageRef = "/"
       weight = 1
     [[languages.ko.menu.main]]
       name = "강의"
@@ -67,17 +68,7 @@ summaryLength = 30
       name = "소개"
       url = "/ko/about/"
       weight = 5
-    [[languages.ko.menu.main]]
-      identifier = "search"
-      weight = 99
-      [languages.ko.menu.main.params]
-        action = "search"
-    [[languages.ko.menu.main]]
-      identifier = "locale"
-      weight = 100
-      [languages.ko.menu.main.params]
-        action = "locale"
-  
+
   [languages.en]
     languageName = "English"
     weight = 2
@@ -86,6 +77,16 @@ summaryLength = 30
     [languages.en.params]
       description = "CodeCompose Company Introduction"
       dateFormat = "2 Jan 2006"
+      nav_courses = "Courses"
+      nav_blog = "Blog"
+      nav_tags = "Tags"
+      nav_about = "About"
+      footer_courses = "Courses"
+      footer_blog = "Blog"
+      footer_about = "About"
+      footer_contact = "Contact"
+      footer_company = "CodeCompose"
+      footer_business = "CodeCompose · Taekyu Lee · Reg. 784-18-01999<br>4F #433, 133 Hannaru-ro, Yeonsu-gu, Incheon, Republic of Korea"
       [languages.en.params.author]
         name = "CodeCompose"
         image = "img/profile.png"
@@ -95,14 +96,9 @@ summaryLength = 30
           { github = "https://github.com/CodeCompose7" },
           { email = "mailto:dev@codecompose.net" },
         ]
-      [languages.en.params.header]
-        logo = "img/logo_with_whitespace.png"
-        logoDark = "img/logo_with_whitespace.png"
-        logoWidth = 40
-        showTitle = false
     [[languages.en.menu.main]]
       name = "Home"
-      url = "/en/"
+      pageRef = "/"
       weight = 1
     [[languages.en.menu.main]]
       name = "Courses"
@@ -120,21 +116,10 @@ summaryLength = 30
       name = "About"
       url = "/en/about/"
       weight = 5
-    [[languages.en.menu.main]]
-      identifier = "search"
-      weight = 99
-      [languages.en.menu.main.params]
-        action = "search"
-    [[languages.en.menu.main]]
-      identifier = "locale"
-      weight = 100
-      [languages.en.menu.main.params]
-        action = "locale"
 
 [params]
-  env = "production"
-  description = "코드컴포즈 회사 소개"
-  enableSearch = true
+  email = "dev@codecompose.net"
+  github = "https://github.com/CodeCompose7"
   [params.business]
     name = "코드컴포즈"
     nameEn = "CodeCompose"
@@ -145,40 +130,12 @@ summaryLength = 30
     addressKo = "인천광역시 연수구 한나루로 133, 4층 433호(옥련동, 박프라자)"
     addressEn = "4F #433, 133 Hannaru-ro, Yeonsu-gu, Incheon, Republic of Korea (Okryeon-dong, Park Plaza)"
     email = "dev@codecompose.net"
-  
+
   # 홈페이지 레이아웃 설정
   [params.homepage]
-    layout = "profile"
     showRecent = true
     showRecentFolders = ["blog"]
     recentLimit = 5
-  
-  # 리스트 페이지 설정
-  [params.list]
-    showTaxonomies = true
-  
-  [params.article]
-    showTableOfContents = true
-    showTaxonomies = true
-  
-  # 섹션 경로 설정 (필요 시 여기서 섹션 슬러그만 변경)
-  [params.sections]
-    blog = "blog"
-  
-  # 댓글 시스템 (Giscus 설정 - 나중에 GitHub repo 생성 후 설정)
-  # [params.giscus]
-  #   repo = "yourusername/yourusername.github.io"
-  #   repoId = "YOUR_REPO_ID"
-  #   category = "Comments"
-  #   categoryId = "YOUR_CATEGORY_ID"
-  
-  # 소셜 링크
-  [[params.socialIcons]]
-    name = "github"
-    url = "https://github.com/CodeCompose7"
-  [[params.socialIcons]]
-    name = "email"
-    url = "mailto:dev@codecompose.net"
 
 [markup]
   [markup.highlight]

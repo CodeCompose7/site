@@ -1,0 +1,9 @@
+services:
+  hugo:
+    build: .
+    ports:
+      - "1313:1313"
+    volumes:
+      - .:/src
+    environment:
+      - TZ=Asia/Seoul
