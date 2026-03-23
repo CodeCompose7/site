@@ -25,7 +25,6 @@ jobs:
       - name: 코드 체크아웃
         uses: actions/checkout@v4
         with:
-          submodules: recursive
           fetch-depth: 0
 
       - name: Go 설정 (Hugo Modules용)
