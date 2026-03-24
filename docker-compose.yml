@@ -7,3 +7,11 @@ services:
       - .:/src
     environment:
       - TZ=Asia/Seoul
+
+  tidy:
+    build: .
+    volumes:
+      - .:/src
+    entrypoint: ["hugo", "mod", "tidy"]
+    profiles:
+      - tools
