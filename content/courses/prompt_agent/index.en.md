@@ -7,6 +7,9 @@ categories: ["ai-learning"]
 tags: ["Prompt Engineering", "AI Agent", "LLM", "Open Source", "Ollama", "LiteLLM", "LangGraph", "Tool Use", "Multi-Agent"]
 description: "From controlling LLMs to building systems with LLMs"
 summary: "Learn the principles and core techniques of prompt engineering, along with AI agent architecture and design principles through live coding demos using open-source tools."
+feature: "prompt_agent_main*"
+featureAlt: "Prompt Engineering"
+coverCaption: "Prompt Engineering & AI Agent Design"
 level: 2
 hours: "2:00"
 type: "special-lecture"

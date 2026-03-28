@@ -7,6 +7,9 @@ categories: ["ai-learning"]
 tags: ["프롬프트 엔지니어링", "AI 에이전트", "LLM", "오픈소스", "Ollama", "LiteLLM", "LangGraph", "Tool Use", "멀티 에이전트"]
 description: "LLM을 제어하는 기술에서 LLM으로 시스템을 만드는 기술까지"
 summary: "프롬프트 엔지니어링의 원리와 핵심 테크닉을 이해하고, AI 에이전트의 구조와 설계 원칙을 오픈소스 도구 기반 라이브 코딩 데모와 함께 학습합니다."
+feature: "prompt_agent_main*"
+featureAlt: "프롬프트 엔지니어링 강의 대표 이미지"
+coverCaption: "프롬프트 엔지니어링과 AI 에이전트 설계"
 level: 2
 hours: "2:00"
 type: "special-lecture"
