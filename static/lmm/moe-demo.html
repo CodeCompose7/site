@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoE - Mixture of Experts Demo</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:700px;margin:0 auto;text-align:center}
+  h2{font-size:1.2rem;margin-bottom:4px}
+  .sub{color:#888;font-size:.85rem;margin-bottom:16px}
+  canvas{display:block;margin:0 auto;border-radius:12px;border:1px solid #e8e8e8;cursor:pointer}
+  .controls{display:flex;justify-content:center;gap:10px;margin-top:12px}
+  .btn{padding:8px 20px;border-radius:20px;border:2px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
+  .btn:hover{border-color:#90caf9;background:#e3f2fd}
+  .btn.primary{border-color:#1976d2;background:#1976d2;color:#fff}
+  .info{margin-top:12px;padding:14px;background:#f8f9fa;border-radius:8px;font-size:.85rem;color:#555;line-height:1.5}
+  .stat{display:flex;justify-content:center;gap:20px;margin-top:10px}
+  .stat-item{text-align:center;padding:8px 16px;background:#f0f4f8;border-radius:8px}
+  .stat-val{font-size:1.3rem;font-weight:700}
+  .stat-label{font-size:.72rem;color:#888}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>MoE: Mixture of Experts (Llama 4 Maverick)</h2>
+  <p class="sub">"새 입력" 버튼을 눌러 라우터가 어떤 Expert를 활성화하는지 확인하세요</p>
+  <canvas id="canvas" width="650" height="430"></canvas>
+  <div class="controls">
+    <button class="btn primary" onclick="newInput()">새 입력 보내기</button>
+  </div>
+  <div class="stat">
+    <div class="stat-item"><div class="stat-val" style="color:#1976d2">~400B</div><div class="stat-label">전체 파라미터</div></div>
+    <div class="stat-item"><div class="stat-val" style="color:#4caf50" id="activeParams">17B</div><div class="stat-label">활성 파라미터</div></div>
+    <div class="stat-item"><div class="stat-val" style="color:#ff9800" id="activeCount">2/8</div><div class="stat-label">활성 Expert</div></div>
+    <div class="stat-item"><div class="stat-val" style="color:#9c27b0" id="efficiency">4.3%</div><div class="stat-label">활성 비율</div></div>
+  </div>
+  <div class="info" id="info">
+    MoE는 입력마다 라우터가 가장 적합한 Expert만 활성화합니다. 전체 400B 중 17B만 사용하여 연산 효율을 극대화합니다.
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+function setupHiDPI(cvs) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = cvs.getBoundingClientRect();
+  cvs.width = rect.width * dpr;
+  cvs.height = rect.height * dpr;
+  cvs.style.width = rect.width + 'px';
+  cvs.style.height = rect.height + 'px';
+  const c = cvs.getContext('2d');
+  c.scale(dpr, dpr);
+  return c;
+}
+const W = 650, H = 430;
+const ctx = setupHiDPI(canvas);
+const NUM_EXPERTS = 8;
+let activeExperts = [0, 3];
+let animT = 0, animId = null;
+let pulsePhase = 0;
+
+const expertLabels = ['언어 이해', '코드 생성', '수학 추론', '이미지 분석', '번역', '요약', '창작', '분류'];
+const inputExamples = [
+  { text: '"이 사진 설명해줘"', experts: [3, 0], type: '이미지+텍스트' },
+  { text: '"Python 코드 짜줘"', experts: [1, 5], type: '코드 생성' },
+  { text: '"125 x 37 = ?"', experts: [2, 0], type: '수학' },
+  { text: '"영어로 번역해줘"', experts: [4, 0], type: '번역' },
+  { text: '"소설 써줘"', experts: [6, 0], type: '창작' },
+  { text: '"긍정/부정 분류"', experts: [7, 0], type: '분류' },
+];
+let currentInput = 0;
+
+function newInput() {
+  currentInput = (currentInput + 1) % inputExamples.length;
+  activeExperts = inputExamples[currentInput].experts;
+  animT = 0;
+  document.getElementById('activeCount').textContent = `${activeExperts.length}/${NUM_EXPERTS}`;
+  document.getElementById('info').innerHTML = `<strong>입력:</strong> ${inputExamples[currentInput].text}<br>라우터가 <strong>${activeExperts.map(i => expertLabels[i]).join(', ')}</strong> Expert를 활성화했습니다. 나머지 ${NUM_EXPERTS - activeExperts.length}개는 비활성 상태로 연산하지 않습니다.`;
+  if (animId) cancelAnimationFrame(animId);
+  runAnim();
+}
+
+function drawRoundedBox(x, y, w, h, r, fill, stroke, lw) {
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, r);
+  ctx.fillStyle = fill; ctx.fill();
+  ctx.strokeStyle = stroke; ctx.lineWidth = lw; ctx.stroke();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  pulsePhase += 0.05;
+
+  // Input
+  drawRoundedBox(20, H / 2 - 30, 110, 60, 8, '#bbdefb', '#1976d2', 2);
+  ctx.fillStyle = '#333'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('입력', 75, H / 2 - 4);
+  ctx.font = '10px sans-serif'; ctx.fillStyle = '#666';
+  ctx.fillText(inputExamples[currentInput].type, 75, H / 2 + 14);
+
+  // Router
+  drawRoundedBox(170, H / 2 - 25, 80, 50, 8, '#fff9c4', '#f9a825', 2);
+  ctx.fillStyle = '#333'; ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('라우터', 210, H / 2 + 4);
+
+  // Arrow input → router
+  ctx.beginPath(); ctx.moveTo(130, H / 2); ctx.lineTo(170, H / 2);
+  ctx.strokeStyle = '#1976d2'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(170, H / 2); ctx.lineTo(164, H / 2 - 4); ctx.lineTo(164, H / 2 + 4); ctx.closePath();
+  ctx.fillStyle = '#1976d2'; ctx.fill();
+
+  // Experts
+  const expertX = 300, expertW = 130, expertH = 34, gap = 6;
+  const totalH = NUM_EXPERTS * (expertH + gap);
+  const startY = (H - totalH) / 2;
+
+  for (let i = 0; i < NUM_EXPERTS; i++) {
+    const ey = startY + i * (expertH + gap);
+    const isActive = activeExperts.includes(i);
+    const pulse = isActive ? Math.sin(pulsePhase + i) * 0.15 + 0.85 : 1;
+
+    if (isActive) {
+      drawRoundedBox(expertX, ey, expertW, expertH, 6, '#c8e6c9', '#388e3c', 2.5);
+      // Arrow router → expert
+      ctx.beginPath(); ctx.moveTo(250, H / 2); ctx.lineTo(expertX, ey + expertH / 2);
+      ctx.strokeStyle = `rgba(56,142,60,${Math.min(1, animT * 3)})`;
+      ctx.lineWidth = 2; ctx.stroke();
+      // Pulse
+      const pr = 4 + Math.sin(pulsePhase + i) * 2;
+      ctx.beginPath(); ctx.arc(expertX + expertW + 10, ey + expertH / 2, pr, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(76,175,80,${0.5 + Math.sin(pulsePhase + i) * 0.3})`; ctx.fill();
+    } else {
+      drawRoundedBox(expertX, ey, expertW, expertH, 6, '#f5f5f5', '#bdbdbd', 1);
+      // Dashed line
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(250, H / 2); ctx.lineTo(expertX, ey + expertH / 2);
+      ctx.strokeStyle = 'rgba(189,189,189,0.3)'; ctx.lineWidth = 0.5; ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    ctx.fillStyle = isActive ? '#1b5e20' : '#999';
+    ctx.font = `${isActive ? 'bold ' : ''}11px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.fillText(`${isActive ? '✅ ' : ''}${expertLabels[i]}`, expertX + expertW / 2, ey + expertH / 2 + 4);
+  }
+
+  // Output
+  const outX = 490;
+  drawRoundedBox(outX, H / 2 - 30, 110, 60, 8, '#c8e6c9', '#388e3c', 2);
+  activeExperts.forEach(i => {
+    const ey = startY + i * (expertH + gap) + expertH / 2;
+    ctx.beginPath(); ctx.moveTo(expertX + expertW, ey); ctx.lineTo(outX, H / 2);
+    ctx.strokeStyle = `rgba(56,142,60,${Math.min(1, animT * 2)})`; ctx.lineWidth = 2; ctx.stroke();
+  });
+  ctx.fillStyle = '#333'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('출력', outX + 55, H / 2 + 4);
+}
+
+function runAnim() {
+  animT += 0.02;
+  draw();
+  if (animT < 2) animId = requestAnimationFrame(runAnim);
+  else { animId = setInterval(() => { pulsePhase += 0.05; draw(); }, 50); }
+}
+
+runAnim();
+</script>
+</body>
+</html>

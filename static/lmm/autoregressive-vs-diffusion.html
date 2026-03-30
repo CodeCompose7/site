@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diffusion vs Autoregressive 이미지 생성</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:750px;margin:0 auto;text-align:center}
+  h2{font-size:1.2rem;margin-bottom:4px}
+  .sub{color:#888;font-size:.85rem;margin-bottom:16px}
+  .compare{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .panel{flex:1;min-width:280px;border:2px solid #e0e0e0;border-radius:12px;padding:16px;text-align:center}
+  .panel h3{font-size:1rem;margin-bottom:8px}
+  .panel.left{border-color:#f9a825}
+  .panel.right{border-color:#1976d2}
+  canvas{display:block;margin:8px auto;border-radius:8px;border:1px solid #e8e8e8}
+  .step-label{font-size:.85rem;color:#888;margin:4px 0}
+  .controls{display:flex;justify-content:center;gap:10px;margin-top:12px}
+  .btn{padding:8px 20px;border-radius:20px;border:2px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
+  .btn.primary{border-color:#1976d2;background:#1976d2;color:#fff}
+  .diff-table{margin-top:16px;font-size:.82rem;text-align:left;border-collapse:collapse;width:100%}
+  .diff-table th,.diff-table td{padding:8px 10px;border-bottom:1px solid #eee}
+  .diff-table th{background:#f8f9fa;font-weight:600}
+  .win{color:#4caf50;font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Diffusion vs Autoregressive 이미지 생성</h2>
+  <p class="sub">"동시 생성" 버튼으로 두 방식의 차이를 확인하세요</p>
+  <div class="compare">
+    <div class="panel left">
+      <h3 style="color:#f57f17">Diffusion (Stable Diffusion)</h3>
+      <canvas id="c-diff" width="200" height="200"></canvas>
+      <div class="step-label" id="diff-step">대기 중</div>
+    </div>
+    <div class="panel right">
+      <h3 style="color:#1565c0">Autoregressive (GPT-4o)</h3>
+      <canvas id="c-ar" width="200" height="200"></canvas>
+      <div class="step-label" id="ar-step">대기 중</div>
+    </div>
+  </div>
+  <div class="controls">
+    <button class="btn primary" onclick="startBoth()">동시 생성 시작</button>
+    <button class="btn" onclick="resetBoth()">초기화</button>
+  </div>
+  <table class="diff-table">
+    <tr><th></th><th>Diffusion</th><th>Autoregressive</th></tr>
+    <tr><td>생성 방식</td><td>전체를 동시에 denoising</td><td>토큰을 하나씩 순차 생성</td></tr>
+    <tr><td>속도</td><td class="win">빠름</td><td>느림</td></tr>
+    <tr><td>텍스트 렌더링</td><td>부정확</td><td class="win">정확 (토큰 기반)</td></tr>
+    <tr><td>멀티턴 편집</td><td>어려움</td><td class="win">대화로 수정 가능</td></tr>
+    <tr><td>LLM 통합</td><td>별도 모델</td><td class="win">LLM 내장</td></tr>
+  </table>
+</div>
+<script>
+const cDiff = document.getElementById('c-diff');
+const cAR = document.getElementById('c-ar');
+const S = 200;
+const dpr = window.devicePixelRatio || 1;
+const PS = S * dpr; // physical pixel size
+// Set CSS size to logical, canvas to physical
+cDiff.style.width = S + 'px'; cDiff.style.height = S + 'px';
+cDiff.width = PS; cDiff.height = PS;
+cAR.style.width = S + 'px'; cAR.style.height = S + 'px';
+cAR.width = PS; cAR.height = PS;
+const ctxD = cDiff.getContext('2d');
+const ctxA = cAR.getContext('2d');
+let diffStep = 0, arStep = 0, animId = null;
+const totalDiffSteps = 40, totalARSteps = S * S / 16; // AR fills 4x4 blocks
+
+// Target image: simple flower at physical pixel resolution
+const target = new Uint8Array(PS * PS * 3);
+for (let py = 0; py < PS; py++) for (let px = 0; px < PS; px++) {
+  const idx = (py * PS + px) * 3;
+  const x = px / dpr, y = py / dpr;
+  const cx = S / 2, cy = S / 2;
+  const dx = x - cx, dy = y - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const angle = Math.atan2(dy, dx);
+  const petal = Math.cos(angle * 6) * 25;
+  if (dist < 45 + petal && dist > 15) {
+    const hue = ((angle + Math.PI) / (2 * Math.PI));
+    target[idx] = 200 + hue * 55; target[idx + 1] = 80 + (1 - hue) * 120; target[idx + 2] = 150;
+  } else if (dist <= 15) {
+    target[idx] = 255; target[idx + 1] = 220; target[idx + 2] = 50;
+  } else if (x > 95 && x < 105 && y > 120) {
+    target[idx] = 60; target[idx + 1] = 150; target[idx + 2] = 60;
+  } else {
+    target[idx] = 230; target[idx + 1] = 245; target[idx + 2] = 255;
+  }
+}
+
+const noise = new Uint8Array(PS * PS * 3);
+for (let i = 0; i < noise.length; i++) noise[i] = Math.random() * 255;
+
+function drawDiffusion() {
+  const t = Math.min(diffStep / totalDiffSteps, 1);
+  const id = ctxD.createImageData(PS, PS);
+  for (let y = 0; y < PS; y++) for (let x = 0; x < PS; x++) {
+    const pi = (y * PS + x) * 4;
+    const ti = (y * PS + x) * 3;
+    // All pixels denoise simultaneously
+    id.data[pi] = target[ti] * t + noise[ti] * (1 - t);
+    id.data[pi + 1] = target[ti + 1] * t + noise[ti + 1] * (1 - t);
+    id.data[pi + 2] = target[ti + 2] * t + noise[ti + 2] * (1 - t);
+    id.data[pi + 3] = 255;
+  }
+  ctxD.putImageData(id, 0, 0);
+  document.getElementById('diff-step').textContent = t >= 1 ? '완료!' : `Denoising step ${diffStep}/${totalDiffSteps}`;
+}
+
+function drawAutoregressive() {
+  const blockSize = 4; // logical block size
+  const pBlockSize = blockSize * dpr; // physical block size
+  const cols = S / blockSize; // logical grid columns
+  const blocksToFill = Math.min(arStep, cols * cols);
+
+  const id = ctxA.createImageData(PS, PS);
+  // Fill with grey first
+  for (let i = 0; i < id.data.length; i += 4) { id.data[i] = 220; id.data[i+1] = 220; id.data[i+2] = 220; id.data[i+3] = 255; }
+
+  // Fill blocks sequentially (left-to-right, top-to-bottom)
+  for (let b = 0; b < blocksToFill; b++) {
+    const bx = (b % cols) * pBlockSize;
+    const by = Math.floor(b / cols) * pBlockSize;
+    for (let dy = 0; dy < pBlockSize; dy++) for (let dx = 0; dx < pBlockSize; dx++) {
+      const x = bx + dx, y = by + dy;
+      if (x >= PS || y >= PS) continue;
+      const pi = (y * PS + x) * 4;
+      const ti = (y * PS + x) * 3;
+      id.data[pi] = target[ti]; id.data[pi + 1] = target[ti + 1]; id.data[pi + 2] = target[ti + 2]; id.data[pi + 3] = 255;
+    }
+  }
+  // Current block highlight - use scaled context for stroke
+  ctxA.putImageData(id, 0, 0);
+  if (blocksToFill < cols * cols) {
+    const bx = (blocksToFill % cols) * blockSize;
+    const by = Math.floor(blocksToFill / cols) * blockSize;
+    ctxA.save();
+    ctxA.scale(dpr, dpr);
+    ctxA.strokeStyle = '#1976d2'; ctxA.lineWidth = 2;
+    ctxA.strokeRect(bx, by, blockSize, blockSize);
+    ctxA.restore();
+  }
+  const pct = Math.min(100, Math.round(blocksToFill / (cols * cols) * 100));
+  document.getElementById('ar-step').textContent = pct >= 100 ? '완료!' : `토큰 생성 중... ${pct}%`;
+}
+
+function startBoth() {
+  diffStep = 0; arStep = 0;
+  if (animId) cancelAnimationFrame(animId);
+  function tick() {
+    if (diffStep < totalDiffSteps) diffStep++;
+    if (arStep < (S / 4) * (S / 4)) arStep += 8; // AR is slower
+    drawDiffusion();
+    drawAutoregressive();
+    if (diffStep < totalDiffSteps || arStep < (S / 4) * (S / 4)) animId = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+function resetBoth() {
+  if (animId) cancelAnimationFrame(animId);
+  diffStep = 0; arStep = 0;
+  for (let i = 0; i < noise.length; i++) noise[i] = Math.random() * 255;
+  ctxD.clearRect(0, 0, PS, PS); ctxA.clearRect(0, 0, PS, PS);
+  ctxD.save(); ctxD.scale(dpr, dpr);
+  ctxD.fillStyle = '#f5f5f5'; ctxD.fillRect(0, 0, S, S);
+  ctxD.restore();
+  ctxA.save(); ctxA.scale(dpr, dpr);
+  ctxA.fillStyle = '#f5f5f5'; ctxA.fillRect(0, 0, S, S);
+  ctxA.restore();
+  document.getElementById('diff-step').textContent = '대기 중';
+  document.getElementById('ar-step').textContent = '대기 중';
+}
+
+resetBoth();
+</script>
+</body>
+</html>

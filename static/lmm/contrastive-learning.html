@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contrastive Learning Demo</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:700px;margin:0 auto;text-align:center}
+  h2{font-size:1.2rem;margin-bottom:4px}
+  .sub{color:#888;font-size:.85rem;margin-bottom:16px}
+  canvas{border-radius:12px;border:1px solid #e8e8e8;cursor:pointer;display:block;margin:0 auto}
+  .controls{display:flex;justify-content:center;gap:10px;margin-top:12px}
+  .btn{padding:8px 20px;border-radius:20px;border:2px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s}
+  .btn:hover{border-color:#90caf9;background:#e3f2fd}
+  .btn.primary{border-color:#1976d2;background:#1976d2;color:#fff}
+  .info{margin-top:12px;padding:12px;background:#f8f9fa;border-radius:8px;font-size:.85rem;color:#555;line-height:1.5;min-height:50px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>대조 학습 (Contrastive Learning)</h2>
+  <p class="sub">학습이 진행되면서 관련 쌍은 가까워지고 비관련 쌍은 멀어집니다. 재생 버튼을 눌러보세요.</p>
+  <canvas id="canvas" width="650" height="400"></canvas>
+  <div class="controls">
+    <button class="btn primary" onclick="togglePlay()">학습 시작</button>
+    <button class="btn" onclick="resetDemo()">초기화</button>
+  </div>
+  <div class="info" id="info">
+    <strong>Epoch 0:</strong> 이미지와 텍스트 임베딩이 랜덤하게 배치되어 있습니다. 학습을 시작하면 관련 쌍끼리 가까워집니다.
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+function setupHiDPI(cvs) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = cvs.getBoundingClientRect();
+  cvs.width = rect.width * dpr;
+  cvs.height = rect.height * dpr;
+  cvs.style.width = rect.width + 'px';
+  cvs.style.height = rect.height + 'px';
+  const c = cvs.getContext('2d');
+  c.scale(dpr, dpr);
+  return c;
+}
+const W = 650, H = 400;
+const ctx = setupHiDPI(canvas);
+
+const pairs = [
+  { img: '🐱', text: '고양이', color: '#4caf50' },
+  { img: '🐶', text: '강아지', color: '#2196f3' },
+  { img: '🚗', text: '자동차', color: '#f44336' },
+  { img: '🍕', text: '피자',   color: '#ff9800' },
+];
+
+let epoch = 0, maxEpoch = 60, playing = false, animId = null;
+let imgPos = [], txtPos = [];
+
+function init() {
+  epoch = 0;
+  imgPos = pairs.map(() => ({ x: 80 + Math.random() * (W - 160), y: 60 + Math.random() * (H - 120) }));
+  txtPos = pairs.map(() => ({ x: 80 + Math.random() * (W - 160), y: 60 + Math.random() * (H - 120) }));
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function step() {
+  const t = Math.min(epoch / maxEpoch, 1);
+  const cx = W / 2, cy = H / 2;
+  const targetRadius = 100;
+
+  pairs.forEach((p, i) => {
+    const angle = (i / pairs.length) * Math.PI * 2 - Math.PI / 2;
+    const tx = cx + Math.cos(angle) * targetRadius;
+    const ty = cy + Math.sin(angle) * targetRadius;
+
+    imgPos[i].x = lerp(imgPos[i].x, tx - 20, 0.04);
+    imgPos[i].y = lerp(imgPos[i].y, ty, 0.04);
+    txtPos[i].x = lerp(txtPos[i].x, tx + 20, 0.04);
+    txtPos[i].y = lerp(txtPos[i].y, ty, 0.04);
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  const t = Math.min(epoch / maxEpoch, 1);
+
+  // Draw connections
+  pairs.forEach((p, i) => {
+    // Positive pair (same index)
+    ctx.beginPath();
+    ctx.moveTo(imgPos[i].x, imgPos[i].y);
+    ctx.lineTo(txtPos[i].x, txtPos[i].y);
+    const dist = Math.hypot(imgPos[i].x - txtPos[i].x, imgPos[i].y - txtPos[i].y);
+    ctx.strokeStyle = `rgba(76,175,80,${Math.min(1, 0.2 + t * 0.8)})`;
+    ctx.lineWidth = 1 + t * 3;
+    ctx.setLineDash([]);
+    ctx.stroke();
+
+    // Negative pairs (different index) - show repulsion
+    if (t > 0.1) {
+      pairs.forEach((_, j) => {
+        if (i !== j) {
+          ctx.beginPath();
+          ctx.moveTo(imgPos[i].x, imgPos[i].y);
+          ctx.lineTo(txtPos[j].x, txtPos[j].y);
+          ctx.strokeStyle = `rgba(244,67,54,${Math.max(0, 0.15 - t * 0.12)})`;
+          ctx.lineWidth = 0.5;
+          ctx.setLineDash([3, 3]);
+          ctx.stroke();
+        }
+      });
+    }
+    ctx.setLineDash([]);
+  });
+
+  // Draw image nodes
+  pairs.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(imgPos[i].x, imgPos[i].y, 22, 0, Math.PI * 2);
+    ctx.fillStyle = '#bbdefb';
+    ctx.fill();
+    ctx.strokeStyle = '#1976d2'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.font = '20px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(p.img, imgPos[i].x, imgPos[i].y);
+  });
+
+  // Draw text nodes
+  pairs.forEach((p, i) => {
+    const tw = ctx.measureText(p.text).width + 20;
+    ctx.beginPath();
+    ctx.roundRect(txtPos[i].x - tw / 2, txtPos[i].y - 14, tw, 28, 14);
+    ctx.fillStyle = '#fff3e0';
+    ctx.fill();
+    ctx.strokeStyle = '#e65100'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#333'; ctx.font = '13px sans-serif';
+    ctx.fillText(p.text, txtPos[i].x, txtPos[i].y + 1);
+  });
+
+  // Epoch counter
+  ctx.fillStyle = '#888'; ctx.font = '13px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText(`Epoch: ${epoch}`, 12, 24);
+
+  // Legend
+  ctx.textAlign = 'right';
+  ctx.strokeStyle = '#4caf50'; ctx.lineWidth = 2; ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(W - 180, 16); ctx.lineTo(W - 150, 16); ctx.stroke();
+  ctx.fillStyle = '#4caf50'; ctx.fillText('관련 쌍 (끌어당김)', W - 10, 20);
+
+  ctx.strokeStyle = '#f44336'; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(W - 180, 36); ctx.lineTo(W - 150, 36); ctx.stroke();
+  ctx.fillStyle = '#f44336'; ctx.fillText('비관련 쌍 (밀어냄)', W - 10, 40);
+  ctx.setLineDash([]);
+
+  // Info
+  const info = document.getElementById('info');
+  if (epoch === 0) info.innerHTML = '<strong>Epoch 0:</strong> 이미지와 텍스트 임베딩이 랜덤하게 배치되어 있습니다.';
+  else if (epoch < 20) info.innerHTML = `<strong>Epoch ${epoch}:</strong> 관련 쌍끼리 서서히 가까워지고 있습니다. 초록 선이 굵어지는 것은 유사도가 높아지는 것을 의미합니다.`;
+  else if (epoch < 50) info.innerHTML = `<strong>Epoch ${epoch}:</strong> 관련 쌍은 가까이, 비관련 쌍은 멀리! 대조 손실(contrastive loss)이 줄어들고 있습니다.`;
+  else info.innerHTML = `<strong>Epoch ${epoch}:</strong> 학습 완료! 각 이미지-텍스트 쌍이 임베딩 공간에서 가까이 위치합니다. 이것이 CLIP의 핵심 원리입니다.`;
+}
+
+function tick() {
+  if (epoch < maxEpoch) { epoch++; step(); }
+  draw();
+  if (playing && epoch < maxEpoch) animId = requestAnimationFrame(tick);
+  else playing = false;
+}
+
+function togglePlay() {
+  if (playing) { playing = false; if (animId) cancelAnimationFrame(animId); return; }
+  if (epoch >= maxEpoch) { init(); }
+  playing = true;
+  tick();
+}
+
+function resetDemo() {
+  playing = false;
+  if (animId) cancelAnimationFrame(animId);
+  init(); draw();
+}
+
+init(); draw();
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Omni-Modal: Thinker-Talker Architecture</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:750px;margin:0 auto;text-align:center}
+  h2{font-size:1.2rem;margin-bottom:4px}
+  .sub{color:#888;font-size:.85rem;margin-bottom:16px}
+  .input-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px}
+  .input-chip{padding:10px 18px;border-radius:20px;border:2px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.9rem;transition:all .2s}
+  .input-chip:hover{border-color:#90caf9;background:#e3f2fd}
+  .input-chip.active{border-color:#1976d2;background:#bbdefb;font-weight:600}
+  canvas{display:block;margin:0 auto;border-radius:12px;border:1px solid #e8e8e8}
+  .btn{padding:8px 24px;border-radius:20px;border:2px solid #1976d2;background:#1976d2;color:#fff;cursor:pointer;font-size:.85rem;font-weight:600;margin-top:12px;transition:all .2s}
+  .btn:hover{background:#1565c0}
+  .info{margin-top:12px;padding:14px;background:#f8f9fa;border-radius:8px;font-size:.85rem;color:#555;line-height:1.6}
+  .output-area{display:flex;gap:12px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .output-box{flex:1;min-width:200px;padding:14px;border-radius:8px;text-align:left;font-size:.85rem;line-height:1.5}
+  .output-box.text{background:#e8f5e9;border:1px solid #a5d6a7}
+  .output-box.voice{background:#fff3e0;border:1px solid #ffcc80}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Omni-Modal: Thinker-Talker (Qwen2.5-Omni)</h2>
+  <p class="sub">입력 모달리티를 선택하고 "처리 시작"을 눌러 Thinker-Talker 아키텍처의 동작을 확인하세요</p>
+  <div class="input-row">
+    <div class="input-chip active" onclick="setInput(0)">📝 텍스트</div>
+    <div class="input-chip" onclick="setInput(1)">🖼️ 이미지</div>
+    <div class="input-chip" onclick="setInput(2)">🎵 오디오</div>
+    <div class="input-chip" onclick="setInput(3)">🎬 비디오</div>
+    <div class="input-chip" onclick="setInput(4)">📝+🖼️ 복합</div>
+  </div>
+  <canvas id="canvas" width="700" height="360"></canvas>
+  <button class="btn" onclick="startProcess()">처리 시작</button>
+  <div class="output-area" id="outputs" style="display:none">
+    <div class="output-box text" id="textOut"></div>
+    <div class="output-box voice" id="voiceOut"></div>
+  </div>
+  <div class="info" id="info">
+    입력 모달리티를 선택하세요. Thinker(LLM)가 텍스트를 추론하는 동시에 Talker가 음성을 생성합니다.
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+const dpr = window.devicePixelRatio || 1;
+const W = 700, H = 360;
+canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+canvas.width = W * dpr; canvas.height = H * dpr;
+const ctx = canvas.getContext('2d');
+ctx.scale(dpr, dpr);
+
+let curInput = 0, step = 0, animId = null, animT = 0;
+const inputs = [
+  { label: '📝 "오늘 날씨 알려줘"', type: 'text', textOut: '"오늘 서울의 날씨는 맑고 기온은 22도입니다. 외출하기 좋은 날씨네요!"', voiceOut: '🔊 "오늘 서울의 날씨는..."' },
+  { label: '🖼️ 고양이 사진', type: 'image', textOut: '"이 사진에는 주황색 고양이가 키보드 위에 누워있습니다. 편안해 보이네요."', voiceOut: '🔊 "이 사진에는 주황색..."' },
+  { label: '🎵 새소리 오디오', type: 'audio', textOut: '"이 오디오에는 참새와 까치의 지저귀는 소리가 들립니다. 봄철 아침의 소리 같습니다."', voiceOut: '🔊 "이 오디오에는 참새와..."' },
+  { label: '🎬 요리 영상', type: 'video', textOut: '"이 영상에서는 파스타를 만드는 과정이 보입니다. 소스를 끓이고 면을 삶고 있습니다."', voiceOut: '🔊 "이 영상에서는 파스타를..."' },
+  { label: '📝+🖼️ "이 사진 설명해줘"', type: 'multi', textOut: '"사진 속 풍경은 벚꽃이 만개한 공원입니다. 사람들이 산책하고 있고 따스한 봄날의 분위기입니다."', voiceOut: '🔊 "사진 속 풍경은..."' },
+];
+
+function setInput(i) {
+  curInput = i;
+  document.querySelectorAll('.input-chip').forEach((c, j) => c.classList.toggle('active', j === i));
+  step = 0; animT = 0;
+  document.getElementById('outputs').style.display = 'none';
+  if (animId) cancelAnimationFrame(animId);
+  draw();
+}
+
+function drawBox(x, y, w, h, label, fill, stroke, active, pulse) {
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, 8);
+  ctx.fillStyle = active ? fill : '#f5f5f5'; ctx.fill();
+  ctx.strokeStyle = active ? stroke : '#e0e0e0';
+  ctx.lineWidth = active ? 2.5 : 1; ctx.stroke();
+  if (pulse && active) {
+    ctx.beginPath(); ctx.roundRect(x - 3, y - 3, w + 6, h + 6, 10);
+    ctx.strokeStyle = `rgba(25,118,210,${0.3 + Math.sin(animT * 4) * 0.2})`;
+    ctx.lineWidth = 2; ctx.stroke();
+  }
+  ctx.fillStyle = active ? '#333' : '#bbb';
+  ctx.font = `${active ? 'bold ' : ''}12px sans-serif`; ctx.textAlign = 'center';
+  label.split('\n').forEach((l, i, a) => ctx.fillText(l, x + w / 2, y + h / 2 + (i - (a.length - 1) / 2) * 15));
+}
+
+function drawArrow(x1, y1, x2, y2, active, label) {
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.strokeStyle = active ? '#1976d2' : '#e0e0e0'; ctx.lineWidth = active ? 2 : 1; ctx.stroke();
+  if (active) {
+    const a = Math.atan2(y2 - y1, x2 - x1);
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - 7 * Math.cos(a - 0.4), y2 - 7 * Math.sin(a - 0.4));
+    ctx.lineTo(x2 - 7 * Math.cos(a + 0.4), y2 - 7 * Math.sin(a + 0.4));
+    ctx.closePath(); ctx.fillStyle = '#1976d2'; ctx.fill();
+  }
+  if (label) {
+    ctx.fillStyle = '#888'; ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(label, (x1 + x2) / 2, (y1 + y2) / 2 - 8);
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  const cy = H / 2;
+  const s = step;
+
+  // Input
+  const inp = inputs[curInput];
+  drawBox(10, cy - 35, 130, 70, inp.label, '#bbdefb', '#1976d2', s >= 0, false);
+
+  // Thinker
+  drawBox(190, cy - 35, 120, 70, 'Thinker\n(LLM)', '#bbdefb', '#1976d2', s >= 1, s === 1);
+  drawArrow(140, cy, 190, cy, s >= 1);
+
+  // Text output
+  drawBox(380, cy - 60, 130, 50, '텍스트 출력', '#c8e6c9', '#388e3c', s >= 2, false);
+  drawArrow(310, cy - 10, 380, cy - 35, s >= 2);
+
+  // Talker
+  drawBox(380, cy + 10, 130, 50, 'Talker\n(음성 생성)', '#ffccbc', '#e64a19', s >= 2, s === 2);
+  drawArrow(310, cy + 10, 380, cy + 35, s >= 2, 'hidden states');
+
+  // Voice output
+  drawBox(560, cy + 10, 120, 50, '음성 출력', '#fff9c4', '#f9a825', s >= 3, false);
+  drawArrow(510, cy + 35, 560, cy + 35, s >= 3);
+
+  // Modality icons
+  if (s >= 0) {
+    const icons = { text: '📝', image: '🖼️', audio: '🎵', video: '🎬', multi: '📝🖼️' };
+    ctx.font = '20px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText(icons[inp.type], 75, cy + 55);
+  }
+
+  // Simultaneous label
+  if (s >= 2) {
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = '#9c27b0'; ctx.lineWidth = 1.5;
+    ctx.strokeRect(370, cy - 68, 150, 138);
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#9c27b0'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('동시 생성!', 445, cy + 80);
+  }
+}
+
+function startProcess() {
+  step = 0; animT = 0;
+  document.getElementById('outputs').style.display = 'none';
+  if (animId) cancelAnimationFrame(animId);
+
+  function advance() {
+    animT += 0.02;
+    draw();
+    if (animT > 1 && step < 3) { step++; animT = 0; }
+    if (step >= 3 && animT > 1) {
+      // Show text outputs
+      const inp = inputs[curInput];
+      document.getElementById('outputs').style.display = 'flex';
+      document.getElementById('textOut').innerHTML = `<strong>텍스트 출력:</strong><br>${inp.textOut}`;
+      document.getElementById('voiceOut').innerHTML = `<strong>음성 출력:</strong><br>${inp.voiceOut}`;
+      document.getElementById('info').innerHTML = `<strong>완료!</strong> Thinker가 텍스트를 추론하는 동시에 Talker가 hidden states를 활용하여 음성을 생성했습니다. 입력 모달리티(${inp.type})에 관계없이 동일한 아키텍처로 처리됩니다.`;
+      return;
+    }
+    animId = requestAnimationFrame(advance);
+  }
+  advance();
+}
+
+draw();
+</script>
+</body>
+</html>
