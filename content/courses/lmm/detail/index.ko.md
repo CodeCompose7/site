@@ -3,6 +3,9 @@ title: "LMM - 대규모 멀티모달 모델의 이해와 적용 (상세)"
 date: 2026-03-30
 lastmod: 2026-03-30
 version: 1
+_build:
+  list: never
+  render: always
 ---
 
 > 이 내용을 슬라이드로 보려면 [프레젠테이션 모드](/slides/lmm/)를 이용하세요.
