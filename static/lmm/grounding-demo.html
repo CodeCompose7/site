@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Grounding Demo</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:750px;margin:0 auto;text-align:center}
+  h2{font-size:1.2rem;margin-bottom:4px}
+  .sub{color:#888;font-size:.85rem;margin-bottom:16px}
+  .frames{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+  .frame-wrap{text-align:center}
+  .frame-wrap .label{font-size:.75rem;color:#888;margin-top:4px}
+  canvas{border-radius:8px;border:1px solid #e8e8e8;cursor:pointer}
+  .questions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:12px}
+  .q-chip{padding:8px 16px;border-radius:20px;border:2px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.82rem;transition:all .2s}
+  .q-chip:hover{border-color:#90caf9;background:#e3f2fd}
+  .q-chip.active{border-color:#1976d2;background:#bbdefb;font-weight:600}
+  .result{margin-top:12px;padding:14px;background:#f8f9fa;border-radius:8px;font-size:.85rem;color:#555;line-height:1.6;text-align:left}
+  .bbox-info{display:inline-block;padding:3px 8px;border-radius:4px;background:#c8e6c9;font-family:monospace;font-size:.8rem;margin:2px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>비디오 Grounding: 객체 위치 추적</h2>
+  <p class="sub">질문을 선택하면 각 프레임에서 해당 객체의 바운딩박스가 표시됩니다</p>
+  <div class="questions">
+    <div class="q-chip active" onclick="setQuery(0)">"사람은 어디에 있나요?"</div>
+    <div class="q-chip" onclick="setQuery(1)">"공은 어디에 있나요?"</div>
+    <div class="q-chip" onclick="setQuery(2)">"자동차를 추적해주세요"</div>
+  </div>
+  <div class="frames" id="frames"></div>
+  <div class="result" id="result">
+    질문을 선택하면 4개 프레임에서 객체의 바운딩박스 좌표가 출력됩니다.
+  </div>
+</div>
+<script>
+const NUM_FRAMES = 4;
+const FW = 160, FH = 120;
+const dpr = window.devicePixelRatio || 1;
+
+const scenes = [
+  { bg: '#87CEEB', ground: '#8BC34A', groundH: 40 },
+];
+
+const queries = [
+  {
+    label: '사람',
+    color: '#f44336',
+    bboxes: [
+      { x: 30, y: 30, w: 30, h: 50 },
+      { x: 50, y: 28, w: 30, h: 50 },
+      { x: 75, y: 25, w: 30, h: 52 },
+      { x: 100, y: 27, w: 30, h: 50 },
+    ],
+    answer: '사람이 왼쪽에서 오른쪽으로 걸어가고 있습니다. 프레임별로 x좌표가 증가합니다.',
+  },
+  {
+    label: '공',
+    color: '#2196f3',
+    bboxes: [
+      { x: 120, y: 20, w: 20, h: 20 },
+      { x: 105, y: 35, w: 20, h: 20 },
+      { x: 85, y: 50, w: 20, h: 20 },
+      { x: 70, y: 40, w: 20, h: 20 },
+    ],
+    answer: '공이 포물선을 그리며 이동하고 있습니다. 오른쪽 위에서 왼쪽 아래로 내려오다 다시 올라갑니다.',
+  },
+  {
+    label: '자동차',
+    color: '#ff9800',
+    bboxes: [
+      { x: 10, y: 65, w: 40, h: 25 },
+      { x: 40, y: 65, w: 40, h: 25 },
+      { x: 75, y: 65, w: 40, h: 25 },
+      { x: 110, y: 65, w: 40, h: 25 },
+    ],
+    answer: '자동차가 도로를 따라 왼쪽에서 오른쪽으로 일정한 속도로 이동하고 있습니다.',
+  },
+];
+
+let curQuery = 0;
+let canvases = [];
+
+function createFrames() {
+  const container = document.getElementById('frames');
+  container.innerHTML = '';
+  canvases = [];
+  for (let i = 0; i < NUM_FRAMES; i++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'frame-wrap';
+    const c = document.createElement('canvas');
+    c.width = FW * dpr; c.height = FH * dpr;
+    c.style.width = FW + 'px'; c.style.height = FH + 'px';
+    wrap.appendChild(c);
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = `Frame ${i + 1}`;
+    wrap.appendChild(label);
+    container.appendChild(wrap);
+    canvases.push(c);
+  }
+}
+
+function drawScene(ctx, frameIdx) {
+  // Sky
+  ctx.fillStyle = '#87CEEB';
+  ctx.fillRect(0, 0, FW, FH);
+
+  // Clouds
+  ctx.fillStyle = 'rgba(255,255,255,0.8)';
+  ctx.beginPath(); ctx.arc(40 + frameIdx * 5, 20, 12, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(52 + frameIdx * 5, 18, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(120 - frameIdx * 3, 15, 8, 0, Math.PI * 2); ctx.fill();
+
+  // Road
+  ctx.fillStyle = '#607D8B';
+  ctx.fillRect(0, FH - 40, FW, 25);
+  // Road lines
+  ctx.setLineDash([8, 6]);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, FH - 28); ctx.lineTo(FW, FH - 28); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Grass
+  ctx.fillStyle = '#8BC34A';
+  ctx.fillRect(0, FH - 15, FW, 15);
+
+  // Sun
+  ctx.fillStyle = '#FFC107';
+  ctx.beginPath(); ctx.arc(130, 20, 12, 0, Math.PI * 2); ctx.fill();
+
+  // Tree
+  ctx.fillStyle = '#795548';
+  ctx.fillRect(15, FH - 55, 6, 25);
+  ctx.fillStyle = '#4CAF50';
+  ctx.beginPath(); ctx.arc(18, FH - 58, 14, 0, Math.PI * 2); ctx.fill();
+
+  // Person (stick figure)
+  const q = queries[0];
+  const px = q.bboxes[frameIdx].x + q.bboxes[frameIdx].w / 2;
+  const py = q.bboxes[frameIdx].y;
+  ctx.strokeStyle = '#333'; ctx.lineWidth = 1.5;
+  // Head
+  ctx.beginPath(); ctx.arc(px, py + 8, 6, 0, Math.PI * 2); ctx.stroke();
+  // Body
+  ctx.beginPath(); ctx.moveTo(px, py + 14); ctx.lineTo(px, py + 32); ctx.stroke();
+  // Arms
+  ctx.beginPath(); ctx.moveTo(px - 10, py + 22); ctx.lineTo(px + 10, py + 22); ctx.stroke();
+  // Legs
+  ctx.beginPath(); ctx.moveTo(px, py + 32); ctx.lineTo(px - 8, py + 45); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px, py + 32); ctx.lineTo(px + 8, py + 45); ctx.stroke();
+
+  // Ball
+  const bq = queries[1];
+  const bx = bq.bboxes[frameIdx].x + bq.bboxes[frameIdx].w / 2;
+  const by = bq.bboxes[frameIdx].y + bq.bboxes[frameIdx].h / 2;
+  ctx.fillStyle = '#f44336';
+  ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.stroke();
+
+  // Car
+  const cq = queries[2];
+  const cx = cq.bboxes[frameIdx].x;
+  const cy = cq.bboxes[frameIdx].y;
+  ctx.fillStyle = '#1565C0';
+  ctx.fillRect(cx + 5, cy, 30, 12);
+  ctx.fillRect(cx, cy + 10, 40, 14);
+  // Wheels
+  ctx.fillStyle = '#333';
+  ctx.beginPath(); ctx.arc(cx + 10, cy + 24, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx + 30, cy + 24, 4, 0, Math.PI * 2); ctx.fill();
+  // Window
+  ctx.fillStyle = '#90CAF9';
+  ctx.fillRect(cx + 10, cy + 2, 10, 8);
+  ctx.fillRect(cx + 22, cy + 2, 10, 8);
+}
+
+function drawBBox(ctx, bbox, color, label) {
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.setLineDash([4, 2]);
+  ctx.strokeRect(bbox.x, bbox.y, bbox.w, bbox.h);
+  ctx.setLineDash([]);
+
+  // Label background
+  const tw = ctx.measureText(label).width + 8;
+  ctx.fillStyle = color;
+  ctx.fillRect(bbox.x, bbox.y - 14, tw, 14);
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText(label, bbox.x + 4, bbox.y - 3);
+}
+
+function setQuery(q) {
+  curQuery = q;
+  document.querySelectorAll('.q-chip').forEach((c, i) => c.classList.toggle('active', i === q));
+  drawAll();
+}
+
+function drawAll() {
+  const query = queries[curQuery];
+
+  canvases.forEach((c, i) => {
+    const ctx2 = c.getContext('2d');
+    ctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx2.clearRect(0, 0, FW, FH);
+    drawScene(ctx2, i);
+    drawBBox(ctx2, query.bboxes[i], query.color, query.label);
+  });
+
+  // Result
+  const res = document.getElementById('result');
+  let bboxHtml = query.bboxes.map((b, i) =>
+    `Frame ${i + 1}: <span class="bbox-info">[${b.x}, ${b.y}, ${b.x + b.w}, ${b.y + b.h}]</span>`
+  ).join('<br>');
+
+  res.innerHTML = `
+    <strong>질문:</strong> "${document.querySelector('.q-chip.active').textContent}"<br><br>
+    <strong>모델 응답:</strong> ${query.answer}<br><br>
+    <strong>바운딩박스 좌표 (x1, y1, x2, y2):</strong><br>${bboxHtml}
+  `;
+}
+
+createFrames();
+drawAll();
+</script>
+</body>
+</html>

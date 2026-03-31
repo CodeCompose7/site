@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLIP - Interactive Demo</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:750px;margin:0 auto}
+  h2{text-align:center;font-size:1.2rem;margin-bottom:4px}
+  .sub{text-align:center;color:#888;font-size:.85rem;margin-bottom:16px}
+  .demo{display:flex;gap:16px;align-items:stretch;flex-wrap:wrap;justify-content:center}
+  .col{flex:1;min-width:200px;max-width:300px}
+  .card{border:2px solid #e0e0e0;border-radius:12px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:8px}
+  .card:hover{border-color:#90caf9;background:#e3f2fd}
+  .card.selected{border-color:#1976d2;background:#bbdefb}
+  .card img{width:100%;border-radius:8px;margin-bottom:8px}
+  .card .emoji{font-size:3rem;margin:8px 0}
+  .card .label{font-size:.9rem;font-weight:600}
+  .text-input{width:100%;padding:10px;border:2px solid #e0e0e0;border-radius:8px;font-size:.9rem;margin-bottom:6px;transition:border-color .2s}
+  .text-input:focus{outline:none;border-color:#1976d2}
+  .text-chip{display:inline-block;padding:6px 14px;border-radius:16px;border:1px solid #e0e0e0;margin:3px;cursor:pointer;font-size:.82rem;transition:all .2s}
+  .text-chip:hover{background:#e3f2fd;border-color:#90caf9}
+  .text-chip.selected{background:#bbdefb;border-color:#1976d2;font-weight:600}
+  .result{margin-top:16px;padding:16px;background:#f8f9fa;border-radius:12px;text-align:center}
+  .score-bar{height:28px;border-radius:14px;margin:6px 0;display:flex;align-items:center;overflow:hidden;background:#e0e0e0;position:relative}
+  .score-fill{height:100%;border-radius:14px;transition:width .6s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:.8rem;font-weight:700;color:#fff;min-width:40px}
+  .score-label{display:flex;justify-content:space-between;font-size:.8rem;color:#888;margin-top:2px}
+  .match-text{font-size:1.1rem;font-weight:700;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>CLIP: 이미지-텍스트 유사도</h2>
+  <p class="sub">이미지와 텍스트를 선택하면 유사도 점수를 계산합니다</p>
+  <div class="demo">
+    <div class="col">
+      <div style="font-size:.85rem;font-weight:600;margin-bottom:8px;color:#1976d2">이미지 선택</div>
+      <div class="card selected" data-img="cat" onclick="selectImg(this,'cat')">
+        <div class="emoji">🐱</div>
+        <div class="label">고양이</div>
+      </div>
+      <div class="card" data-img="dog" onclick="selectImg(this,'dog')">
+        <div class="emoji">🐶</div>
+        <div class="label">강아지</div>
+      </div>
+      <div class="card" data-img="car" onclick="selectImg(this,'car')">
+        <div class="emoji">🚗</div>
+        <div class="label">자동차</div>
+      </div>
+      <div class="card" data-img="pizza" onclick="selectImg(this,'pizza')">
+        <div class="emoji">🍕</div>
+        <div class="label">피자</div>
+      </div>
+    </div>
+    <div class="col" style="display:flex;flex-direction:column">
+      <div style="font-size:.85rem;font-weight:600;margin-bottom:8px;color:#e64a19">텍스트 선택</div>
+      <div style="flex:1">
+        <div class="text-chip selected" onclick="selectText(this,'고양이 사진')">고양이 사진</div>
+        <div class="text-chip" onclick="selectText(this,'강아지가 앉아있는 모습')">강아지가 앉아있는 모습</div>
+        <div class="text-chip" onclick="selectText(this,'빨간 스포츠카')">빨간 스포츠카</div>
+        <div class="text-chip" onclick="selectText(this,'맛있어 보이는 음식')">맛있어 보이는 음식</div>
+        <div class="text-chip" onclick="selectText(this,'동물 사진')">동물 사진</div>
+        <div class="text-chip" onclick="selectText(this,'자연 풍경')">자연 풍경</div>
+      </div>
+      <div class="result" id="result">
+        <div style="font-size:.85rem;color:#888;margin-bottom:8px">유사도 점수</div>
+        <div class="score-bar"><div class="score-fill" id="scoreFill" style="width:74%;background:#4caf50">0.74</div></div>
+        <div class="score-label"><span>0</span><span>1</span></div>
+        <div class="match-text" id="matchText" style="color:#4caf50">높은 유사도!</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:16px;padding:12px;background:#f0f4f8;border-radius:8px;font-size:.82rem;color:#666;line-height:1.5">
+    <strong>CLIP 원리:</strong> Vision Transformer가 이미지를 벡터로, Text Transformer가 텍스트를 벡터로 변환한 뒤, 두 벡터의 코사인 유사도를 계산합니다. 관련 있는 쌍일수록 1에 가까운 점수가 나옵니다.
+  </div>
+</div>
+<script>
+let curImg = 'cat', curText = '고양이 사진';
+const scores = {
+  'cat-고양이 사진': 0.74, 'cat-강아지가 앉아있는 모습': 0.04,
+  'cat-빨간 스포츠카': 0.02, 'cat-맛있어 보이는 음식': 0.05,
+  'cat-동물 사진': 0.19, 'cat-자연 풍경': 0.03,
+  'dog-고양이 사진': 0.06, 'dog-강아지가 앉아있는 모습': 0.47,
+  'dog-빨간 스포츠카': 0.01, 'dog-맛있어 보이는 음식': 0.03,
+  'dog-동물 사진': 0.30, 'dog-자연 풍경': 0.04,
+  'car-고양이 사진': 0.01, 'car-강아지가 앉아있는 모습': 0.01,
+  'car-빨간 스포츠카': 0.68, 'car-맛있어 보이는 음식': 0.02,
+  'car-동물 사진': 0.02, 'car-자연 풍경': 0.08,
+  'pizza-고양이 사진': 0.01, 'pizza-강아지가 앉아있는 모습': 0.01,
+  'pizza-빨간 스포츠카': 0.02, 'pizza-맛있어 보이는 음식': 0.72,
+  'pizza-동물 사진': 0.03, 'pizza-자연 풍경': 0.04,
+};
+function selectImg(el, img) {
+  curImg = img;
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  update();
+}
+function selectText(el, text) {
+  curText = text;
+  document.querySelectorAll('.text-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  update();
+}
+function update() {
+  const key = curImg + '-' + curText;
+  const score = scores[key] || 0.02;
+  const pct = Math.round(score * 100);
+  const fill = document.getElementById('scoreFill');
+  const match = document.getElementById('matchText');
+  fill.style.width = pct + '%';
+  fill.textContent = score.toFixed(2);
+  if (score >= 0.5) { fill.style.background = '#4caf50'; match.style.color = '#4caf50'; match.textContent = '높은 유사도!'; }
+  else if (score >= 0.15) { fill.style.background = '#ff9800'; match.style.color = '#ff9800'; match.textContent = '보통 유사도'; }
+  else { fill.style.background = '#f44336'; match.style.color = '#f44336'; match.textContent = '낮은 유사도'; }
+}
+</script>
+</body>
+</html>
