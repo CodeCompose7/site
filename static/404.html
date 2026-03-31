@@ -5,17 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 - 페이지를 찾을 수 없습니다</title>
   <script>
-    // 접속 경로에서 언어 확인
     const currentPath = window.location.pathname;
-    let lang = 'ko'; // 기본값은 한국어
-    
-    // URL 경로가 /en으로 시작하면 영어로 설정
+
+    // Slidev SPA 폴백: /slides/lmm/5 → /slides/lmm/#/5
+    const slidesMatch = currentPath.match(/^(\/slides\/[^/]+)\/(.+)/);
+    if (slidesMatch) {
+      window.location.replace(slidesMatch[1] + '/#/' + slidesMatch[2]);
+    }
+
+    // 접속 경로에서 언어 확인
+    let lang = 'ko';
     if (currentPath.startsWith('/en') || currentPath.startsWith('/en/')) {
       lang = 'en';
     } else if (currentPath.startsWith('/ko') || currentPath.startsWith('/ko/')) {
       lang = 'ko';
     }
-    
+
     // 적절한 언어의 404 페이지로 리다이렉트
     window.location.replace(`/${lang}/404.html`);
   </script>
