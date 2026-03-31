@@ -93,6 +93,8 @@ timeline
 
 ## 강의 구성
 
+> [강의 상세 자료](detail/) | [슬라이드](/slides/lmm/)
+
 ### Part 1 — Large Language Model
 
 - LLM이란: 텍스트 입력 → 모델 → 텍스트 출력

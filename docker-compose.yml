@@ -7,11 +7,48 @@ services:
       - .:/src
     environment:
       - TZ=Asia/Seoul
+    # Hugo 서버만 실행 (슬라이드는 사전 빌드 필요)
+    entrypoint: ["hugo"]
+    command: ["server", "--bind", "0.0.0.0", "--baseURL", "http://localhost:1313/", "--disableFastRender"]
 
   tidy:
     build: .
     volumes:
       - .:/src
     entrypoint: ["hugo", "mod", "tidy"]
+    profiles:
+      - tools
+
+  # 슬라이드 빌드 후 Hugo 서버 (처음 또는 슬라이드 변경 시)
+  dev:
+    build: .
+    ports:
+      - "1313:1313"
+    volumes:
+      - .:/src
+    environment:
+      - TZ=Asia/Seoul
+    # entrypoint가 슬라이드 빌드 → Hugo 서버 순서로 실행
+    profiles:
+      - slides
+
+  # 슬라이드만 빌드
+  slides-build:
+    build: .
+    volumes:
+      - .:/src
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        for dir in /src/slides/*/; do
+          if [ -f "$$dir/package.json" ]; then
+            name=$$(basename "$$dir")
+            echo "==> Building slides: $$name"
+            cd "$$dir"
+            npm install
+            npx slidev build --base "/slides/$$name/" --out "/src/static/slides/$$name/"
+            cd /src
+          fi
+        done
     profiles:
       - tools

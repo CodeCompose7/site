@@ -58,6 +58,13 @@ hugo server -D --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 │   └── courses/               # 강의 소개
 │       ├── _index.*.md
 │       └── *.ko.md / *.en.md, 하위 폴더 포함
+├── slides/                    # Slidev 슬라이드 소스
+│   └── lmm/                   # LMM 강의 슬라이드
+│       ├── package.json        # Slidev 의존성
+│       └── slides.md           # 슬라이드 마크다운
+├── static/
+│   ├── lmm/                   # LMM 인터랙티브 데모 (HTML)
+│   └── slides/                # (빌드 시 생성) Slidev 빌드 결과물
 ├── layouts/                   # 커스텀 레이아웃 (Congo 테마 확장)
 │   ├── about/                 # about 페이지 전용 템플릿
 │   ├── _default/              # 기본 단일/목록 템플릿
@@ -104,7 +111,32 @@ VS Code에서:
 git submodule add --depth=1 https://github.com/jpanther/congo.git themes/congo
 ```
 
-### 3. 로컬 서버 실행
+### 3. 로컬 서버 실행 (Docker)
+
+```bash
+# Hugo 서버만 실행 (슬라이드 변경 없을 때)
+docker compose up hugo
+
+# 슬라이드 빌드 후 Hugo 서버 (슬라이드 변경 시)
+docker compose --profile slides up --build dev
+
+# 슬라이드만 빌드 (Hugo 서버 없이)
+docker compose run --rm --build slides-build
+```
+
+- `docker compose up hugo` — Hugo만 실행. 슬라이드가 이미 빌드되어 있으면 `/slides/` 경로도 서빙됩니다.
+- `slides-build` — `slides/` 하위의 Slidev 프로젝트를 빌드하여 `static/slides/`에 출력합니다. 슬라이드 소스(`slides.md`)를 변경할 때만 다시 실행하면 됩니다.
+- `dev` — 슬라이드 빌드 + Hugo 서버를 한 번에 실행합니다.
+
+브라우저에서 `http://localhost:1313` 접속
+
+| URL 경로                  | 내용                           |
+| ------------------------- | ------------------------------ |
+| `/ko/courses/lmm/`        | 강의 개요 (Hugo)               |
+| `/ko/courses/lmm/detail/` | 강의 상세 (Hugo)               |
+| `/slides/lmm/`            | 슬라이드 프레젠테이션 (Slidev) |
+
+### 로컬 서버 실행 (Hugo 직접)
 
 ```bash
 # 로컬 개발용 (baseURL 오버라이드)
@@ -123,8 +155,6 @@ hugo server --bind 0.0.0.0 --port 1313 --baseURL http://localhost:1313
 ```bash
 HUGO_BASEURL=http://localhost:1313 hugo server -D
 ```
-
-브라우저에서 `http://localhost:1313` 접속
 
 > **참고**: `hugo.toml`의 `baseURL`은 프로덕션용 커스텀 도메인  
 > `https://courses.codecompose.net/` 으로 설정되어 있습니다.  

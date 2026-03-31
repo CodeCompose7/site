@@ -5,6 +5,8 @@ lastmod: 2026-03-30
 version: 1
 ---
 
+> 이 내용을 슬라이드로 보려면 [프레젠테이션 모드](/slides/lmm/)를 이용하세요.
+
 ## Part 1 — Large Language Model
 
 ### LLM이란
