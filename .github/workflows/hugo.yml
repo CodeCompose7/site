@@ -44,10 +44,47 @@ jobs:
           go env
           hugo mod tidy
           
+      - name: 슬라이드 변경 확인
+        id: slides-check
+        run: |
+          if [ -d "slides" ] && [ "$(ls -A slides/)" ]; then
+            echo "has_slides=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_slides=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Node.js 설정 (Slidev 빌드용)
+        if: steps.slides-check.outputs.has_slides == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Slidev npm 캐시
+        if: steps.slides-check.outputs.has_slides == 'true'
+        uses: actions/cache@v4
+        with:
+          path: slides/*/node_modules
+          key: slidev-${{ runner.os }}-${{ hashFiles('slides/*/package.json') }}
+
+      - name: Slidev 슬라이드 빌드
+        if: steps.slides-check.outputs.has_slides == 'true'
+        run: |
+          for dir in slides/*/; do
+            if [ -f "$dir/package.json" ]; then
+              name=$(basename "$dir")
+              echo "==> Building slides: $name"
+              cd "$dir"
+              npm install
+              npx slidev build --base "/slides/$name/" --out "../../static/slides/$name/"
+              cp "../../static/slides/$name/index.html" "../../static/slides/$name/404.html"
+              cd ../..
+            fi
+          done
+
       - name: Pages 설정
         id: pages
         uses: actions/configure-pages@v3
-        
+
       - name: Hugo로 빌드
         env:
           HUGO_ENVIRONMENT: production

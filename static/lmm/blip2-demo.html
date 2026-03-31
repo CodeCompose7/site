@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLIP-2 Architecture Demo</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#fff;color:#333;padding:20px}
+  .container{max-width:750px;height: 690px;margin:0 auto}
+  h2{text-align:center;font-size:1.2rem;margin-bottom:4px}
+  .sub{text-align:center;color:#888;font-size:.85rem;margin-bottom:16px}
+  .stage-tabs{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+  .stage-tab{padding:10px 24px;border-radius:20px;border:2px solid #e0e0e0;background:#fff;cursor:pointer;font-size:.9rem;font-weight:600;transition:all .2s}
+  .stage-tab:hover{border-color:#90caf9;background:#e3f2fd}
+  .stage-tab.active{border-color:#1976d2;background:#1976d2;color:#fff}
+  canvas{display:block;margin:0 auto;border-radius:12px;border:1px solid #e8e8e8}
+  .info{margin-top:12px;padding:14px;background:#f8f9fa;border-radius:8px;font-size:.85rem;color:#555;line-height:1.6;text-align:center}
+  .stat{display:flex;justify-content:center;gap:24px;margin-top:12px}
+  .stat-item{text-align:center}
+  .stat-val{font-size:1.4rem;font-weight:700;color:#1976d2}
+  .stat-label{font-size:.75rem;color:#888}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>BLIP-2: 2단계 학습 아키텍처</h2>
+  <p class="sub">각 단계를 클릭하여 데이터 흐름의 변화를 확인하세요</p>
+  <div class="stage-tabs">
+    <div class="stage-tab active" onclick="setStage(1)">1단계: Representation</div>
+    <div class="stage-tab" onclick="setStage(2)">2단계: Generation</div>
+  </div>
+  <canvas id="canvas" width="700" height="400"></canvas>
+  <div class="info" id="info">
+    <strong>1단계:</strong> Image Encoder(frozen)의 출력을 Q-Former가 32개 학습 가능 쿼리로 처리합니다. 이미지와 텍스트의 정렬을 학습합니다.
+  </div>
+  <div class="stat">
+    <div class="stat-item"><div class="stat-val">3.2B</div><div class="stat-label">전체 파라미터</div></div>
+    <div class="stat-item"><div class="stat-val" id="trainable">190M</div><div class="stat-label">학습 파라미터</div></div>
+    <div class="stat-item"><div class="stat-val" id="pct">6%</div><div class="stat-label">학습 비율</div></div>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+function setupHiDPI(cvs) {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = cvs.getBoundingClientRect();
+  cvs.width = rect.width * dpr;
+  cvs.height = rect.height * dpr;
+  cvs.style.width = rect.width + 'px';
+  cvs.style.height = rect.height + 'px';
+  const c = cvs.getContext('2d');
+  c.scale(dpr, dpr);
+  return c;
+}
+const W = 700, H = 400;
+const ctx = setupHiDPI(canvas);
+let stage = 1;
+let animT = 0, animId = null;
+
+function setStage(s) {
+  stage = s;
+  animT = 0;
+  document.querySelectorAll('.stage-tab').forEach((t, i) => t.classList.toggle('active', i === s - 1));
+  const info = document.getElementById('info');
+  if (s === 1) info.innerHTML = '<strong>1단계 — Vision-Language Representation Learning:</strong><br>Image Encoder(❄️ frozen)의 출력을 Q-Former가 32개 학습 가능 쿼리로 처리합니다.<br>3가지 손실 함수(Image-Text Matching, Contrastive, Text Generation)로 이미지-텍스트 정렬을 학습합니다.';
+  else info.innerHTML = '<strong>2단계 — Vision-to-Language Generative Learning:</strong><br>1단계에서 학습된 Q-Former의 출력을 FC Layer를 통해 LLM(❄️ frozen)에 연결합니다.<br>Q-Former + FC만 fine-tuning하여 이미지 기반 텍스트 생성을 학습합니다.';
+  if (animId) cancelAnimationFrame(animId);
+  runAnim();
+}
+
+function drawBox(x, y, w, h, label, fill, frozen) {
+  ctx.beginPath(); ctx.roundRect(x, y, w, h, 8);
+  ctx.fillStyle = fill; ctx.fill();
+  ctx.strokeStyle = frozen ? '#90a4ae' : '#1976d2';
+  ctx.lineWidth = frozen ? 1.5 : 2.5; ctx.stroke();
+  ctx.fillStyle = '#333'; ctx.font = 'bold 13px sans-serif'; ctx.textAlign = 'center';
+  const lines = label.split('\n');
+  lines.forEach((l, i) => ctx.fillText(l, x + w / 2, y + h / 2 + (i - (lines.length - 1) / 2) * 16));
+  if (frozen) {
+    ctx.font = '16px sans-serif';
+    ctx.fillText('❄️', x + w - 14, y + 16);
+  }
+}
+
+function drawArrow(x1, y1, x2, y2, active) {
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+  ctx.strokeStyle = active ? `rgba(25,118,210,${0.4 + animT * 0.6})` : '#ccc';
+  ctx.lineWidth = active ? 2 : 1; ctx.stroke();
+  // arrowhead
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 8 * Math.cos(angle - 0.4), y2 - 8 * Math.sin(angle - 0.4));
+  ctx.lineTo(x2 - 8 * Math.cos(angle + 0.4), y2 - 8 * Math.sin(angle + 0.4));
+  ctx.closePath(); ctx.fillStyle = active ? '#1976d2' : '#ccc'; ctx.fill();
+}
+
+function drawPulse(x, y) {
+  const r = 6 + Math.sin(animT * 6) * 3;
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(25,118,210,${0.3 + Math.sin(animT * 6) * 0.2})`;
+  ctx.fill();
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  const active = true;
+
+  if (stage === 1) {
+    drawBox(20, 120, 120, 80, 'Image\nEncoder', '#e3f2fd', true);
+    drawBox(190, 120, 120, 80, 'Q-Former', '#fff9c4', false);
+    drawBox(190, 30, 120, 50, 'Learned\nQueries (32)', '#c8e6c9', false);
+    drawBox(190, 240, 120, 50, 'Text', '#ffccbc', false);
+
+    drawArrow(140, 160, 190, 160, active);
+    drawArrow(250, 80, 250, 120, active);
+    drawArrow(250, 240, 250, 200, active);
+
+    // Outputs
+    drawBox(380, 50, 140, 50, 'Image-Text\nMatching', '#e8eaf6', false);
+    drawBox(380, 130, 140, 50, 'Contrastive\nLearning', '#e8eaf6', false);
+    drawBox(380, 210, 140, 50, 'Text\nGeneration', '#e8eaf6', false);
+
+    drawArrow(310, 140, 380, 75, active);
+    drawArrow(310, 155, 380, 155, active);
+    drawArrow(310, 170, 380, 235, active);
+
+    // Loss
+    drawArrow(520, 75, 600, 155, active);
+    drawArrow(520, 155, 600, 155, active);
+    drawArrow(520, 235, 600, 155, active);
+    drawBox(580, 130, 100, 50, 'Combined\nLoss', '#ffcdd2', false);
+
+    drawPulse(250, 160);
+
+  } else {
+    drawBox(20, 130, 100, 70, 'Image\nEncoder', '#e3f2fd', true);
+    drawBox(150, 130, 100, 70, 'Q-Former', '#fff9c4', false);
+    drawBox(150, 50, 100, 45, 'Learned\nQueries', '#c8e6c9', false);
+    drawBox(280, 130, 80, 70, 'FC\nLayer', '#fff9c4', false);
+    drawBox(400, 130, 120, 70, 'LLM\nDecoder', '#e3f2fd', true);
+    drawBox(560, 130, 120, 70, 'Output\nText', '#c8e6c9', false);
+
+    drawArrow(120, 165, 150, 165, active);
+    drawArrow(200, 95, 200, 130, active);
+    drawArrow(250, 165, 280, 165, active);
+    drawArrow(360, 165, 400, 165, active);
+    drawArrow(520, 165, 560, 165, active);
+
+    drawPulse(200, 165);
+    drawPulse(320, 165);
+
+    // Trainable highlight
+    ctx.setLineDash([4, 3]);
+    ctx.strokeStyle = '#f44336'; ctx.lineWidth = 2;
+    ctx.strokeRect(145, 45, 220, 165);
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#f44336'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('학습되는 부분 (6%)', 255, 225);
+  }
+}
+
+function runAnim() {
+  animT += 0.016;
+  draw();
+  animId = requestAnimationFrame(runAnim);
+}
+
+runAnim();
+</script>
+</body>
+</html>

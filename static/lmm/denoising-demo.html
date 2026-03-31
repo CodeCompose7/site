@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Denoising / Diffusion Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #fff; color: #333; padding: 20px; }
+  .container { max-width: 700px; margin: 0 auto; text-align: center; }
+  h2 { font-size: 1.2rem; margin-bottom: 4px; }
+  .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 16px; }
+  .canvas-wrap { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 12px; }
+  canvas { border-radius: 8px; border: 1px solid #e0e0e0; }
+  .label { font-size: 0.8rem; color: #888; margin-top: 4px; }
+  .slider-wrap { margin: 16px 0; }
+  .slider-wrap label { font-size: 0.9rem; font-weight: 600; }
+  input[type=range] { width: 80%; max-width: 400px; margin: 8px 0; }
+  .step-info { font-size: 1rem; font-weight: 600; color: #1976d2; margin: 8px 0; }
+  .controls { display: flex; justify-content: center; gap: 12px; margin-top: 12px; }
+  .btn {
+    padding: 8px 24px; border-radius: 8px; border: 1px solid #ddd; background: #f5f5f5;
+    cursor: pointer; font-size: 0.85rem; transition: background 0.2s;
+  }
+  .btn:hover { background: #e3f2fd; }
+  .btn.primary { background: #1976d2; color: #fff; border-color: #1976d2; }
+  .explanation { margin-top: 16px; font-size: 0.85rem; color: #666; line-height: 1.6; background: #f8f9fa; padding: 12px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Diffusion: Denoising Process</h2>
+  <p class="subtitle">슬라이더를 움직여 노이즈 제거 과정을 단계별로 확인하세요</p>
+  <div class="canvas-wrap">
+    <div>
+      <canvas id="noisy" width="200" height="200"></canvas>
+      <div class="label">노이즈 이미지</div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:2rem;color:#1976d2">→</div>
+    <div>
+      <canvas id="clean" width="200" height="200"></canvas>
+      <div class="label">Denoising 결과</div>
+    </div>
+  </div>
+  <div class="step-info" id="stepInfo">Step 0 / 20 (순수 노이즈)</div>
+  <div class="slider-wrap">
+    <label>Denoising Step</label><br>
+    <input type="range" id="slider" min="0" max="20" value="0">
+  </div>
+  <div class="controls">
+    <button class="btn primary" onclick="autoPlay()">자동 재생</button>
+    <button class="btn" onclick="reset()">초기화</button>
+  </div>
+  <div class="explanation" id="explanation">
+    <strong>Step 0:</strong> 순수한 랜덤 노이즈입니다. Diffusion 모델은 이 노이즈에서 시작하여 단계적으로 이미지를 생성합니다.
+  </div>
+</div>
+<script>
+const W = 200, H = 200;
+const dpr = window.devicePixelRatio || 1;
+const PW = W * dpr, PH = H * dpr; // physical pixel dimensions
+const cNoisy = document.getElementById('noisy');
+const cClean = document.getElementById('clean');
+// Set CSS size to logical, canvas size to physical
+cNoisy.style.width = W + 'px'; cNoisy.style.height = H + 'px';
+cNoisy.width = PW; cNoisy.height = PH;
+cClean.style.width = W + 'px'; cClean.style.height = H + 'px';
+cClean.width = PW; cClean.height = PH;
+const ctxN = cNoisy.getContext('2d');
+const ctxC = cClean.getContext('2d');
+const slider = document.getElementById('slider');
+const stepInfo = document.getElementById('stepInfo');
+const explanation = document.getElementById('explanation');
+
+// Pre-generate a simple "target" image at physical pixel resolution
+const targetData = new ImageData(PW, PH);
+for (let py = 0; py < PH; py++) {
+  for (let px = 0; px < PW; px++) {
+    const idx = (py * PW + px) * 4;
+    // Map physical pixel to logical coordinate
+    const x = px / dpr, y = py / dpr;
+    const cx = W / 2, cy = H / 2;
+    const dx = x - cx, dy = y - cy;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx);
+
+    // Create a colorful flower pattern
+    const petal = Math.cos(angle * 5) * 30;
+    const inFlower = dist < 50 + petal;
+    const inCenter = dist < 20;
+    const inStem = x > 95 && x < 105 && y > 130 && y < 190;
+    const inLeaf = dist < 30 && Math.abs(angle - 0.8) < 0.4 && y > 140;
+
+    if (inCenter) {
+      targetData.data[idx] = 255; targetData.data[idx+1] = 200; targetData.data[idx+2] = 50; targetData.data[idx+3] = 255;
+    } else if (inFlower && dist > 15) {
+      const hue = ((angle + Math.PI) / (2 * Math.PI)) * 360;
+      const rgb = hslToRgb(hue, 80, 60);
+      targetData.data[idx] = rgb[0]; targetData.data[idx+1] = rgb[1]; targetData.data[idx+2] = rgb[2]; targetData.data[idx+3] = 255;
+    } else if (inStem) {
+      targetData.data[idx] = 80; targetData.data[idx+1] = 160; targetData.data[idx+2] = 60; targetData.data[idx+3] = 255;
+    } else {
+      targetData.data[idx] = 230; targetData.data[idx+1] = 245; targetData.data[idx+2] = 255; targetData.data[idx+3] = 255;
+    }
+  }
+}
+
+// Pre-generate noise at physical pixel resolution
+const noiseData = new Float32Array(PW * PH * 3);
+for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 255;
+
+function hslToRgb(h, s, l) {
+  s /= 100; l /= 100;
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+  const m = l - c / 2;
+  let r, g, b;
+  if (h < 60) { r = c; g = x; b = 0; }
+  else if (h < 120) { r = x; g = c; b = 0; }
+  else if (h < 180) { r = 0; g = c; b = x; }
+  else if (h < 240) { r = 0; g = x; b = c; }
+  else if (h < 300) { r = x; g = 0; b = c; }
+  else { r = c; g = 0; b = x; }
+  return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
+}
+
+function draw(step) {
+  const maxStep = 20;
+  const t = step / maxStep; // 0 = pure noise, 1 = clean
+
+  const noisyImg = ctxN.createImageData(PW, PH);
+  const cleanImg = ctxC.createImageData(PW, PH);
+
+  for (let y = 0; y < PH; y++) {
+    for (let x = 0; x < PW; x++) {
+      const idx = (y * PW + x) * 4;
+      const ni = (y * PW + x) * 3;
+
+      // Noisy version (always full noise for reference)
+      noisyImg.data[idx] = noiseData[ni];
+      noisyImg.data[idx+1] = noiseData[ni+1];
+      noisyImg.data[idx+2] = noiseData[ni+2];
+      noisyImg.data[idx+3] = 255;
+
+      // Denoised version (blend noise → target)
+      cleanImg.data[idx] = targetData.data[idx] * t + noiseData[ni] * (1 - t);
+      cleanImg.data[idx+1] = targetData.data[idx+1] * t + noiseData[ni+1] * (1 - t);
+      cleanImg.data[idx+2] = targetData.data[idx+2] * t + noiseData[ni+2] * (1 - t);
+      cleanImg.data[idx+3] = 255;
+    }
+  }
+
+  ctxN.putImageData(noisyImg, 0, 0);
+  ctxC.putImageData(cleanImg, 0, 0);
+
+  const labels = ['순수 노이즈', '노이즈 제거 시작', '형태 윤곽 출현', '색상 분리', '디테일 형성', '완성'];
+  const li = Math.min(Math.floor(t * 5), 5);
+  stepInfo.textContent = `Step ${step} / ${maxStep}`;
+
+  const explanations = [
+    '<strong>Step 0:</strong> 순수한 랜덤 노이즈입니다. Diffusion 모델은 이 노이즈에서 시작합니다.',
+    '<strong>초기 단계:</strong> 모델이 대략적인 색상 분포를 잡기 시작합니다.',
+    '<strong>중간 단계:</strong> 형태의 윤곽이 나타나기 시작합니다. 어떤 이미지인지 감이 잡힙니다.',
+    '<strong>후반 단계:</strong> 색상이 선명해지고 경계가 뚜렷해집니다.',
+    '<strong>마무리 단계:</strong> 세부 디테일이 형성됩니다.',
+    '<strong>완성:</strong> 학습된 분포에 맞는 이미지가 생성되었습니다. 실제 Stable Diffusion은 이 과정을 latent space에서 수행합니다.'
+  ];
+  explanation.innerHTML = explanations[li];
+}
+
+slider.addEventListener('input', () => draw(+slider.value));
+
+let playId = null;
+function autoPlay() {
+  if (playId) { clearInterval(playId); playId = null; return; }
+  slider.value = 0;
+  draw(0);
+  playId = setInterval(() => {
+    const v = +slider.value + 1;
+    if (v > 20) { clearInterval(playId); playId = null; return; }
+    slider.value = v;
+    draw(v);
+  }, 200);
+}
+
+function reset() {
+  if (playId) { clearInterval(playId); playId = null; }
+  // Re-generate noise at physical pixel resolution
+  for (let i = 0; i < noiseData.length; i++) noiseData[i] = Math.random() * 255;
+  slider.value = 0;
+  draw(0);
+}
+
+draw(0);
+</script>
+</body>
+</html>

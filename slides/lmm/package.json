@@ -1,0 +1,13 @@
+{
+  "name": "lmm-slides",
+  "private": true,
+  "scripts": {
+    "dev": "slidev --open",
+    "build": "slidev build --base /slides/lmm/",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "^51.0.0",
+    "slidev-theme-codecompose": "latest"
+  }
+}
