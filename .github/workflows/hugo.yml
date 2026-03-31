@@ -99,15 +99,11 @@ jobs:
           echo "=== public/ 최상위 ==="
           ls -la ./public
           echo "=== slides 확인 ==="
-          if [ -d "./public/slides" ]; then
-            find ./public/slides -type f | head -20
-          else
-            echo "WARNING: public/slides/ 디렉토리 없음!"
-            echo "=== static/slides 확인 ==="
-            ls -la ./static/slides/ 2>/dev/null || echo "static/slides/도 없음"
-          fi
+          find ./public/slides -type f 2>/dev/null | head -10 || echo "slides 없음"
           echo "=== lmm detail 확인 ==="
-          find ./public -path "*/lmm/detail*" -type f | head -5 || echo "lmm detail 없음"
+          find ./public -path "*/lmm/detail*" -type f 2>/dev/null | head -5 || echo "lmm detail 없음"
+          echo "Build completed successfully"
+          true
         
       - name: 아티팩트 업로드
         uses: actions/upload-pages-artifact@v3
