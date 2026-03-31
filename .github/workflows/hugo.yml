@@ -76,6 +76,7 @@ jobs:
               cd "$dir"
               npm install
               npx slidev build --base "/slides/$name/" --out "../../static/slides/$name/"
+              cp "../../static/slides/$name/index.html" "../../static/slides/$name/404.html"
               cd ../..
             fi
           done

@@ -122,19 +122,28 @@ docker compose --profile slides up --build dev
 
 # 슬라이드만 빌드 (Hugo 서버 없이)
 docker compose run --rm --build slides-build
+
+# 슬라이드 개발 서버 (핫 리로드, 슬라이드 편집 시 추천)
+docker compose --profile slides up slides-dev
 ```
 
 - `docker compose up hugo` — Hugo만 실행. 슬라이드가 이미 빌드되어 있으면 `/slides/` 경로도 서빙됩니다.
 - `slides-build` — `slides/` 하위의 Slidev 프로젝트를 빌드하여 `static/slides/`에 출력합니다. 슬라이드 소스(`slides.md`)를 변경할 때만 다시 실행하면 됩니다.
 - `dev` — 슬라이드 빌드 + Hugo 서버를 한 번에 실행합니다.
+- `slides-dev` — Slidev 자체 개발 서버를 3030 포트에서 실행합니다. 핫 리로드를 지원하며 슬라이드 편집 시 추천합니다.
 
-브라우저에서 `http://localhost:1313` 접속
+브라우저에서 접속:
 
-| URL 경로                  | 내용                           |
-| ------------------------- | ------------------------------ |
-| `/ko/courses/lmm/`        | 강의 개요 (Hugo)               |
-| `/ko/courses/lmm/detail/` | 강의 상세 (Hugo)               |
-| `/slides/lmm/`            | 슬라이드 프레젠테이션 (Slidev) |
+| URL | 내용 |
+| --- | --- |
+| `http://localhost:1313/ko/courses/lmm/` | 강의 개요 (Hugo) |
+| `http://localhost:1313/ko/courses/lmm/detail/` | 강의 상세 (Hugo) |
+| `http://localhost:1313/slides/lmm/` | 슬라이드 (Hugo 경유, 빌드 필요) |
+| `http://localhost:3030` | 슬라이드 (Slidev 개발 서버, 핫 리로드) |
+
+> **슬라이드 새로고침 참고**: Hugo를 통해 슬라이드를 볼 때(`localhost:1313/slides/lmm/11`) 새로고침하면 404가 됩니다.
+> 이는 Slidev가 SPA이기 때문입니다. 슬라이드 편집/프레젠테이션 시에는 `slides-dev`(`localhost:3030`)를 사용하세요.
+> GitHub Pages 배포 시에는 `404.html` 폴백으로 새로고침이 정상 동작합니다.
 
 ### 로컬 서버 실행 (Hugo 직접)
 

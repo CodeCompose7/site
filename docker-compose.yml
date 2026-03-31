@@ -32,7 +32,7 @@ services:
     profiles:
       - slides
 
-  # 슬라이드만 빌드
+  # 슬라이드만 빌드 (정적 파일 생성)
   slides-build:
     build: .
     volumes:
@@ -47,8 +47,25 @@ services:
             cd "$$dir"
             npm install
             npx slidev build --base "/slides/$$name/" --out "/src/static/slides/$$name/"
+            cp "/src/static/slides/$$name/index.html" "/src/static/slides/$$name/404.html"
             cd /src
           fi
         done
     profiles:
       - tools
+
+  # 슬라이드 개발 서버 (핫 리로드, 새로고침 가능)
+  slides-dev:
+    build: .
+    ports:
+      - "3030:3030"
+    volumes:
+      - .:/src
+    working_dir: /src/slides/lmm
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        npm install
+        npx slidev --remote --port 3030
+    profiles:
+      - slides
