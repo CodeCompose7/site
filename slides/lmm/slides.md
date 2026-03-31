@@ -204,12 +204,8 @@ layout: cols
 </v-click>
 
 ---
-layout: image-bottom
----
 
 # 멀티모달 모델 아키텍처
-
-::top::
 
 ```mermaid
 flowchart TB
@@ -219,8 +215,6 @@ flowchart TB
     DNS --> CAT
     CAT --> DM["Dense"] --> OUT["분류 (1)"]
 ```
-
-::bottom::
 
 | 접근 | 설명 |
 | --- | --- |
