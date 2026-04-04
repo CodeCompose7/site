@@ -5,4 +5,3 @@ go 1.23.4
 require (
 	github.com/CodeCompose7/cc-layouts v0.3.3 // indirect
 )
-replace github.com/CodeCompose7/cc-layouts => ../cc-layouts
