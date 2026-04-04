@@ -1,17 +1,12 @@
-name: Hugo 사이트를 Pages에 배포
+name: Hugo 사이트를 Firebase에 배포
 
 on:
   push:
     branches: ["main"]
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
-  group: "pages"
+  group: "deploy"
   cancel-in-progress: false
 
 defaults:
@@ -19,7 +14,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: 코드 체크아웃
@@ -43,7 +38,7 @@ jobs:
         run: |
           go env
           hugo mod tidy
-          
+
       - name: 슬라이드 변경 확인
         id: slides-check
         run: |
@@ -53,8 +48,7 @@ jobs:
             echo "has_slides=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Node.js 설정 (Slidev 빌드용)
-        if: steps.slides-check.outputs.has_slides == 'true'
+      - name: Node.js 설정
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -81,45 +75,40 @@ jobs:
             fi
           done
 
-      - name: Pages 설정
-        id: pages
-        uses: actions/configure-pages@v3
-
       - name: Hugo로 빌드
         env:
           HUGO_ENVIRONMENT: production
           HUGO_ENV: production
         run: |
-          # baseURL은 hugo.toml 에서 관리합니다.
-          # (커스텀 도메인: https://courses.codecompose.net/)
           hugo --minify
-        
+
+      - name: 인증 보호 경로 추출
+        run: |
+          node scripts/extract-auth-routes.js
+
       - name: 빌드 결과 확인
         run: |
           echo "=== public/ 최상위 ==="
           ls -la ./public
           echo "=== slides 확인 ==="
           find ./public/slides -type f 2>/dev/null | head -10 || echo "slides 없음"
-          echo "=== lmm detail 확인 ==="
-          find ./public -path "*/lmm/detail*" -type f 2>/dev/null | head -5 || echo "lmm detail 없음"
+          echo "=== firebase.json rewrites ==="
+          cat firebase.json | grep -A2 '"source"'
+          echo "=== protected-routes.json ==="
+          cat functions/protected-routes.json
           echo "Build completed successfully"
           true
-        
-      - name: 아티팩트 업로드
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - name: GitHub Pages에 배포
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Cloud Functions 의존성 설치
+        run: |
+          cd functions
+          npm ci
+          cd ..
+
+      - name: Firebase에 배포
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: courses-web-6a6f8

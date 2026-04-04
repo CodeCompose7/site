@@ -3,6 +3,7 @@ title: "LMM - 대규모 멀티모달 모델의 이해와 적용 (상세)"
 date: 2026-03-30
 lastmod: 2026-03-30
 version: 1
+auth: paid
 url: /ko/courses/lmm/detail/
 _build:
   list: never
