@@ -287,9 +287,7 @@ GitHub 카드/일반 링크 카드로 분기합니다.
 GitHub Actions (main push)
   ├─ Hugo 빌드
   ├─ Slidev 슬라이드 빌드
-  ├─ front matter에서 인증 보호 경로 추출 → firebase.json rewrites 자동 생성
-  ├─ Cloud Functions 의존성 설치
-  └─ Firebase deploy (Hosting + Functions)
+  └─ Firebase deploy (Hosting)
 ```
 
 ### 사전 설정 (최초 1회)
@@ -302,18 +300,24 @@ GitHub Actions (main push)
 
 ### 관련 파일
 
-| 파일                             | 역할                                                  |
-| -------------------------------- | ----------------------------------------------------- |
-| `.firebaserc`                    | Firebase 프로젝트 연결                                |
-| `firebase.json`                  | Hosting + Functions 설정 (빌드 시 rewrites 자동 갱신) |
-| `functions/index.js`             | Cloud Function — 인증 미들웨어                        |
-| `scripts/extract-auth-routes.js` | front matter `auth` 필드 → rewrites 자동 생성         |
-| `scripts/set-tier.js`            | 사용자 티어 설정 스크립트                             |
+| 파일                  | 역할                      |
+| --------------------- | ------------------------- |
+| `.firebaserc`         | Firebase 프로젝트 연결    |
+| `firebase.json`       | Hosting 설정              |
+| `scripts/set-tier.js` | 사용자 티어 설정 스크립트 |
 
 ## 페이지 인증
 
-Firebase Authentication + Cloud Functions를 사용하여 특정 페이지에 접근 제어를 적용합니다.  
-Google 로그인 기반이며, 사용자 티어에 따라 접근이 제한됩니다.
+Firebase Authentication을 사용하여 특정 페이지에 클라이언트 사이드 접근 제어를 적용합니다.  
+Google 로그인 기반이며, 사용자 티어(Custom Claims)에 따라 접근이 제한됩니다.
+
+### 동작 방식
+
+1. `auth` 필드가 있는 페이지 → Hugo 빌드 시 콘텐츠를 숨긴 상태로 렌더링
+2. 페이지 로드 시 JavaScript가 Firebase Auth로 Google 로그인 확인
+3. 인증 통과 + 티어 충족 → 콘텐츠 표시 / 실패 → 로그인 화면 또는 접근 제한 표시
+
+인증 로직은 `cc-layouts`의 `auth-guard.html` partial에서 처리됩니다.
 
 ### 티어 계층
 
@@ -343,21 +347,12 @@ auth: paid          # 유료 이상만 접근 가능
 
 - `auth` 필드가 없는 페이지는 누구나 접근 가능 (인증 불필요)
 - 한국어(`.ko.md`)와 영어(`.en.md`) 각각에 `auth` 필드를 넣어야 합니다
-- `/slides/**` 경로는 `auth: paid`로 고정 보호됩니다
-
-### 인증 경로 자동 추출
-
-빌드 시 `scripts/extract-auth-routes.js`가 모든 md 파일의 front matter를 스캔하여  
-`firebase.json`의 rewrites와 `functions/protected-routes.json`을 자동 생성합니다.
-
-```bash
-# 수동 실행 (확인용)
-node scripts/extract-auth-routes.js
-```
+- `auth` 필드가 있는 페이지는 자동으로 검색엔진에서 제외됩니다 (`noindex, nofollow`)
+- `/slides/` 경로는 `robots.txt`에서 크롤러 차단됩니다
 
 ### 사용자 티어 관리
 
-Firebase Admin SDK를 사용하여 사용자에게 티어를 부여합니다.
+Firebase Admin SDK를 사용하여 사용자에게 티어(Custom Claims)를 부여합니다.
 
 ```bash
 # 서비스 계정 키 설정

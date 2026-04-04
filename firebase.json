@@ -6,29 +6,6 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "/__/auth/session",
-        "function": {
-          "functionId": "sessionLogin",
-          "region": "asia-northeast3"
-        }
-      },
-      {
-        "source": "/slides/**",
-        "function": {
-          "functionId": "authMiddleware",
-          "region": "asia-northeast3"
-        }
-      },
-      {
-        "source": "/ko/courses/lmm/detail/**",
-        "function": {
-          "functionId": "authMiddleware",
-          "region": "asia-northeast3"
-        }
-      }
-    ],
     "headers": [
       {
         "source": "**",
@@ -44,9 +21,5 @@
         ]
       }
     ]
-  },
-  "functions": {
-    "source": "functions",
-    "runtime": "nodejs20"
   }
 }
