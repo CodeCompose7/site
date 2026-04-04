@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Slidev 빌드 결과물(static/slides/*/index.html)에
+ * Slidev 빌드 결과물 (static/slides/index.html) 에
  * Firebase Auth 인증 스크립트를 삽입합니다.
  *
  * 사용법: node scripts/inject-slides-auth.js
