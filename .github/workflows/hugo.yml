@@ -109,6 +109,6 @@ jobs:
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > ${{ runner.temp }}/firebase-sa.json
 
       - name: Firebase에 배포 (Hosting + Functions)
-        run: npx firebase-tools deploy --project courses-web-6a6f8
+        run: npx firebase-tools deploy --project courses-web-6a6f8 --force
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-sa.json
