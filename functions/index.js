@@ -202,7 +202,7 @@ function getAccessDeniedHtml(requiredTier) {
 }
 
 // 메인 인증 미들웨어
-exports.authMiddleware = functions.https.onRequest(async (req, res) => {
+exports.authMiddleware = functions.region("asia-northeast3").https.onRequest(async (req, res) => {
   cookieParser()(req, res, async () => {
     const requestPath = req.path;
     const requiredTier = getRequiredTier(requestPath);
@@ -265,7 +265,7 @@ function serveStaticFile(req, res) {
 }
 
 // 세션 쿠키 생성 엔드포인트
-exports.sessionLogin = functions.https.onRequest(async (req, res) => {
+exports.sessionLogin = functions.region("asia-northeast3").https.onRequest(async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }

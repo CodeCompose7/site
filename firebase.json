@@ -9,19 +9,24 @@
     "rewrites": [
       {
         "source": "/__/auth/session",
-        "function": "sessionLogin"
+        "function": {
+          "functionId": "sessionLogin",
+          "region": "asia-northeast3"
+        }
       },
       {
         "source": "/slides/**",
-        "function": "authMiddleware"
-      },
-      {
-        "source": "/ko/courses/lmm/**",
-        "function": "authMiddleware"
+        "function": {
+          "functionId": "authMiddleware",
+          "region": "asia-northeast3"
+        }
       },
       {
         "source": "/ko/courses/lmm/detail/**",
-        "function": "authMiddleware"
+        "function": {
+          "functionId": "authMiddleware",
+          "region": "asia-northeast3"
+        }
       }
     ],
     "headers": [

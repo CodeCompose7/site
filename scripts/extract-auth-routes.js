@@ -96,7 +96,10 @@ function updateFirebaseJson(authRoutes) {
   // auth 경로에서 동적 rewrites 생성
   const authRewrites = Object.keys(authRoutes).map((source) => ({
     source,
-    function: "authMiddleware",
+    function: {
+      functionId: "authMiddleware",
+      region: "asia-northeast3",
+    },
   }));
 
   // 고정 항목 먼저, auth 경로 그 뒤
