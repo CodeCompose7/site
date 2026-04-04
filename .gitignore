@@ -20,6 +20,7 @@ Thumbs.db
 
 # Firebase
 courses-web-6a6f8-firebase-adminsdk.json
+scripts/node_modules/
 
 # Temporary files
 *.log

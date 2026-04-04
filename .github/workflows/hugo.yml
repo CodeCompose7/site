@@ -76,6 +76,10 @@ jobs:
             fi
           done
 
+      - name: 슬라이드 인증 스크립트 삽입
+        if: steps.slides-check.outputs.has_slides == 'true'
+        run: node scripts/inject-slides-auth.js
+
       - name: Hugo로 빌드
         env:
           HUGO_ENVIRONMENT: production
