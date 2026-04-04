@@ -18,6 +18,11 @@ Thumbs.db
 *.swo
 *~
 
+# Firebase
+courses-web-6a6f8-firebase-adminsdk.json
+functions/node_modules/
+functions/protected-routes.json
+
 # Temporary files
 *.log
 *.tmp

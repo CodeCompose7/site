@@ -134,12 +134,12 @@ docker compose --profile slides up slides-dev
 
 브라우저에서 접속:
 
-| URL | 내용 |
-| --- | --- |
-| `http://localhost:1313/ko/courses/lmm/` | 강의 개요 (Hugo) |
-| `http://localhost:1313/ko/courses/lmm/detail/` | 강의 상세 (Hugo) |
-| `http://localhost:1313/slides/lmm/` | 슬라이드 (Hugo 경유, 빌드 필요) |
-| `http://localhost:3030` | 슬라이드 (Slidev 개발 서버, 핫 리로드) |
+| URL                                            | 내용                                   |
+| ---------------------------------------------- | -------------------------------------- |
+| `http://localhost:1313/ko/courses/lmm/`        | 강의 개요 (Hugo)                       |
+| `http://localhost:1313/ko/courses/lmm/detail/` | 강의 상세 (Hugo)                       |
+| `http://localhost:1313/slides/lmm/`            | 슬라이드 (Hugo 경유, 빌드 필요)        |
+| `http://localhost:3030`                        | 슬라이드 (Slidev 개발 서버, 핫 리로드) |
 
 > **슬라이드 새로고침 참고**: Hugo를 통해 슬라이드를 볼 때(`localhost:1313/slides/lmm/11`) 새로고침하면 404가 됩니다.
 > 이는 Slidev가 SPA이기 때문입니다. 슬라이드 편집/프레젠테이션 시에는 `slides-dev`(`localhost:3030`)를 사용하세요.
@@ -277,106 +277,108 @@ GitHub 카드/일반 링크 카드로 분기합니다.
 - GitHub 자동 감지: `type`이 비어 있고 `url`에 `github.com`이 포함되면 GitHub 카드로 렌더
 - 다크모드/라이트모드 색상 대응, Pretendard 폰트 적용
 
-## GitHub Pages 배포
+## Firebase 배포
 
-### 1. GitHub Repository 생성
+`main` 브랜치에 push하면 GitHub Actions가 자동으로 Firebase Hosting에 배포합니다.
 
-`yourusername.github.io` 이름으로 repository 생성
+### 배포 구조
 
-### 2. GitHub Actions 워크플로우 설정
+```text
+GitHub Actions (main push)
+  ├─ Hugo 빌드
+  ├─ Slidev 슬라이드 빌드
+  ├─ front matter에서 인증 보호 경로 추출 → firebase.json rewrites 자동 생성
+  ├─ Cloud Functions 의존성 설치
+  └─ Firebase deploy (Hosting + Functions)
+```
 
-`.github/workflows/hugo.yml` 파일 생성:
+### 사전 설정 (최초 1회)
+
+1. Firebase Console에서 **Blaze 요금제** 전환
+2. Firebase Console > Authentication > **Google 로그인** 활성화
+3. Firebase Console > 프로젝트 설정 > **웹 앱 등록**
+4. Firebase Console > 프로젝트 설정 > 서비스 계정 > **새 비공개 키 생성**
+5. GitHub 리포 > Settings > Secrets > `FIREBASE_SERVICE_ACCOUNT`에 키 JSON 등록
+
+### 관련 파일
+
+| 파일                             | 역할                                                  |
+| -------------------------------- | ----------------------------------------------------- |
+| `.firebaserc`                    | Firebase 프로젝트 연결                                |
+| `firebase.json`                  | Hosting + Functions 설정 (빌드 시 rewrites 자동 갱신) |
+| `functions/index.js`             | Cloud Function — 인증 미들웨어                        |
+| `scripts/extract-auth-routes.js` | front matter `auth` 필드 → rewrites 자동 생성         |
+| `scripts/set-tier.js`            | 사용자 티어 설정 스크립트                             |
+
+## 페이지 인증
+
+Firebase Authentication + Cloud Functions를 사용하여 특정 페이지에 접근 제어를 적용합니다.  
+Google 로그인 기반이며, 사용자 티어에 따라 접근이 제한됩니다.
+
+### 티어 계층
+
+| 티어    | 설명        | 접근 가능 범위                     |
+| ------- | ----------- | ---------------------------------- |
+| `free`  | 무료 사용자 | `auth: free` 페이지                |
+| `paid`  | 유료 사용자 | `auth: free` + `auth: paid` 페이지 |
+| `admin` | 관리자      | 모든 보호 페이지                   |
+
+### 콘텐츠에 인증 적용
+
+front matter에 `auth` 필드를 추가하면 해당 페이지에 로그인이 필요합니다.
 
 ```yaml
-name: Deploy Hugo site to Pages
-
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
-defaults:
-  run:
-    shell: bash
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
-          
-      - name: Setup Hugo
-        uses: peaceiris/actions-hugo@v2
-        with:
-          hugo-version: 'latest'
-          extended: true
-          
-      - name: Build
-        run: hugo --minify
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: ./public
-
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
+---
+title: "LMM 상세"
+auth: free          # 무료 이상이면 접근 가능 (로그인 필요)
+---
 ```
 
-### 3. Repository 설정
+```yaml
+---
+title: "LMM 고급 슬라이드"
+auth: paid          # 유료 이상만 접근 가능
+---
+```
 
-1. Settings > Pages
-2. Source: GitHub Actions 선택
+- `auth` 필드가 없는 페이지는 누구나 접근 가능 (인증 불필요)
+- 한국어(`.ko.md`)와 영어(`.en.md`) 각각에 `auth` 필드를 넣어야 합니다
+- `/slides/**` 경로는 `auth: paid`로 고정 보호됩니다
 
-### 4. Push & 배포
+### 인증 경로 자동 추출
+
+빌드 시 `scripts/extract-auth-routes.js`가 모든 md 파일의 front matter를 스캔하여  
+`firebase.json`의 rewrites와 `functions/protected-routes.json`을 자동 생성합니다.
 
 ```bash
-git add .
-git commit -m "Initial commit"
-git branch -M main
-git remote add origin https://github.com/yourusername/yourusername.github.io.git
-git push -u origin main
+# 수동 실행 (확인용)
+node scripts/extract-auth-routes.js
 ```
+
+### 사용자 티어 관리
+
+Firebase Admin SDK를 사용하여 사용자에게 티어를 부여합니다.
+
+```bash
+# 서비스 계정 키 설정
+export GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account-key.json
+
+# 티어 설정
+node scripts/set-tier.js --email user@gmail.com --tier admin
+node scripts/set-tier.js --email user@gmail.com --tier paid
+node scripts/set-tier.js --email user@gmail.com --tier free
+
+# 현재 티어 확인
+node scripts/set-tier.js --email user@gmail.com --show
+```
+
+> **참고**: 티어 변경 후 사용자가 다시 로그인해야 새 티어가 적용됩니다.
 
 ## 커스텀 도메인 연결 (선택)
 
-1. 도메인 구매 (가비아, GoDaddy 등)
-2. DNS 설정:
-
-   ```text
-   A Record:
-   @ -> 185.199.108.153
-   @ -> 185.199.109.153
-   @ -> 185.199.110.153
-   @ -> 185.199.111.153
-   
-   CNAME Record:
-   www -> yourusername.github.io
-   ```
-
-3. GitHub Settings > Pages > Custom domain에 도메인 입력
-4. 이 프로젝트에서는 `hugo.toml`의 `baseURL`을 커스텀 도메인(`https://courses.codecompose.net/`)으로 고정해 두고,  
-   로컬 개발 및 프리뷰 환경에서만 `--baseURL`/`HUGO_BASEURL`로 오버라이드하는 방식을 사용합니다.
+Firebase Console > Hosting > **커스텀 도메인 추가**에서 도메인을 연결합니다.  
+이 프로젝트에서는 `hugo.toml`의 `baseURL`을 커스텀 도메인(`https://courses.codecompose.net/`)으로 고정해 두고,  
+로컬 개발 및 프리뷰 환경에서만 `--baseURL`/`HUGO_BASEURL`로 오버라이드하는 방식을 사용합니다.
 
 ## 댓글 시스템 (Giscus)
 
