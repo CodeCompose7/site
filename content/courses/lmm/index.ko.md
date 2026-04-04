@@ -11,7 +11,7 @@ feature: "lmm*"
 featureAlt: "LMM 강의 대표 이미지"
 coverCaption: "LMM"
 level: 2
-hours: "1:30"
+hours: "2:00"
 type: "special-lecture"
 demo_device: "MacBook Pro M1 Pro 32GB RAM 2TB + RTX 3090 원격 서버"
 ---
