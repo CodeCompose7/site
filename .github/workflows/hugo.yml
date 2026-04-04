@@ -49,6 +49,7 @@ jobs:
           fi
 
       - name: Node.js 설정
+        if: steps.slides-check.outputs.has_slides == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -82,33 +83,18 @@ jobs:
         run: |
           hugo --minify
 
-      - name: 인증 보호 경로 추출
-        run: |
-          node scripts/extract-auth-routes.js
-
       - name: 빌드 결과 확인
         run: |
           echo "=== public/ 최상위 ==="
           ls -la ./public
           echo "=== slides 확인 ==="
           find ./public/slides -type f 2>/dev/null | head -10 || echo "slides 없음"
-          echo "=== firebase.json rewrites ==="
-          cat firebase.json | grep -A2 '"source"'
-          echo "=== protected-routes.json ==="
-          cat functions/protected-routes.json
           echo "Build completed successfully"
-          true
-
-      - name: Cloud Functions 의존성 설치
-        run: |
-          cd functions
-          npm ci
-          cd ..
 
       - name: Firebase 서비스 계정 키 설정
         run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > ${{ runner.temp }}/firebase-sa.json
 
-      - name: Firebase에 배포 (Hosting + Functions)
-        run: npx firebase-tools deploy --project courses-web-6a6f8 --force
+      - name: Firebase에 배포 (Hosting)
+        run: npx firebase-tools deploy --only hosting --project courses-web-6a6f8 --force
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-sa.json
